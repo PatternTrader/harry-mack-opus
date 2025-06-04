@@ -462,34 +462,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js"></script>
-
+    
     <script>
         // Firebase Configuration
-        // NOTE: Replace with your actual Firebase config
- 
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
             apiKey: "AIzaSyBUtq7jUntXqH0C0V2fDR1fwh2yPoZJAls",
             authDomain: "harry-mack-community.firebaseapp.com",
             projectId: "harry-mack-community",
             storageBucket: "harry-mack-community.firebasestorage.app",
             messagingSenderId: "1035009511388",
-            appId: "1:1035009511388:web:23b2e932da2ac74466c919",
-            measurementId: "G-LDRK7LL6CS"
+            appId: "1:1035009511388:web:23b2e932da2ac74466c919"
         };
- 
+    
         // Initialize Firebase
         let app, auth, db;
         let currentUser = null;
         let videos = [];
         let userRatings = {};
-
+    
         function initializeFirebase() {
+            // Check if Firebase config is properly set
+            if (firebaseConfig.apiKey === "your-api-key-here") {
+                console.log('Firebase not configured - running in demo mode');
+                handleFirebaseError();
+                return;
+            }
+    
             try {
-                app = initializeApp(firebaseConfig);
-                auth = app.auth();
-                db = app.firestore();
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
                 
                 // Set up auth state listener
                 auth.onAuthStateChanged(handleAuthStateChange);
@@ -503,13 +505,13 @@
                 handleFirebaseError();
             }
         }
-
+    
         function handleFirebaseError() {
-            updateConnectionStatus('disconnected');
-            showNotification('Using demo mode - Firebase not configured. Ratings won\'t be saved.', 'error');
+            updateConnectionStatus('demo');
+            showNotification('Running in demo mode - all features work except saving ratings!', 'info');
             initializeDemoMode();
         }
-
+    
         function initializeDemoMode() {
             // Generate sample data for demo
             generateSampleVideos();
