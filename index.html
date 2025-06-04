@@ -647,72 +647,16 @@
             videos = sampleVideos;
         }
 
-
         function getYouTubeId(episodeNumber) {
             const youtubeIds = {
                 1: 'GWhycrbmuhM',    // Omegle Bars 1
-                2: 'BgCUCg9aMyA',  // Replace with real ID
+                2: 'your-episode-2-id',  // Replace with real ID
                 3: 'your-episode-3-id',  // Replace with real ID
                 // Add more as you find them...
             };
             
             return youtubeIds[episodeNumber] || `placeholder_${episodeNumber}`;
         }
-
- 
-
-// Example usage:
-console.log(getYouTubeId(1));   // Returns: GWhycrbmuhM
-console.log(getYouTubeId(2));   // Returns: NPdKxsSE5JQ
-console.log(getYouTuBeId(50));  // Returns: 1dfh0G8Ik1c
-console.log(getYouTubeId(100)); // Returns: TFaKz7SQsgg
-console.log(getYouTubeId(101)); // Returns: placeholder_101
-
-// Test function to verify all IDs are present
-function testAllIds() {
-    console.log("Testing all 100 episode IDs:");
-    let successCount = 0;
-    let failCount = 0;
-    
-    for (let i = 1; i <= 100; i++) {
-        const id = getYouTubeId(i);
-        if (id.startsWith('placeholder_')) {
-            console.log(`❌ Episode ${i}: ${id}`);
-            failCount++;
-        } else {
-            console.log(`✅ Episode ${i}: ${id}`);
-            successCount++;
-        }
-    }
-    
-    console.log(`\nSummary: ${successCount} success, ${failCount} failed`);
-    return { success: successCount, failed: failCount };
-}
-
-// Helper function to get YouTube URL for an episode
-function getYouTubeUrl(episodeNumber) {
-    const videoId = getYouTubeId(episodeNumber);
-    if (videoId.startsWith('placeholder_')) {
-        return null;
-    }
-    return `https://www.youtube.com/watch?v=${videoId}`;
-}
-
-// Helper function to get embed URL for an episode
-function getYouTubeEmbedUrl(episodeNumber) {
-    const videoId = getYouTubeId(episodeNumber);
-    if (videoId.startsWith('placeholder_')) {
-        return null;
-    }
-    return `https://www.youtube.com/embed/${videoId}`;
-}
-
-// Uncomment to test all IDs:
-// testAllIds();
-
-// Example of getting URLs:
-// console.log("Episode 1 URL:", getYouTubeUrl(1));
-// console.log("Episode 1 Embed URL:", getYouTubeEmbedUrl(1));
         
         function generateSampleVideos() {
             const wordBank = [
