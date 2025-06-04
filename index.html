@@ -895,4 +895,280 @@
             `;
         }
 
-        function renderVideos(
+        function renderVideos(videosToShow = videos) {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = videosToShow.map(createVideoCard).join('');
+            
+            // Add click handlers for stars
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', handleStarClick);
+                star.addEventListener('mouseenter', handleStarHover);
+                star.addEventListener('mouseleave', handleStarLeave);
+            });
+        }
+
+        function handleStarClick(e) {
+            const rating = parseInt(e.target.dataset.rating);
+            const category = e.target.dataset.category;
+            const videoId = e.target.dataset.video;
+            
+            if (!currentUser) {
+                showSignInPrompt(category, rating);
+                return;
+            }
+            
+            submitRating(videoId, category, rating);
+            updateStarDisplay(e.target.closest('.stars'), rating, true);
+        }
+
+        function handleStarHover(e) {
+            const rating = parseInt(e.target.dataset.rating);
+            const stars = e.target.closest('.stars');
+            updateStarDisplay(stars, rating);
+        }
+
+        function handleStarLeave(e) {
+            const stars = e.target.closest('.stars');
+            const videoId = e.target.dataset.video;
+            const category = e.target.dataset.category;
+            
+            // Reset to actual rating
+            const video = videos.find(v => v.episodeNumber.toString() === videoId);
+            if (video) {
+                const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
+                const displayRating = userRating > 0 ? userRating : video.ratings[category].average;
+                updateStarDisplay(stars, displayRating, userRating > 0);
+            }
+        }
+
+        function updateStarDisplay(starsContainer, rating, isUserRating = false) {
+            const stars = starsContainer.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                star.classList.remove('active', 'user-rated');
+                if (index < Math.round(rating)) {
+                    star.classList.add(isUserRating ? 'user-rated' : 'active');
+                }
+            });
+        }
+
+        function updateStats() {
+            let totalRatings = 0;
+            let totalOverallRating = 0;
+            let validOverallRatings = 0;
+            let topEpisode = { number: 0, rating: 0 };
+
+            videos.forEach(video => {
+                // Count all ratings across all categories
+                Object.values(video.ratings).forEach(rating => {
+                    totalRatings += rating.count;
+                });
+
+                // Calculate overall average
+                if (video.ratings.overall.count > 0) {
+                    totalOverallRating += video.ratings.overall.average;
+                    validOverallRatings++;
+
+                    // Find top episode
+                    if (video.ratings.overall.average > topEpisode.rating) {
+                        topEpisode = {
+                            number: video.episodeNumber,
+                            rating: video.ratings.overall.average
+                        };
+                    }
+                }
+            });
+
+            // Update stats display
+            document.getElementById('totalRatings').textContent = totalRatings.toLocaleString();
+            document.getElementById('avgOverall').textContent = validOverallRatings > 0 ? 
+                (totalOverallRating / validOverallRatings).toFixed(1) : '0.0';
+            document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
+            document.getElementById('topEpisode').textContent = topEpisode.number > 0 ? 
+                `#${topEpisode.number}` : '#--';
+        }
+
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        function showSignInPrompt(category, rating) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    text-align: center;
+                    max-width: 400px;
+                    margin: 20px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50;">Join the Community!</h3>
+                    <p style="margin-bottom: 20px; color: #7f8c8d; line-height: 1.5;">
+                        Sign in to rate this ${category} as ${rating} star${rating > 1 ? 's' : ''} and help other Harry Mack fans discover the best episodes!
+                    </p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button id="modalSignIn" style="
+                            background: #3498db;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">Sign In with Google</button>
+                        <button id="modalCancel" style="
+                            background: #95a5a6;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                        ">Maybe Later</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            document.getElementById('modalSignIn').onclick = () => {
+                modal.remove();
+                signIn();
+            };
+            
+            document.getElementById('modalCancel').onclick = () => {
+                modal.remove();
+            };
+            
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+
+        // Filter and search functionality
+        function setupFilters() {
+            const sortFilter = document.getElementById('sortFilter');
+            const ratingFilter = document.getElementById('ratingFilter');
+            const searchFilter = document.getElementById('searchFilter');
+
+            [sortFilter, ratingFilter, searchFilter].forEach(filter => {
+                filter.addEventListener('change', applyFilters);
+                filter.addEventListener('input', applyFilters);
+            });
+        }
+
+        function applyFilters() {
+            let filteredVideos = [...videos];
+            
+            // Apply rating filter
+            const minRating = parseFloat(document.getElementById('ratingFilter').value);
+            if (minRating > 0) {
+                filteredVideos = filteredVideos.filter(video => 
+                    video.ratings.overall.average >= minRating
+                );
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+            if (searchTerm) {
+                filteredVideos = filteredVideos.filter(video => {
+                    const titleMatch = video.title.toLowerCase().includes(searchTerm);
+                    const episodeMatch = video.episodeNumber.toString().includes(searchTerm);
+                    const wordsMatch = video.segments.some(segment => 
+                        segment.words.some(word => word.toLowerCase().includes(searchTerm))
+                    );
+                    return titleMatch || episodeMatch || wordsMatch;
+                });
+            }
+            
+            // Apply sort
+            const sortBy = document.getElementById('sortFilter').value;
+            filteredVideos.sort((a, b) => {
+                if (sortBy === 'episode') {
+                    return a.episodeNumber - b.episodeNumber;
+                } else {
+                    return b.ratings[sortBy].average - a.ratings[sortBy].average;
+                }
+            });
+            
+            renderVideos(filteredVideos);
+        }
+
+        // Real-time updates listener
+        function setupRealtimeUpdates() {
+            if (!db) return;
+
+            // Listen for rating updates
+            db.collection('videos').onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'modified') {
+                        const updatedVideo = { id: change.doc.id, ...change.doc.data() };
+                        const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
+                        if (index !== -1) {
+                            videos[index] = updatedVideo;
+                        }
+                    }
+                });
+                
+                // Re-render if there were changes
+                if (snapshot.docChanges().length > 0) {
+                    applyFilters(); // This will re-render with current filters
+                    updateStats();
+                }
+            });
+        }
+
+        // Initialize the application
+        function init() {
+            updateConnectionStatus('connecting');
+            
+            // Try to initialize Firebase, fall back to demo mode if it fails
+            initializeFirebase();
+            
+            // Set up filters
+            setupFilters();
+            
+            // Set up real-time updates
+            setupRealtimeUpdates();
+
+            // Set up auth button
+            document.getElementById('authButton').addEventListener('click', () => {
+                if (currentUser) {
+                    signOut();
+                } else {
+                    signIn();
+                }
+            });
+        }
+
+        // Start the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
