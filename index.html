@@ -161,6 +161,29 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-words-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .edit-words-btn:hover {
+            background: #2980b9;
+        }
+
+        .edit-words-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
         }
 
         .word-segments {
@@ -179,10 +202,16 @@
             font-weight: 500;
             cursor: pointer;
             transition: transform 0.2s ease;
+            position: relative;
         }
 
         .word-tag:hover {
             transform: scale(1.05);
+        }
+
+        .word-tag.placeholder {
+            background: #bdc3c7;
+            color: #7f8c8d;
         }
 
         .segment-label {
@@ -360,6 +389,124 @@
             color: white;
         }
 
+        /* Word Editor Modal Styles */
+        .word-editor-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .word-editor-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .word-editor-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .word-editor-header h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .word-editor-header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .segment-editor {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+        }
+
+        .segment-editor h4 {
+            color: #8e44ad;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .word-inputs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .word-input {
+            flex: 1;
+            min-width: 120px;
+            padding: 8px 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .word-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .word-input::placeholder {
+            color: #bdc3c7;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .editor-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .editor-btn.save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .editor-btn.save:hover {
+            background: #219a52;
+        }
+
+        .editor-btn.cancel {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .editor-btn.cancel:hover {
+            background: #7f8c8d;
+        }
+
+        .editor-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -386,6 +533,12 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+            .word-inputs {
+                flex-direction: column;
+            }
+            .word-input {
+                min-width: auto;
+            }
         }
     </style>
 </head>
@@ -405,7 +558,7 @@
             <h1>🎤 Harry Mack Community Hub</h1>
             <p>Rate and explore all 100 Omegle Bars episodes with the global Harry Mack fan community!</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
-                ✨ Browse and see community ratings without signing in • Sign in only when you want to vote ✨
+                ✨ Browse and see community ratings without signing in • Sign in to rate and edit words ✨
             </p>
         </div>
 
@@ -560,12 +713,26 @@
                 // Load user's existing ratings
                 loadUserRatings();
                 
+                // Enable edit buttons
+                updateEditButtonsVisibility();
+                
             } else {
                 userInfo.style.display = 'none';
                 authButton.textContent = 'Sign In with Google';
                 authButton.onclick = signIn;
                 userRatings = {};
+                
+                // Disable edit buttons
+                updateEditButtonsVisibility();
             }
+        }
+
+        function updateEditButtonsVisibility() {
+            const editButtons = document.querySelectorAll('.edit-words-btn');
+            editButtons.forEach(btn => {
+                btn.disabled = !currentUser;
+                btn.textContent = currentUser ? 'Edit Words' : 'Sign in to edit';
+            });
         }
 
         function signIn() {
@@ -772,7 +939,8 @@
                 for (let j = 0; j < 3; j++) {
                     const segmentWords = [];
                     for (let k = 0; k < 3; k++) {
-                        segmentWords.push(wordBank[Math.floor(Math.random() * wordBank.length)]);
+                        // Use placeholder words that indicate they need to be filled in
+                        segmentWords.push(`word${k + 1}`);
                     }
                     segments.push({ words: segmentWords });
                 }
@@ -945,6 +1113,140 @@
             }
         }
 
+        // Word Editor Functions
+        function openWordEditor(episodeNumber) {
+            if (!currentUser) {
+                showSignInPrompt('words', 'edit');
+                return;
+            }
+
+            const video = videos.find(v => v.episodeNumber === episodeNumber);
+            if (!video) return;
+
+            createWordEditorModal(video);
+        }
+
+        function createWordEditorModal(video) {
+            const modal = document.createElement('div');
+            modal.className = 'word-editor-modal';
+            
+            modal.innerHTML = `
+                <div class="word-editor-content">
+                    <div class="word-editor-header">
+                        <h3>Edit Words - Episode #${video.episodeNumber}</h3>
+                        <p>Help the community by adding the actual improvised words from this episode</p>
+                    </div>
+                    
+                    ${video.segments.map((segment, index) => `
+                        <div class="segment-editor">
+                            <h4>Segment ${index + 1}</h4>
+                            <div class="word-inputs">
+                                <input 
+                                    type="text" 
+                                    class="word-input" 
+                                    placeholder="Word 1" 
+                                    value="${segment.words[0] === `word1` ? '' : segment.words[0]}"
+                                    data-segment="${index}" 
+                                    data-word="0"
+                                >
+                                <input 
+                                    type="text" 
+                                    class="word-input" 
+                                    placeholder="Word 2" 
+                                    value="${segment.words[1] === `word2` ? '' : segment.words[1]}"
+                                    data-segment="${index}" 
+                                    data-word="1"
+                                >
+                                <input 
+                                    type="text" 
+                                    class="word-input" 
+                                    placeholder="Word 3" 
+                                    value="${segment.words[2] === `word3` ? '' : segment.words[2]}"
+                                    data-segment="${index}" 
+                                    data-word="2"
+                                >
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <div class="editor-actions">
+                        <button class="editor-btn save" onclick="saveWords(${video.episodeNumber})">
+                            Save Words
+                        </button>
+                        <button class="editor-btn cancel" onclick="closeWordEditor()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeWordEditor();
+                }
+            });
+        }
+
+        function closeWordEditor() {
+            const modal = document.querySelector('.word-editor-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function saveWords(episodeNumber) {
+            if (!currentUser || !db) {
+                showNotification('Please sign in to save words', 'error');
+                return;
+            }
+
+            const modal = document.querySelector('.word-editor-modal');
+            const inputs = modal.querySelectorAll('.word-input');
+            
+            // Collect all words from inputs
+            const newSegments = [
+                { words: [] },
+                { words: [] },
+                { words: [] }
+            ];
+            
+            inputs.forEach(input => {
+                const segmentIndex = parseInt(input.dataset.segment);
+                const wordIndex = parseInt(input.dataset.word);
+                const word = input.value.trim() || `word${wordIndex + 1}`;
+                newSegments[segmentIndex].words[wordIndex] = word;
+            });
+
+            try {
+                // Update in Firebase
+                const videoDoc = `episode_${episodeNumber}`;
+                await db.collection('videos').doc(videoDoc).update({
+                    segments: newSegments,
+                    lastWordsUpdate: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastWordsUpdateBy: currentUser.uid
+                });
+
+                // Update local data
+                const video = videos.find(v => v.episodeNumber === episodeNumber);
+                if (video) {
+                    video.segments = newSegments;
+                }
+
+                // Close modal and re-render
+                closeWordEditor();
+                renderVideos();
+                
+                showNotification('Words updated successfully! Thanks for contributing!', 'success');
+                
+            } catch (error) {
+                console.error('Error saving words:', error);
+                showNotification('Failed to save words. Please try again.', 'error');
+            }
+        }
+
         function createStarRating(category, videoId, currentRating, ratingCount) {
             let starsHtml = '';
             const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
@@ -962,7 +1264,10 @@
                 <div>
                     <div class="segment-label">Segment ${index + 1}</div>
                     <div class="word-segments">
-                        ${segment.words.map(word => `<span class="word-tag">${word}</span>`).join('')}
+                        ${segment.words.map(word => {
+                            const isPlaceholder = word.startsWith('word');
+                            return `<span class="word-tag ${isPlaceholder ? 'placeholder' : ''}">${isPlaceholder ? 'Need words!' : word}</span>`;
+                        }).join('')}
                     </div>
                 </div>
             `).join('');
@@ -982,12 +1287,16 @@
                         </div>
                     </div>
                             
-                    
                     <div class="video-content">
                         <div class="video-title">${video.title}</div>
                         
                         <div class="words-section">
-                            <h4>Improvised Words</h4>
+                            <h4>
+                                Improvised Words
+                                <button class="edit-words-btn" onclick="openWordEditor(${video.episodeNumber})" ${!currentUser ? 'disabled' : ''}>
+                                    ${currentUser ? 'Edit Words' : 'Sign in to edit'}
+                                </button>
+                            </h4>
                             ${wordsHtml}
                         </div>
 
@@ -1020,6 +1329,9 @@
                 star.addEventListener('mouseenter', handleStarHover);
                 star.addEventListener('mouseleave', handleStarLeave);
             });
+            
+            // Update edit button visibility
+            updateEditButtonsVisibility();
         }
 
         function handleStarClick(e) {
@@ -1132,6 +1444,10 @@
                 animation: fadeIn 0.3s ease;
             `;
             
+            const actionText = category === 'words' ? 
+                'edit words' : 
+                `rate this ${category} as ${rating} star${rating > 1 ? 's' : ''}`;
+            
             modal.innerHTML = `
                 <div style="
                     background: white;
@@ -1144,7 +1460,7 @@
                 ">
                     <h3 style="margin-bottom: 15px; color: #2c3e50;">Join the Community!</h3>
                     <p style="margin-bottom: 20px; color: #7f8c8d; line-height: 1.5;">
-                        Sign in to rate this ${category} as ${rating} star${rating > 1 ? 's' : ''} and help other Harry Mack fans discover the best episodes!
+                        Sign in to ${actionText} and help other Harry Mack fans discover the best episodes!
                     </p>
                     <div style="display: flex; gap: 10px; justify-content: center;">
                         <button id="modalSignIn" style="
@@ -1239,7 +1555,7 @@
         function setupRealtimeUpdates() {
             if (!db) return;
 
-            // Listen for rating updates
+            // Listen for video updates (including word changes)
             db.collection('videos').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'modified') {
