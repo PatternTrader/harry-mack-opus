@@ -1,407 +1,480 @@
 <!DOCTYPE html>
+<!-- This tells the browser "Hey, this is a modern HTML5 webpage!" -->
 <html lang="en">
+<!-- The main container for our entire webpage. lang="en" means it's in English -->
+
 <head>
+    <!-- The HEAD section contains info ABOUT the page, but users don't see it directly -->
+    
     <meta charset="UTF-8">
+    <!-- This lets us use special characters like emojis and letters from other languages -->
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- This makes the website work properly on phones and tablets -->
+    
     <title>Harry Mack Omegle Bars - Community Hub</title>
+    <!-- This is what shows up in the browser tab at the top -->
+    
     <style>
+        /* CSS styles make our website look pretty! Think of it like decorating a room */
+        
+        /* The * means "apply this to EVERYTHING on the page" */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0;        /* Remove all default spacing around elements */
+            padding: 0;       /* Remove all default spacing inside elements */
+            box-sizing: border-box;  /* Makes sizing math easier and more predictable */
         }
 
+        /* This styles the main body of our webpage */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Use these nice fonts */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Pretty blue-purple gradient */
+            color: #333;          /* Make text dark gray */
+            min-height: 100vh;    /* Always fill the full screen height (vh = viewport height) */
         }
 
+        /* This creates a container to hold all our content and center it */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 1200px;   /* Never get wider than 1200 pixels */
+            margin: 0 auto;      /* Center the container on the page */
+            padding: 20px;       /* Add 20 pixels of space inside the container */
         }
 
+        /* This styles the header section at the top of our page */
         .header {
-            text-align: center;
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            color: white;
-            position: relative;
+            text-align: center;                           /* Center all text */
+            margin-bottom: 40px;                          /* Add space below the header */
+            background: rgba(255, 255, 255, 0.1);        /* Semi-transparent white background */
+            backdrop-filter: blur(10px);                  /* Cool frosted glass blur effect */
+            border-radius: 20px;                          /* Round the corners */
+            padding: 30px;                                /* Add space inside the header */
+            color: white;                                 /* Make text white */
+            position: relative;                           /* Allows us to position things inside */
         }
 
+        /* Style the main title */
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.5rem;                          /* Make it big! (rem = relative to root font size) */
+            margin-bottom: 10px;                         /* Add space below */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);  /* Add a subtle shadow behind text */
         }
 
+        /* Style the description text under the title */
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.1rem;   /* Slightly bigger than normal text */
+            opacity: 0.9;        /* Make it slightly transparent */
         }
 
+        /* This positions the user sign-in area in the top-right corner */
         .user-section {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            position: absolute;   /* Position it exactly where we want */
+            top: 20px;           /* 20 pixels from the top */
+            right: 20px;         /* 20 pixels from the right */
+            display: flex;       /* Use flexbox to arrange items in a row */
+            align-items: center; /* Center items vertically */
+            gap: 15px;          /* Add 15 pixels of space between items */
         }
 
+        /* Style the welcome message when user is signed in */
         .user-info {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.2);  /* Semi-transparent white */
+            padding: 8px 15px;                      /* Add space inside */
+            border-radius: 20px;                    /* Round the corners */
+            font-size: 0.9rem;                     /* Slightly smaller text */
         }
 
+        /* Style the sign in/out button */
         .auth-button {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s ease;
+            background: #e74c3c;     /* Red background */
+            color: white;            /* White text */
+            border: none;            /* Remove default button border */
+            padding: 8px 15px;       /* Add space inside */
+            border-radius: 20px;     /* Round the corners */
+            cursor: pointer;         /* Show hand cursor when hovering */
+            font-size: 0.9rem;       /* Text size */
+            transition: background 0.3s ease;  /* Smooth color change when hovering */
         }
 
+        /* Change button color when hovering over it */
         .auth-button:hover {
-            background: #c0392b;
+            background: #c0392b;     /* Darker red */
         }
 
+        /* Connection status indicator (shows if we're online, offline, or in demo mode) */
         .connection-status {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            z-index: 1000;
+            position: fixed;         /* Stay in same spot even when scrolling */
+            top: 10px;              /* 10 pixels from top of screen */
+            left: 10px;             /* 10 pixels from left of screen */
+            padding: 8px 12px;      /* Space inside */
+            border-radius: 15px;    /* Round corners */
+            font-size: 0.8rem;      /* Small text */
+            font-weight: bold;      /* Make text bold */
+            z-index: 1000;         /* Make sure it appears above other elements */
         }
 
+        /* Different colors for different connection states */
         .status-connected {
-            background: #27ae60;
+            background: #27ae60;    /* Green for connected */
             color: white;
         }
 
         .status-disconnected {
-            background: #e74c3c;
+            background: #e74c3c;    /* Red for disconnected */
             color: white;
         }
 
         .status-demo {
-            background: #f39c12;
+            background: #f39c12;    /* Orange for demo mode */
             color: white;
         }
 
         .status-connecting {
-            background: #f39c12;
+            background: #f39c12;    /* Orange for connecting */
             color: white;
         }
 
+        /* This creates a grid layout for all the video cards */
         .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            display: grid;                                          /* Use CSS Grid layout */
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));  /* Auto-size columns, min 380px wide */
+            gap: 25px;                                              /* 25 pixels space between cards */
+            margin-bottom: 40px;                                    /* Space below the grid */
         }
 
+        /* Style each individual video card */
         .video-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;                              /* White background */
+            border-radius: 15px;                            /* Round corners */
+            overflow: hidden;                               /* Hide anything that goes outside the card */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);      /* Drop shadow for depth */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;  /* Smooth animation */
         }
 
+        /* Cool hover effect - card lifts up when you hover over it */
         .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transform: translateY(-5px);                   /* Move up 5 pixels */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);      /* Bigger shadow */
         }
 
+        /* The video thumbnail area */
         .video-embed {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 14px;
+            position: relative;      /* Allows positioning of play button */
+            width: 100%;            /* Full width of card */
+            height: 200px;          /* Fixed height */
+            background: #f0f0f0;    /* Light gray background */
+            display: flex;          /* Use flexbox for centering */
+            align-items: center;    /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            color: #666;            /* Gray text color */
+            font-size: 14px;        /* Text size */
         }
 
+        /* The content area below the video */
         .video-content {
-            padding: 20px;
+            padding: 20px;          /* Add space inside */
         }
 
+        /* Style the video title */
         .video-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
+            font-size: 1.1rem;      /* Slightly bigger text */
+            font-weight: bold;      /* Make it bold */
+            margin-bottom: 15px;    /* Space below */
+            color: #2c3e50;         /* Dark blue-gray color */
         }
 
+        /* Section that contains the improvised words */
         .words-section {
-            margin-bottom: 20px;
+            margin-bottom: 20px;    /* Space below this section */
         }
 
+        /* Style the section headers like "Improvised Words" */
         .words-section h4 {
-            color: #8e44ad;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #8e44ad;                /* Purple color */
+            margin-bottom: 10px;           /* Space below */
+            font-size: 0.9rem;             /* Slightly smaller text */
+            text-transform: uppercase;     /* Make all letters UPPERCASE */
+            letter-spacing: 1px;           /* Add space between letters */
         }
 
+        /* Container for word tags in each segment */
         .word-segments {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+            display: flex;          /* Arrange in a row */
+            gap: 10px;             /* Space between words */
+            flex-wrap: wrap;       /* Wrap to next line if needed */
+            margin-bottom: 15px;   /* Space below */
         }
 
+        /* Style each individual word tag */
         .word-tag {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);  /* Red-orange gradient */
+            color: white;                                           /* White text */
+            padding: 6px 12px;                                     /* Space inside */
+            border-radius: 20px;                                   /* Round corners */
+            font-size: 0.85rem;                                    /* Slightly smaller text */
+            font-weight: 500;                                      /* Medium weight */
+            cursor: pointer;                                       /* Show hand cursor */
+            transition: transform 0.2s ease;                      /* Smooth animation */
         }
 
+        /* Cool hover effect for word tags */
         .word-tag:hover {
-            transform: scale(1.05);
+            transform: scale(1.05);  /* Make slightly bigger when hovering */
         }
 
+        /* Labels like "Segment 1", "Segment 2" */
         .segment-label {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-            font-weight: 600;
+            font-size: 0.75rem;     /* Small text */
+            color: #7f8c8d;          /* Gray color */
+            margin-bottom: 5px;      /* Space below */
+            font-weight: 600;        /* Semi-bold */
         }
 
+        /* The rating section at the bottom of each card */
         .rating-section {
-            border-top: 2px solid #ecf0f1;
-            padding-top: 15px;
+            border-top: 2px solid #ecf0f1;  /* Light gray line at top */
+            padding-top: 15px;               /* Space above content */
         }
 
+        /* Each rating row (Lyrics, Beats, etc.) */
         .rating-category {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            display: flex;                   /* Arrange in a row */
+            justify-content: space-between;  /* Spread items apart */
+            align-items: center;             /* Center vertically */
+            margin-bottom: 12px;             /* Space below each row */
         }
 
+        /* Left side of rating row (label and stats) */
         .rating-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            display: flex;           /* Stack vertically */
+            flex-direction: column;  /* Stack items on top of each other */
+            align-items: flex-start; /* Align to the left */
         }
 
+        /* Rating labels like "Lyrics", "Beats" */
         .rating-label {
-            font-weight: 600;
-            color: #34495e;
-            font-size: 0.9rem;
+            font-weight: 600;       /* Semi-bold */
+            color: #34495e;         /* Dark gray */
+            font-size: 0.9rem;      /* Text size */
         }
 
+        /* Rating statistics like "4.2★ (45 ratings)" */
         .rating-stats {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-            margin-top: 2px;
+            font-size: 0.75rem;     /* Small text */
+            color: #7f8c8d;         /* Gray color */
+            margin-top: 2px;        /* Tiny space above */
         }
 
+        /* Right side of rating row (stars and user rating) */
         .rating-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
+            display: flex;           /* Stack vertically */
+            flex-direction: column;  /* Stack items */
+            align-items: flex-end;   /* Align to the right */
+            gap: 5px;               /* Space between items */
         }
 
+        /* Container for the 5 star rating */
         .stars {
-            display: flex;
-            gap: 4px;
+            display: flex;          /* Arrange stars in a row */
+            gap: 4px;              /* Small space between stars */
         }
 
+        /* Each individual star */
         .star {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #ddd;
-            user-select: none;
+            width: 24px;                      /* Star size */
+            height: 24px;                     /* Star size */
+            cursor: pointer;                  /* Show hand cursor */
+            transition: all 0.2s ease;       /* Smooth animation */
+            color: #ddd;                      /* Light gray by default */
+            user-select: none;                /* Prevent text selection */
         }
 
+        /* Stars that are "active" (filled in based on rating) */
         .star:hover,
         .star.active {
-            color: #f39c12;
-            transform: scale(1.1);
+            color: #f39c12;         /* Orange color */
+            transform: scale(1.1);   /* Slightly bigger */
         }
 
+        /* Stars that the current user has rated */
         .star.user-rated {
-            color: #e74c3c;
+            color: #e74c3c;         /* Red color to show it's your rating */
         }
 
+        /* Shows "Your rating: 4★" under the stars */
         .user-rating-indicator {
-            font-size: 0.7rem;
-            color: #e74c3c;
-            font-weight: bold;
+            font-size: 0.7rem;      /* Very small text */
+            color: #e74c3c;         /* Red color */
+            font-weight: bold;      /* Bold text */
         }
 
+        /* Statistics bar at the bottom of the page */
         .stats-bar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
-            color: white;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent white */
+            backdrop-filter: blur(10px);            /* Frosted glass effect */
+            border-radius: 15px;                    /* Round corners */
+            padding: 25px;                          /* Space inside */
+            margin-top: 30px;                       /* Space above */
+            color: white;                           /* White text */
+            text-align: center;                     /* Center all text */
         }
 
+        /* Grid layout for the statistics */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            display: grid;                                          /* Use grid layout */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  /* Auto-size columns */
+            gap: 20px;                                              /* Space between items */
         }
 
+        /* Each individual statistic box */
         .stat-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            padding: 15px;                          /* Space inside */
+            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
+            border-radius: 10px;                    /* Round corners */
         }
 
+        /* The big number in each stat box */
         .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 2rem;        /* Big text */
+            font-weight: bold;      /* Bold */
+            margin-bottom: 5px;     /* Space below */
         }
 
+        /* The label under each big number */
         .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.9rem;      /* Normal size text */
+            opacity: 0.8;           /* Slightly transparent */
         }
 
+        /* Filter section for sorting and searching */
         .filter-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            color: white;
+            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
+            backdrop-filter: blur(10px);            /* Frosted glass effect */
+            border-radius: 15px;                    /* Round corners */
+            padding: 20px;                          /* Space inside */
+            margin-bottom: 30px;                    /* Space below */
+            color: white;                           /* White text */
         }
 
+        /* Container for all the filter controls */
         .filter-controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
+            display: flex;          /* Arrange in a row */
+            gap: 15px;             /* Space between items */
+            flex-wrap: wrap;       /* Wrap to next line if needed */
+            align-items: center;   /* Center vertically */
         }
 
+        /* Style the dropdown menus and search box */
         .filter-controls select,
         .filter-controls input {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            background: white;
-            color: #333;
+            padding: 8px 12px;      /* Space inside */
+            border: none;           /* No border */
+            border-radius: 8px;     /* Round corners */
+            background: white;      /* White background */
+            color: #333;           /* Dark text */
         }
 
+        /* Loading message */
         .loading {
-            text-align: center;
-            color: white;
-            font-size: 1.2rem;
-            margin: 50px 0;
+            text-align: center;     /* Center the text */
+            color: white;           /* White text */
+            font-size: 1.2rem;      /* Bigger text */
+            margin: 50px 0;        /* Space above and below */
         }
 
+        /* Error messages */
         .error-message {
-            background: #e74c3c;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
+            background: #e74c3c;    /* Red background */
+            color: white;           /* White text */
+            padding: 15px;          /* Space inside */
+            border-radius: 10px;    /* Round corners */
+            margin: 20px 0;        /* Space above and below */
+            text-align: center;     /* Center text */
         }
 
+        /* Popup notifications */
         .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 10px;
-            z-index: 1000;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
+            position: fixed;         /* Stay in place when scrolling */
+            top: 20px;              /* From top of screen */
+            right: 20px;            /* From right of screen */
+            padding: 15px 20px;     /* Space inside */
+            border-radius: 10px;    /* Round corners */
+            z-index: 1000;         /* Appear above everything else */
+            max-width: 300px;       /* Don't get too wide */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);  /* Shadow for depth */
+            animation: slideIn 0.3s ease;            /* Slide in animation */
         }
 
+        /* Different colors for different types of notifications */
         .notification.success {
-            background: #27ae60;
+            background: #27ae60;    /* Green for success */
             color: white;
         }
 
         .notification.error {
-            background: #e74c3c;
+            background: #e74c3c;    /* Red for errors */
             color: white;
         }
 
         .notification.info {
-            background: #3498db;
+            background: #3498db;    /* Blue for info */
             color: white;
         }
 
+        /* Animation for notifications sliding in from the right */
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(100%); opacity: 0; }  /* Start off-screen and invisible */
+            to { transform: translateX(0); opacity: 1; }       /* End in place and visible */
         }
 
+        /* Animation for fading in */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; }    /* Start invisible */
+            to { opacity: 1; }      /* End visible */
         }
 
+        /* Mobile phone styles - when screen is smaller than 768px wide */
         @media (max-width: 768px) {
             .video-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr;  /* Only one column on mobile */
             }
             .header h1 {
-                font-size: 2rem;
+                font-size: 2rem;             /* Smaller title on mobile */
             }
             .user-section {
-                position: static;
-                justify-content: center;
-                margin-top: 15px;
+                position: static;             /* Don't position absolutely */
+                justify-content: center;      /* Center the content */
+                margin-top: 15px;            /* Add space above */
             }
             .filter-controls {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: column;       /* Stack vertically on mobile */
+                align-items: stretch;         /* Make items full width */
             }
         }
     </style>
 </head>
+
 <body>
+    <!-- This shows if we're connected to the internet, in demo mode, etc. -->
     <div class="connection-status" id="connectionStatus">
         <span id="statusText">Connecting...</span>
     </div>
 
+    <!-- Main container that holds everything -->
     <div class="container">
+        
+        <!-- Header section with title and sign-in button -->
         <div class="header">
+            <!-- User sign-in area in top right corner -->
             <div class="user-section">
+                <!-- This div shows "Welcome, [Name]!" when signed in -->
                 <div class="user-info" id="userInfo" style="display: none;">
                     Welcome, <span id="userName"></span>!
                 </div>
+                <!-- Sign in/out button -->
                 <button class="auth-button" id="authButton">Sign In with Google</button>
             </div>
+            
+            <!-- Main title and description -->
             <h1>🎤 Harry Mack Community Hub</h1>
             <p>Rate and explore all 100 Omegle Bars episodes with the global Harry Mack fan community!</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
@@ -409,6 +482,7 @@
             </p>
         </div>
 
+        <!-- Filter and search controls -->
         <div class="filter-section">
             <div class="filter-controls">
                 <label>Sort by:</label>
@@ -432,14 +506,17 @@
             </div>
         </div>
 
+        <!-- Loading message (shows while page is loading) -->
         <div id="loadingMessage" class="loading">
             Loading Harry Mack videos and community ratings...
         </div>
 
+        <!-- Grid where all the video cards will go (hidden until loaded) -->
         <div class="video-grid" id="videoGrid" style="display: none;">
-            <!-- Videos will be populated by JavaScript -->
+            <!-- Videos will be added here by JavaScript -->
         </div>
 
+        <!-- Statistics section at the bottom -->
         <div class="stats-bar" id="statsBar" style="display: none;">
             <h3 style="margin-bottom: 20px;">Global Community Stats</h3>
             <div class="stats-grid">
@@ -463,141 +540,164 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- These load Firebase (Google's database service) from the internet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js"></script>
 
     <script>
-        // Firebase Configuration
+        // =====================================================
+        // JAVASCRIPT SECTION - This makes the website interactive!
+        // =====================================================
+        
+        // Firebase is Google's service for storing data online
+        // This configuration tells our website how to connect to our specific Firebase project
         const firebaseConfig = {
-            apiKey: "AIzaSyBUtq7jUntXqH0C0V2fDR1fwh2yPoZJAls",
-            authDomain: "harry-mack-community.firebaseapp.com",
-            projectId: "harry-mack-community",
-            storageBucket: "harry-mack-community.firebasestorage.app",
-            messagingSenderId: "1035009511388",
-            appId: "1:1035009511388:web:23b2e932da2ac74466c919"
+            apiKey: "AIzaSyBUtq7jUntXqH0C0V2fDR1fwh2yPoZJAls",           // Like a password to access Firebase
+            authDomain: "harry-mack-community.firebaseapp.com",        // Where users sign in
+            projectId: "harry-mack-community",                         // Our project name
+            storageBucket: "harry-mack-community.firebasestorage.app", // Where we store files
+            messagingSenderId: "1035009511388",                        // For notifications
+            appId: "1:1035009511388:web:23b2e932da2ac74466c919"        // Unique ID for our app
         };
 
-        // Initialize Firebase
-        let app, auth, db;
-        let currentUser = null;
-        let videos = [];
-        let userRatings = {};
+        // These variables store important information that we'll use throughout our app
+        let app, auth, db;          // Firebase services (app, authentication, database)
+        let currentUser = null;     // The person currently signed in (null means nobody)
+        let videos = [];           // Array to store all video data
+        let userRatings = {};      // Object to store the current user's ratings
 
+        // This function sets up Firebase (Google's online services)
         function initializeFirebase() {
             try {
-                app = firebase.initializeApp(firebaseConfig);
-                auth = firebase.auth();
-                db = firebase.firestore();
+                // Try to connect to Firebase
+                app = firebase.initializeApp(firebaseConfig);  // Initialize the main Firebase app
+                auth = firebase.auth();                        // Set up authentication (sign in/out)
+                db = firebase.firestore();                     // Set up the database
                 
                 console.log('Firebase initialized successfully');
                 console.log('Project ID:', firebaseConfig.projectId);
                 
-                // Set up auth state listener
+                // Set up a listener that watches for when users sign in or out
                 auth.onAuthStateChanged(handleAuthStateChange);
                 
-                // Initialize the app
-                loadVideosData();
-                updateConnectionStatus('connected');
+                // Start loading the app
+                loadVideosData();                   // Load all video information
+                updateConnectionStatus('connected'); // Show we're connected
                 
             } catch (error) {
+                // If Firebase doesn't work, fall back to demo mode
                 console.error('Firebase initialization failed:', error);
                 handleFirebaseError();
             }
         }
 
+        // This function runs if Firebase fails to connect
         function handleFirebaseError() {
-            updateConnectionStatus('demo');
+            updateConnectionStatus('demo');  // Show we're in demo mode
             showNotification('Running in demo mode - all features work except saving ratings!', 'info');
-            initializeDemoMode();
+            initializeDemoMode();           // Start demo mode instead
         }
 
+        // Demo mode creates fake data so the website still works without Firebase
         function initializeDemoMode() {
-            // Generate sample data for demo
-            generateSampleVideos();
-            renderVideos();
-            updateStats();
+            generateSampleVideos();  // Create fake video data
+            renderVideos();         // Show the videos on screen
+            updateStats();          // Calculate and show statistics
+            
+            // Hide loading message and show the content
             document.getElementById('loadingMessage').style.display = 'none';
             document.getElementById('videoGrid').style.display = 'grid';
             document.getElementById('statsBar').style.display = 'block';
         }
 
+        // This function updates the connection status indicator in the top-left
         function updateConnectionStatus(status) {
             const statusElement = document.getElementById('connectionStatus');
             const statusText = document.getElementById('statusText');
             
+            // Change the CSS class based on connection status
             statusElement.className = 'connection-status status-' + status;
             
+            // Show different text and colors for each status
             switch(status) {
                 case 'connected':
-                    statusText.textContent = '🟢 Live';
+                    statusText.textContent = '🟢 Live';         // Green circle, we're online
                     break;
                 case 'disconnected':
-                    statusText.textContent = '🔴 Offline';
+                    statusText.textContent = '🔴 Offline';      // Red circle, we're offline
                     break;
                 case 'demo':
-                    statusText.textContent = '🟡 Demo Mode';
+                    statusText.textContent = '🟡 Demo Mode';    // Yellow circle, demo mode
                     break;
                 case 'connecting':
-                    statusText.textContent = '🟡 Connecting...';
+                    statusText.textContent = '🟡 Connecting...'; // Yellow circle, trying to connect
                     break;
             }
         }
 
+        // This function runs whenever someone signs in or out
         function handleAuthStateChange(user) {
-            currentUser = user;
+            currentUser = user;  // Store the current user (null if nobody signed in)
+            
+            // Get references to HTML elements we need to update
             const userInfo = document.getElementById('userInfo');
             const userName = document.getElementById('userName');
             const authButton = document.getElementById('authButton');
 
             if (user) {
-                userInfo.style.display = 'block';
-                userName.textContent = user.displayName || user.email;
-                authButton.textContent = 'Sign Out';
-                authButton.onclick = signOut;
+                // Someone is signed in
+                userInfo.style.display = 'block';                          // Show welcome message
+                userName.textContent = user.displayName || user.email;     // Show their name or email
+                authButton.textContent = 'Sign Out';                       // Change button to "Sign Out"
+                authButton.onclick = signOut;                              // Make button sign out when clicked
                 
-                // Load user's existing ratings
-                loadUserRatings();
+                loadUserRatings();  // Load this user's existing ratings
                 
             } else {
-                userInfo.style.display = 'none';
-                authButton.textContent = 'Sign In with Google';
-                authButton.onclick = signIn;
-                userRatings = {};
+                // Nobody is signed in
+                userInfo.style.display = 'none';        // Hide welcome message
+                authButton.textContent = 'Sign In with Google';  // Change button to "Sign In"
+                authButton.onclick = signIn;             // Make button sign in when clicked
+                userRatings = {};                       // Clear any stored ratings
             }
         }
 
+        // This function signs users in with Google
         function signIn() {
             if (!auth) {
+                // If we're in demo mode, authentication won't work
                 showNotification('Authentication not available in demo mode', 'info');
                 return;
             }
             
-            const provider = new firebase.auth.GoogleAuthProvider();
+            const provider = new firebase.auth.GoogleAuthProvider();  // Set up Google sign-in
             
-            // Try popup first, fallback to redirect if it fails
+            // Try popup sign-in first (opens a small window)
             auth.signInWithPopup(provider).catch(error => {
                 console.error('Popup sign in failed:', error);
                 
-                // If popup fails, try redirect method
+                // If popup fails (browser blocked it), try redirect method
                 if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
                     showNotification('Popup blocked. Trying redirect method...', 'info');
-                    auth.signInWithRedirect(provider);
+                    auth.signInWithRedirect(provider);  // This takes over the whole page
                 } else {
                     showNotification(`Sign in failed: ${error.message}`, 'error');
                 }
             });
         }
 
+        // This function signs users out
         function signOut() {
             if (auth) {
-                auth.signOut();
+                auth.signOut();  // Tell Firebase to sign the user out
             }
         }
 
+        // This function loads all video data from Firebase (or creates demo data)
         async function loadVideosData() {
             if (!db) {
+                // If no database connection, use demo data
                 generateSampleVideos();
                 renderVideos();
                 updateStats();
@@ -608,18 +708,21 @@
             }
 
             try {
+                // Get all videos from Firebase, sorted by episode number
                 const videosSnapshot = await db.collection('videos').orderBy('episodeNumber').get();
                 
                 if (videosSnapshot.empty) {
-                    // Initialize with sample data if collection is empty
+                    // If no videos exist in Firebase, create some sample data
                     await initializeFirebaseData();
                 } else {
+                    // Convert Firebase data into JavaScript array
                     videos = videosSnapshot.docs.map(doc => ({
                         id: doc.id,
-                        ...doc.data()
+                        ...doc.data()  // Spread operator - takes all the data from the document
                     }));
                 }
                 
+                // Show the videos on screen
                 renderVideos();
                 updateStats();
                 document.getElementById('loadingMessage').style.display = 'none';
@@ -627,38 +730,45 @@
                 document.getElementById('statsBar').style.display = 'block';
                 
             } catch (error) {
+                // If something goes wrong, show error and use demo mode
                 console.error('Error loading videos:', error);
                 showNotification('Error loading videos. Using demo data.', 'error');
                 initializeDemoMode();
             }
         }
 
+        // This function adds sample video data to Firebase if it's empty
         async function initializeFirebaseData() {
-            // This would populate Firebase with initial video data
-            const sampleVideos = generateSampleVideos();
+            const sampleVideos = generateSampleVideos();  // Create sample data
             
+            // Batch write - this lets us add many documents at once (faster!)
             const batch = db.batch();
             sampleVideos.forEach((video, index) => {
                 const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
-                batch.set(docRef, video);
+                batch.set(docRef, video);  // Add this video to the batch
             });
             
-            await batch.commit();
-            videos = sampleVideos;
+            await batch.commit();  // Actually save all the videos to Firebase
+            videos = sampleVideos; // Store them locally too
         }
 
+        // This function returns YouTube video IDs for each episode
         function getYouTubeId(episodeNumber) {
+            // Object that maps episode numbers to YouTube video IDs
             const youtubeIds = {
-                1: 'GWhycrbmuhM',    // Omegle Bars 1
-                2: 'your-episode-2-id',  // Replace with real ID
-                3: 'your-episode-3-id',  // Replace with real ID
-                // Add more as you find them...
+                1: 'GWhycrbmuhM',    // Real YouTube ID for Omegle Bars 1
+                2: 'your-episode-2-id',  // You would replace these with real IDs
+                3: 'your-episode-3-id',  // as you find them
+                // Add more episodes here...
             };
             
+            // Return the real ID if we have it, otherwise create a placeholder
             return youtubeIds[episodeNumber] || `placeholder_${episodeNumber}`;
         }
         
+        // This function creates fake video data for demo mode
         function generateSampleVideos() {
+            // Array of random words that Harry Mack might freestyle about
             const wordBank = [
                 "pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
                 "telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
@@ -668,25 +778,32 @@
                 "telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream"
             ];
 
-            const sampleVideos = [];
+            const sampleVideos = [];  // Array to store all our fake videos
             
+            // Create 100 fake episodes
             for (let i = 1; i <= 100; i++) {
-                const segments = [];
+                const segments = [];  // Each episode has 3 segments
+                
+                // Create 3 segments for this episode
                 for (let j = 0; j < 3; j++) {
-                    const segmentWords = [];
+                    const segmentWords = [];  // Each segment has 3 words
+                    
+                    // Pick 3 random words for this segment
                     for (let k = 0; k < 3; k++) {
                         segmentWords.push(wordBank[Math.floor(Math.random() * wordBank.length)]);
                     }
                     segments.push({ words: segmentWords });
                 }
 
-                // Generate realistic sample ratings with some episodes having more ratings
+                // Generate realistic fake ratings (between 3-5 stars mostly)
                 const baseRatingCount = Math.floor(Math.random() * 150) + 10; // 10-160 ratings per category
-                const lyrics = Math.random() * 2 + 3; // 3-5 stars
+                const lyrics = Math.random() * 2 + 3; // Random number between 3-5
                 const beats = Math.random() * 2 + 3;
                 const reaction = Math.random() * 2 + 3;
-                const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3); // Slightly correlated
+                // Overall rating is roughly the average of the others, with some randomness
+                const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
 
+                // Create the video object with all its data
                 const video = {
                     episodeNumber: i,
                     title: `Omegle Bars Episode #${i}`,
@@ -694,7 +811,7 @@
                     segments: segments,
                     ratings: {
                         lyrics: { 
-                            average: Math.max(1, Math.min(5, lyrics)), 
+                            average: Math.max(1, Math.min(5, lyrics)), // Keep between 1-5 stars
                             count: baseRatingCount + Math.floor(Math.random() * 20) 
                         },
                         beats: { 
@@ -712,28 +829,32 @@
                     }
                 };
 
-                sampleVideos.push(video);
+                sampleVideos.push(video);  // Add this video to our array
             }
             
-            videos = sampleVideos;
+            videos = sampleVideos;  // Store globally so other functions can use them
             return sampleVideos;
         }
 
+        // This function loads the current user's existing ratings from Firebase
         async function loadUserRatings() {
-            if (!currentUser || !db) return;
+            if (!currentUser || !db) return;  // Exit if no user or no database
 
             try {
+                // Find all ratings that belong to the current user
                 const ratingsSnapshot = await db.collection('userRatings')
-                    .where('userId', '==', currentUser.uid)
+                    .where('userId', '==', currentUser.uid)  // Filter by user ID
                     .get();
                 
-                userRatings = {};
+                userRatings = {};  // Reset the ratings object
+                
+                // Loop through each rating document and store it
                 ratingsSnapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    userRatings[data.videoId] = data.ratings;
+                    userRatings[data.videoId] = data.ratings;  // Store ratings by video ID
                 });
                 
-                // Update UI to show user's ratings
+                // Update the UI to show the user's existing ratings
                 updateUserRatingDisplay();
                 
             } catch (error) {
@@ -741,17 +862,22 @@
             }
         }
 
+        // This function updates the star displays to show which ones the user has rated
         function updateUserRatingDisplay() {
-            // Update star displays to show user's ratings
+            // Loop through all the user's ratings
             Object.keys(userRatings).forEach(videoId => {
                 const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+                
+                // For each rating category
                 categories.forEach(category => {
                     const rating = userRatings[videoId][category];
-                    if (rating > 0) {
+                    if (rating > 0) {  // If user has rated this category
+                        // Find the stars container for this video and category
                         const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]`)?.closest('.stars');
                         if (starsContainer) {
-                            updateStarDisplay(starsContainer, rating, true);
-                            // Add user rating indicator
+                            updateStarDisplay(starsContainer, rating, true);  // Show user's rating
+                            
+                            // Add "Your rating: X★" text if it doesn't exist
                             const controls = starsContainer.closest('.rating-controls');
                             if (controls && !controls.querySelector('.user-rating-indicator')) {
                                 const indicator = document.createElement('div');
@@ -765,27 +891,30 @@
             });
         }
 
+        // This function saves a user's rating to Firebase and updates the overall rating
         async function submitRating(videoId, category, rating) {
             try {
-                // Update user's personal ratings
+                // Update the user's personal ratings in memory
                 if (!userRatings[videoId]) {
+                    // If this is the first rating for this video, create an object
                     userRatings[videoId] = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
                 }
-                userRatings[videoId][category] = rating;
+                userRatings[videoId][category] = rating;  // Store the new rating
 
                 if (db) {
-                    // Save to Firebase
+                    // Save the user's ratings to Firebase
                     await db.collection('userRatings').doc(`${currentUser.uid}_${videoId}`).set({
-                        userId: currentUser.uid,
-                        videoId: videoId,
-                        ratings: userRatings[videoId],
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        userId: currentUser.uid,          // Who rated it
+                        videoId: videoId,                 // Which video
+                        ratings: userRatings[videoId],    // All their ratings for this video
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()  // When they rated it
                     });
 
-                    // Update video's aggregate rating
+                    // Update the video's overall average rating
                     await updateVideoRating(videoId, category, rating);
                 }
 
+                // Show success message
                 showNotification(`Rated ${category}: ${rating} stars! Thanks for contributing to the community!`, 'success');
                 
             } catch (error) {
@@ -794,40 +923,45 @@
             }
         }
 
+        // This function updates a video's overall rating when someone rates it
         async function updateVideoRating(videoId, category, newRating) {
-            if (!db) return;
+            if (!db) return;  // Exit if no database
 
             try {
                 const videoRef = db.collection('videos').doc(videoId);
                 const ratingsRef = db.collection('ratings').doc(`${videoId}_${category}`);
                 
+                // Use a transaction to safely update the rating (prevents race conditions)
                 await db.runTransaction(async (transaction) => {
                     const ratingsDoc = await transaction.get(ratingsRef);
                     
-                    let totalRating = newRating;
-                    let count = 1;
+                    let totalRating = newRating;  // Start with the new rating
+                    let count = 1;               // Count starts at 1
                     
                     if (ratingsDoc.exists) {
+                        // If ratings already exist, add to them
                         const data = ratingsDoc.data();
                         totalRating = data.totalRating + newRating;
                         count = data.count + 1;
                     }
                     
-                    const average = totalRating / count;
+                    const average = totalRating / count;  // Calculate new average
                     
+                    // Save the updated rating stats
                     transaction.set(ratingsRef, {
                         totalRating: totalRating,
                         count: count,
                         average: average
                     });
                     
+                    // Update the video document with new average and count
                     transaction.update(videoRef, {
                         [`ratings.${category}.average`]: average,
                         [`ratings.${category}.count`]: count
                     });
                 });
                 
-                // Update local data
+                // Update our local data so the UI updates immediately
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (video) {
                     const currentData = video.ratings[category];
@@ -839,7 +973,7 @@
                     };
                 }
                 
-                // Re-render to show updated ratings
+                // Re-render the page to show updated ratings
                 renderVideos();
                 updateStats();
                 
@@ -848,19 +982,23 @@
             }
         }
 
+        // This function creates the HTML for a star rating display
         function createStarRating(category, videoId, currentRating, ratingCount) {
             let starsHtml = '';
             const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
             
+            // Create 5 stars
             for (let i = 1; i <= 5; i++) {
-                const activeClass = i <= Math.round(currentRating) ? 'active' : '';
-                const userRatedClass = userRating > 0 && i <= userRating ? 'user-rated' : '';
+                const activeClass = i <= Math.round(currentRating) ? 'active' : '';  // Fill stars based on rating
+                const userRatedClass = userRating > 0 && i <= userRating ? 'user-rated' : '';  // Different color for user's rating
                 starsHtml += `<span class="star ${activeClass} ${userRatedClass}" data-rating="${i}" data-category="${category}" data-video="${videoId}">★</span>`;
             }
             return starsHtml;
         }
 
+        // This function creates the HTML for one video card
         function createVideoCard(video) {
+            // Create HTML for the improvised words sections
             const wordsHtml = video.segments.map((segment, index) => `
                 <div>
                     <div class="segment-label">Segment ${index + 1}</div>
@@ -873,8 +1011,10 @@
             const videoId = video.episodeNumber.toString();
             const userVideoRatings = userRatings[videoId] || { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
 
+            // Return the complete HTML for this video card
             return `
                 <div class="video-card" data-episode="${video.episodeNumber}">
+                    <!-- Video thumbnail that links to YouTube -->
                     <div class="video-embed" style="position: relative; cursor: pointer; background-image: url('https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg'); background-size: cover; background-position: center;" onclick="window.open('https://www.youtube.com/watch?v=${video.youtubeId}', '_blank')">
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
                             <div style="text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
@@ -885,15 +1025,17 @@
                         </div>
                     </div>
                             
-                    
+                    <!-- Card content below the video -->
                     <div class="video-content">
                         <div class="video-title">${video.title}</div>
                         
+                        <!-- Section showing the improvised words -->
                         <div class="words-section">
                             <h4>Improvised Words</h4>
                             ${wordsHtml}
                         </div>
 
+                        <!-- Rating section with stars for each category -->
                         <div class="rating-section">
                             ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
                                 <div class="rating-category">
@@ -913,44 +1055,51 @@
             `;
         }
 
+        // This function puts all the video cards on the page
         function renderVideos(videosToShow = videos) {
             const grid = document.getElementById('videoGrid');
+            // Create HTML for all videos and put it in the grid
             grid.innerHTML = videosToShow.map(createVideoCard).join('');
             
-            // Add click handlers for stars
+            // Add event listeners to all the stars so they respond to clicks and hovers
             document.querySelectorAll('.star').forEach(star => {
-                star.addEventListener('click', handleStarClick);
-                star.addEventListener('mouseenter', handleStarHover);
-                star.addEventListener('mouseleave', handleStarLeave);
+                star.addEventListener('click', handleStarClick);        // When clicked
+                star.addEventListener('mouseenter', handleStarHover);   // When mouse enters
+                star.addEventListener('mouseleave', handleStarLeave);   // When mouse leaves
             });
         }
 
+        // This function runs when someone clicks on a star
         function handleStarClick(e) {
-            const rating = parseInt(e.target.dataset.rating);
-            const category = e.target.dataset.category;
-            const videoId = e.target.dataset.video;
+            const rating = parseInt(e.target.dataset.rating);    // Which star (1-5)
+            const category = e.target.dataset.category;          // Which category (lyrics, beats, etc.)
+            const videoId = e.target.dataset.video;              // Which video
             
             if (!currentUser) {
+                // If not signed in, show sign-in prompt
                 showSignInPrompt(category, rating);
                 return;
             }
             
+            // Submit the rating and update the star display
             submitRating(videoId, category, rating);
             updateStarDisplay(e.target.closest('.stars'), rating, true);
         }
 
+        // This function runs when someone hovers over a star (preview)
         function handleStarHover(e) {
             const rating = parseInt(e.target.dataset.rating);
             const stars = e.target.closest('.stars');
-            updateStarDisplay(stars, rating);
+            updateStarDisplay(stars, rating);  // Show what it would look like
         }
 
+        // This function runs when someone stops hovering over a star
         function handleStarLeave(e) {
             const stars = e.target.closest('.stars');
             const videoId = e.target.dataset.video;
             const category = e.target.dataset.category;
             
-            // Reset to actual rating
+            // Reset to show the actual rating (not the hover preview)
             const video = videos.find(v => v.episodeNumber.toString() === videoId);
             if (video) {
                 const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
@@ -959,22 +1108,26 @@
             }
         }
 
+        // This function updates how the stars look (filled/empty, colors)
         function updateStarDisplay(starsContainer, rating, isUserRating = false) {
             const stars = starsContainer.querySelectorAll('.star');
             stars.forEach((star, index) => {
-                star.classList.remove('active', 'user-rated');
+                star.classList.remove('active', 'user-rated');  // Remove old classes
                 if (index < Math.round(rating)) {
+                    // Fill in stars up to the rating
                     star.classList.add(isUserRating ? 'user-rated' : 'active');
                 }
             });
         }
 
+        // This function calculates and displays statistics at the bottom
         function updateStats() {
             let totalRatings = 0;
             let totalOverallRating = 0;
             let validOverallRatings = 0;
             let topEpisode = { number: 0, rating: 0 };
 
+            // Loop through all videos to calculate stats
             videos.forEach(video => {
                 // Count all ratings across all categories
                 Object.values(video.ratings).forEach(rating => {
@@ -986,7 +1139,7 @@
                     totalOverallRating += video.ratings.overall.average;
                     validOverallRatings++;
 
-                    // Find top episode
+                    // Find the highest rated episode
                     if (video.ratings.overall.average > topEpisode.rating) {
                         topEpisode = {
                             number: video.episodeNumber,
@@ -996,7 +1149,7 @@
                 }
             });
 
-            // Update stats display
+            // Update the statistics display
             document.getElementById('totalRatings').textContent = totalRatings.toLocaleString();
             document.getElementById('avgOverall').textContent = validOverallRatings > 0 ? 
                 (totalOverallRating / validOverallRatings).toFixed(1) : '0.0';
@@ -1005,21 +1158,26 @@
                 `#${topEpisode.number}` : '#--';
         }
 
+        // This function shows popup notifications to the user
         function showNotification(message, type = 'info') {
-            // Remove existing notifications
+            // Remove any existing notifications first
             document.querySelectorAll('.notification').forEach(n => n.remove());
 
+            // Create new notification element
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
             document.body.appendChild(notification);
 
+            // Auto-remove after 4 seconds
             setTimeout(() => {
                 notification.remove();
             }, 4000);
         }
 
+        // This function shows a popup asking users to sign in when they try to rate
         function showSignInPrompt(category, rating) {
+            // Create modal overlay
             const modal = document.createElement('div');
             modal.style.cssText = `
                 position: fixed;
@@ -1035,6 +1193,7 @@
                 animation: fadeIn 0.3s ease;
             `;
             
+            // Create modal content
             modal.innerHTML = `
                 <div style="
                     background: white;
@@ -1073,6 +1232,7 @@
             
             document.body.appendChild(modal);
             
+            // Add click handlers for the buttons
             document.getElementById('modalSignIn').onclick = () => {
                 modal.remove();
                 signIn();
@@ -1082,6 +1242,7 @@
                 modal.remove();
             };
             
+            // Close modal if user clicks outside of it
             modal.onclick = (e) => {
                 if (e.target === modal) {
                     modal.remove();
@@ -1089,22 +1250,24 @@
             };
         }
 
-        // Filter and search functionality
+        // This function sets up the filter and search functionality
         function setupFilters() {
             const sortFilter = document.getElementById('sortFilter');
             const ratingFilter = document.getElementById('ratingFilter');
             const searchFilter = document.getElementById('searchFilter');
 
+            // Add event listeners to all filter controls
             [sortFilter, ratingFilter, searchFilter].forEach(filter => {
-                filter.addEventListener('change', applyFilters);
-                filter.addEventListener('input', applyFilters);
+                filter.addEventListener('change', applyFilters);  // When dropdown changes
+                filter.addEventListener('input', applyFilters);   // When typing in search box
             });
         }
 
+        // This function applies all the current filters and sorts the videos
         function applyFilters() {
-            let filteredVideos = [...videos];
+            let filteredVideos = [...videos];  // Start with all videos (... makes a copy)
             
-            // Apply rating filter
+            // Apply minimum rating filter
             const minRating = parseFloat(document.getElementById('ratingFilter').value);
             if (minRating > 0) {
                 filteredVideos = filteredVideos.filter(video => 
@@ -1121,35 +1284,37 @@
                     const wordsMatch = video.segments.some(segment => 
                         segment.words.some(word => word.toLowerCase().includes(searchTerm))
                     );
-                    return titleMatch || episodeMatch || wordsMatch;
+                    return titleMatch || episodeMatch || wordsMatch;  // Match any of these
                 });
             }
             
-            // Apply sort
+            // Apply sorting
             const sortBy = document.getElementById('sortFilter').value;
             filteredVideos.sort((a, b) => {
                 if (sortBy === 'episode') {
-                    return a.episodeNumber - b.episodeNumber;
+                    return a.episodeNumber - b.episodeNumber;  // Sort by episode number (ascending)
                 } else {
-                    return b.ratings[sortBy].average - a.ratings[sortBy].average;
+                    return b.ratings[sortBy].average - a.ratings[sortBy].average;  // Sort by rating (descending)
                 }
             });
             
+            // Show the filtered and sorted videos
             renderVideos(filteredVideos);
         }
 
-        // Real-time updates listener
+        // This function sets up real-time updates when other users rate videos
         function setupRealtimeUpdates() {
-            if (!db) return;
+            if (!db) return;  // Exit if no database
 
-            // Listen for rating updates
+            // Listen for changes to the videos collection
             db.collection('videos').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'modified') {
+                        // A video's rating was updated
                         const updatedVideo = { id: change.doc.id, ...change.doc.data() };
                         const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
                         if (index !== -1) {
-                            videos[index] = updatedVideo;
+                            videos[index] = updatedVideo;  // Update our local copy
                         }
                     }
                 });
@@ -1162,20 +1327,20 @@
             });
         }
 
-        // Initialize the application
+        // This is the main function that starts everything when the page loads
         function init() {
-            updateConnectionStatus('connecting');
+            updateConnectionStatus('connecting');  // Show we're trying to connect
             
             // Try to initialize Firebase, fall back to demo mode if it fails
             initializeFirebase();
             
-            // Set up filters
+            // Set up the filter controls
             setupFilters();
             
             // Set up real-time updates
             setupRealtimeUpdates();
 
-            // Set up auth button
+            // Set up the sign in/out button
             document.getElementById('authButton').addEventListener('click', () => {
                 if (currentUser) {
                     signOut();
@@ -1185,7 +1350,7 @@
             });
         }
 
-        // Start the application when the page loads
+        // Start the application when the page finishes loading
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
