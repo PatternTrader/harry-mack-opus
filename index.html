@@ -578,6 +578,18 @@
                 console.log('Firebase initialized successfully');
                 console.log('Project ID:', firebaseConfig.projectId);
                 
+                // Handle redirect results (for when user comes back from Google sign-in)
+                auth.getRedirectResult().then((result) => {
+                    if (result.user) {
+                        // User successfully signed in via redirect
+                        showNotification(`Welcome ${result.user.displayName}! You're now signed in.`, 'success');
+                    }
+                }).catch((error) => {
+                    // Handle redirect errors
+                    console.error('Redirect sign in error:', error);
+                    showNotification(`Sign in failed: ${error.message}`, 'error');
+                });
+                
                 // Set up a listener that watches for when users sign in or out
                 auth.onAuthStateChanged(handleAuthStateChange);
                 
@@ -673,18 +685,32 @@
             
             const provider = new firebase.auth.GoogleAuthProvider();  // Set up Google sign-in
             
-            // Try popup sign-in first (opens a small window)
-            auth.signInWithPopup(provider).catch(error => {
-                console.error('Popup sign in failed:', error);
-                
-                // If popup fails (browser blocked it), try redirect method
-                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-                    showNotification('Popup blocked. Trying redirect method...', 'info');
-                    auth.signInWithRedirect(provider);  // This takes over the whole page
-                } else {
-                    showNotification(`Sign in failed: ${error.message}`, 'error');
-                }
-            });
+            // Add extra permissions we want from Google
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            // Check if we're on mobile or if popups might be blocked
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // On mobile, use redirect (works better than popup)
+                showNotification('Redirecting to Google sign-in...', 'info');
+                auth.signInWithRedirect(provider);
+            } else {
+                // On desktop, try popup first, fallback to redirect if blocked
+                auth.signInWithPopup(provider).catch(error => {
+                    console.error('Popup sign in failed:', error);
+                    
+                    // If popup fails (browser blocked it), try redirect method
+                    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+                        showNotification('Popup blocked. Redirecting to Google sign-in...', 'info');
+                        auth.signInWithRedirect(provider);  // This takes over the whole page
+                    } else {
+                        showNotification(`Sign in failed: ${error.message}`, 'error');
+                        console.error('Full error details:', error);
+                    }
+                });
+            }
         }
 
         // This function signs users out
