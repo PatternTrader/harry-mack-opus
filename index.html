@@ -613,12 +613,19 @@
 
 
 
-
-        // STEP 2: Replace your signIn function with this one
-        // Find "function signIn() {" and replace the entire function
+        // Add this variable at the top of your script section
+        let isSigningIn = false;
+        
+        // Replace your signIn function with this:
         async function signIn() {
             if (!auth) {
                 showNotification('Authentication not available in demo mode', 'info');
+                return;
+            }
+            
+            // Prevent multiple simultaneous sign-in attempts
+            if (isSigningIn) {
+                console.log('Sign-in already in progress');
                 return;
             }
             
@@ -631,10 +638,10 @@
             provider.addScope('email');
             
             try {
+                isSigningIn = true;
                 console.log('Starting popup sign in...');
                 showNotification('Opening Google sign-in popup...', 'info');
                 
-                // Use signInWithPopup instead of signInWithRedirect
                 const result = await auth.signInWithPopup(provider);
                 
                 console.log('Sign in successful:', result.user);
@@ -651,12 +658,16 @@
                     showNotification('Sign-in popup was closed. Please try again.', 'info');
                 } else if (error.code === 'auth/popup-blocked') {
                     showNotification('Sign-in popup was blocked by browser. Please allow popups and try again.', 'error');
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    showNotification('Another sign-in popup is already open. Please complete that first.', 'info');
                 } else {
                     showNotification(`Sign in failed: ${error.message}`, 'error');
                 }
+            } finally {
+                isSigningIn = false;
             }
         }
- 
+
         async function signOut() {
             if (auth) {
                 try {
