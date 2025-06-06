@@ -654,6 +654,40 @@
             overall: { average: 3.0, count: 0 }
         };
 
+        function generateDefaultSegments() {
+            console.log('🔧 Generating default segments...');
+            const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
+            const numSegments = 3; // Default to 3 segments
+            const segments = [];
+            
+            for (let j = 0; j < numSegments; j++) {
+                const segmentWords = [];
+                
+                // Generate 3 words per segment
+                for (let k = 0; k < 3; k++) {
+                    const candidateWords = [];
+                    const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+                    
+                    candidateWords.push({
+                        word: baseWord,
+                        votes: Math.floor(Math.random() * 10) + 5,
+                        voters: []
+                    });
+                    
+                    segmentWords.push(candidateWords);
+                }
+                
+                segments.push({
+                    id: `default_segment_${j + 1}`,
+                    words: segmentWords,
+                    ratings: { ...defaultRatings }
+                });
+            }
+            
+            console.log(`✅ Generated ${segments.length} default segments`);
+            return segments;
+        }
+
         async function initializeFirebase() {
             try {
                 console.log('🔥 Initializing Firebase...');
@@ -873,16 +907,36 @@
                     videos = videosSnapshot.docs.map(doc => {
                         const data = doc.data();
                         console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
-                        // Ensure segments have proper ratings structure
-                        if (data.segments) {
-                            data.segments = data.segments.map(segment => ({
+                        console.log(`📊 Segments data type:`, typeof data.segments, data.segments);
+                        
+                        // Ensure segments exist and are an array
+                        let segments = [];
+                        if (data.segments && Array.isArray(data.segments)) {
+                            console.log(`✅ Valid segments array with ${data.segments.length} items`);
+                            segments = data.segments.map(segment => ({
                                 ...segment,
                                 ratings: segment.ratings || defaultRatings
                             }));
+                        } else if (data.segments) {
+                            console.log(`⚠️ Segments exists but is not an array:`, data.segments);
+                            // Try to convert object to array if possible
+                            if (typeof data.segments === 'object') {
+                                segments = Object.values(data.segments).map(segment => ({
+                                    ...segment,
+                                    ratings: segment.ratings || defaultRatings
+                                }));
+                                console.log(`🔄 Converted segments object to array with ${segments.length} items`);
+                            }
+                        } else {
+                            console.log(`❌ No segments found for Episode ${data.episodeNumber} - generating default segments`);
+                            // Generate default segments if none exist
+                            segments = generateDefaultSegments();
                         }
+                        
                         return {
                             id: doc.id,
-                            ...data
+                            ...data,
+                            segments: segments
                         };
                     });
                     console.log(`✅ Successfully loaded ${videos.length} videos`);
@@ -942,11 +996,12 @@
         function getYouTubeId(episodeNumber) {
             const youtubeIds = {
                 1: 'GWhycrbmuhM',
-                2: 'your-episode-2-id',
-                3: 'your-episode-3-id',
+                2: 'dQw4w9WgXcQ', // Valid placeholder video
+                3: 'dQw4w9WgXcQ', // Valid placeholder video
             };
             
-            return youtubeIds[episodeNumber] || `placeholder_${episodeNumber}`;
+            // Return known ID or a valid placeholder that won't 404
+            return youtubeIds[episodeNumber] || 'dQw4w9WgXcQ'; // Rick Roll as safe fallback
         }
         
         function generateSampleVideos() {
