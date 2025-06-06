@@ -1687,35 +1687,53 @@
         }
 
         function renderVideos() {
+            console.log('🎨 Starting renderVideos function...');
+            console.log(`📊 Videos to render: ${videos.length}`);
+            
             const videoGrid = document.getElementById('videoGrid');
             videoGrid.innerHTML = ''; // Clear existing videos
 
             let filteredVideos = [...videos];
+            console.log(`📋 Initial video count: ${filteredVideos.length}`);
 
             // Apply filters
             const sortFilter = document.getElementById('sortFilter').value;
             const ratingFilter = parseFloat(document.getElementById('ratingFilter').value);
             const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
 
+            console.log(`🔍 Filters - Sort: ${sortFilter}, Rating: ${ratingFilter}, Search: "${searchFilter}"`);
+
             // Filter by rating
             if (ratingFilter > 0) {
+                const beforeCount = filteredVideos.length;
                 filteredVideos = filteredVideos.filter(video => video.ratings.overall.average >= ratingFilter);
+                console.log(`📊 Rating filter: ${beforeCount} → ${filteredVideos.length} videos`);
             }
 
             // Filter by search term
             if (searchFilter) {
-                filteredVideos = filteredVideos.filter(video =>
-                    video.title.toLowerCase().includes(searchFilter) ||
-                    video.episodeNumber.toString().includes(searchFilter) ||
-                    video.segments.some(segment =>
-                        segment.words && segment.words.some(wordCandidates =>
-                            wordCandidates && wordCandidates.some(candidate =>
-                                candidate && candidate.word && 
-                                candidate.word.toLowerCase().includes(searchFilter)
-                            )
-                        )
-                    )
-                );
+                const beforeCount = filteredVideos.length;
+                filteredVideos = filteredVideos.filter(video => {
+                    try {
+                        return video.title.toLowerCase().includes(searchFilter) ||
+                               video.episodeNumber.toString().includes(searchFilter) ||
+                               (video.segments && video.segments.some(segment =>
+                                   segment.words && segment.words.some(wordCandidates => {
+                                       if (Array.isArray(wordCandidates)) {
+                                           return wordCandidates.some(candidate =>
+                                               candidate && candidate.word && 
+                                               candidate.word.toLowerCase().includes(searchFilter)
+                                           );
+                                       }
+                                       return false;
+                                   })
+                               ));
+                    } catch (searchError) {
+                        console.error(`❌ Search error for video ${video.episodeNumber}:`, searchError);
+                        return true; // Include video if search fails
+                    }
+                });
+                console.log(`🔍 Search filter: ${beforeCount} → ${filteredVideos.length} videos`);
             }
 
             // Sort videos
@@ -1726,69 +1744,130 @@
                     return b.ratings[sortFilter].average - a.ratings[sortFilter].average;
                 }
             });
+            console.log(`📊 Sorted ${filteredVideos.length} videos by ${sortFilter}`);
 
+            // Render each video with error handling
+            let successCount = 0;
+            let errorCount = 0;
+            
             filteredVideos.forEach((video, index) => {
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.innerHTML = `
-                    <div class="video-embed" style="position: relative; cursor: pointer; background-image: url('https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg'); background-size: cover; background-position: center;" onclick="window.open('https://www.youtube.com/watch?v=${video.youtubeId}', '_blank')">
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-                            <div style="text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-                                <div style="font-size: 4rem; margin-bottom: 10px;">▶️</div>
-                                <div style="font-size: 1.1rem; font-weight: bold;">Episode #${video.episodeNumber}</div>
-                                <div style="font-size: 0.9rem; opacity: 0.9;">Click to watch on YouTube</div>
+                try {
+                    console.log(`🎬 Rendering video ${index + 1}/${filteredVideos.length}: Episode ${video.episodeNumber}`);
+                    
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    
+                    // Create video card HTML with error handling for segments
+                    let segmentsHtml = '';
+                    if (video.segments && Array.isArray(video.segments)) {
+                        console.log(`📦 Processing ${video.segments.length} segments for Episode ${video.episodeNumber}`);
+                        try {
+                            segmentsHtml = video.segments.map((segment, segIndex) => {
+                                try {
+                                    return createSegmentHtml(segment, video.episodeNumber, segIndex);
+                                } catch (segmentError) {
+                                    console.error(`❌ Error rendering segment ${segIndex} for Episode ${video.episodeNumber}:`, segmentError);
+                                    return `<div class="segment-error">Error loading segment ${segIndex + 1}</div>`;
+                                }
+                            }).join('');
+                        } catch (segmentsError) {
+                            console.error(`❌ Error processing segments for Episode ${video.episodeNumber}:`, segmentsError);
+                            segmentsHtml = '<div class="segments-error">Error loading segments</div>';
+                        }
+                    } else {
+                        console.log(`⚠️ No valid segments for Episode ${video.episodeNumber}`);
+                        segmentsHtml = '<div class="no-segments">No segments available</div>';
+                    }
+                    
+                    videoCard.innerHTML = `
+                        <div class="video-embed" style="position: relative; cursor: pointer; background-image: url('https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg'); background-size: cover; background-position: center;" onclick="window.open('https://www.youtube.com/watch?v=${video.youtubeId}', '_blank')">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                                    <div style="font-size: 4rem; margin-bottom: 10px;">▶️</div>
+                                    <div style="font-size: 1.1rem; font-weight: bold;">Episode #${video.episodeNumber}</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.9;">Click to watch on YouTube</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="video-content">
-                        <h3 class="video-title">${video.title}</h3>
-                        <div class="overall-rating">
-                            <h4>Overall Video Rating</h4>
-                            <div class="rating-category">
-                                <div class="rating-info">
-                                    <span class="rating-label">Overall</span>
-                                    <span class="rating-stats">${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)</span>
-                                </div>
-                                <div class="rating-controls">
-                                    <div class="stars" data-category="overall" data-video="${video.episodeNumber}">
-                                        ${createStarRating('overall', video.episodeNumber, video.ratings.overall.average, video.ratings.overall.count)}
+                        <div class="video-content">
+                            <h3 class="video-title">${video.title}</h3>
+                            <div class="overall-rating">
+                                <h4>Overall Video Rating</h4>
+                                <div class="rating-category">
+                                    <div class="rating-info">
+                                        <span class="rating-label">Overall</span>
+                                        <span class="rating-stats">${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)</span>
                                     </div>
-                                    ${userRatings[video.episodeNumber]?.video?.overall ? `<div class="user-rating-indicator">Your rating: ${userRatings[video.episodeNumber].video.overall}★</div>` : ''}
+                                    <div class="rating-controls">
+                                        <div class="stars" data-category="overall" data-video="${video.episodeNumber}">
+                                            ${createStarRating('overall', video.episodeNumber, video.ratings.overall.average, video.ratings.overall.count)}
+                                        </div>
+                                        ${userRatings[video.episodeNumber]?.video?.overall ? `<div class="user-rating-indicator">Your rating: ${userRatings[video.episodeNumber].video.overall}★</div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="segments-section">
+                                <div class="segments-header">
+                                    <h4>Segments (${video.segments ? video.segments.length : 0})</h4>
+                                    <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
+                                </div>
+                                <div class="segments-container" data-video="${video.episodeNumber}">
+                                    ${segmentsHtml}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="segments-section">
-                            <div class="segments-header">
-                                <h4>Segments (${video.segments.length})</h4>
-                                <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
-                            </div>
-                            <div class="segments-container" data-video="${video.episodeNumber}">
-                                ${video.segments.map((segment, segIndex) => createSegmentHtml(segment, video.episodeNumber, segIndex)).join('')}
-                            </div>
+                    `;
+                    videoGrid.appendChild(videoCard);
+                    successCount++;
+                    
+                } catch (videoError) {
+                    console.error(`❌ Error rendering video ${video.episodeNumber}:`, videoError);
+                    console.error(`❌ Video error details:`, videoError.message);
+                    errorCount++;
+                    
+                    // Create a basic error card
+                    const errorCard = document.createElement('div');
+                    errorCard.className = 'video-card';
+                    errorCard.innerHTML = `
+                        <div class="video-content">
+                            <h3 class="video-title">Episode #${video.episodeNumber} (Error)</h3>
+                            <p>Error loading this episode. Please try refreshing.</p>
                         </div>
-                    </div>
-                `;
-                videoGrid.appendChild(videoCard);
+                    `;
+                    videoGrid.appendChild(errorCard);
+                }
             });
+
+            console.log(`✅ Rendering complete: ${successCount} success, ${errorCount} errors`);
 
             // Attach star rating event listeners
-            document.querySelectorAll('.star').forEach(star => {
-                star.onclick = function() {
-                    const rating = parseInt(this.dataset.rating);
-                    const category = this.dataset.category;
-                    const videoId = this.dataset.video;
-                    const segmentId = this.dataset.segment || null;
-                    if (currentUser) {
-                        submitRating(videoId, category, rating, segmentId);
-                    } else {
-                        showSignInPrompt('rate segments', 0);
-                    }
-                };
-            });
+            try {
+                document.querySelectorAll('.star').forEach(star => {
+                    star.onclick = function() {
+                        const rating = parseInt(this.dataset.rating);
+                        const category = this.dataset.category;
+                        const videoId = this.dataset.video;
+                        const segmentId = this.dataset.segment || null;
+                        if (currentUser) {
+                            submitRating(videoId, category, rating, segmentId);
+                        } else {
+                            showSignInPrompt('rate segments', 0);
+                        }
+                    };
+                });
+                console.log('✅ Star rating event listeners attached');
+            } catch (eventError) {
+                console.error('❌ Error attaching event listeners:', eventError);
+            }
 
             // Update user rating display after rendering
-            updateUserRatingDisplay();
+            try {
+                updateUserRatingDisplay();
+                console.log('✅ User rating display updated');
+            } catch (displayError) {
+                console.error('❌ Error updating user rating display:', displayError);
+            }
         }
 
         function updateStarDisplay(starsContainer, rating, userRated = false) {
