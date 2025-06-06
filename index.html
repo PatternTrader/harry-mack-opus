@@ -480,12 +480,16 @@
             appId: "1:1035009511388:web:23b2e932da2ac74466c919"
         };
 
+ 
+        
         let app, auth, db;
         let currentUser = null;
         let videos = [];
         let userRatings = {};
 
-        // Initialize Firebase with better error handling
+
+        
+        // STEP 1: Replace your initializeFirebase function with this one
         async function initializeFirebase() {
             try {
                 app = firebase.initializeApp(firebaseConfig);
@@ -497,22 +501,43 @@
                 // Set persistence to LOCAL for better redirect handling
                 await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                 
-                // Handle auth state changes
-                auth.onAuthStateChanged(handleAuthStateChange);
-                
-                // Check if we're returning from a redirect
+                // IMPORTANT: Check for redirect result BEFORE setting up auth state listener
+                console.log('Checking for redirect result...');
                 try {
                     const result = await auth.getRedirectResult();
+                    console.log('Redirect result:', result);
+                    
                     if (result.user) {
-                        console.log('User signed in via redirect:', result.user.displayName);
-                        showNotification(`Welcome ${result.user.displayName}! You're now signed in.`, 'success');
+                        console.log('User signed in via redirect:', result.user.email);
+                        showNotification(`Welcome ${result.user.displayName || result.user.email}! You're now signed in.`, 'success');
+                        // Force update the UI
+                        handleAuthStateChange(result.user);
+                    } else if (result.credential) {
+                        console.log('Got credential but no user - possible error');
+                    } else {
+                        console.log('No redirect result - normal page load');
                     }
                 } catch (redirectError) {
                     console.error('Redirect error:', redirectError);
-                    if (redirectError.code !== 'auth/redirect-cancelled-by-user') {
-                        showNotification('Sign in was cancelled or failed. Please try again.', 'error');
+                    console.error('Error code:', redirectError.code);
+                    console.error('Error message:', redirectError.message);
+                    
+                    if (redirectError.code === 'auth/unauthorized-domain') {
+                        showNotification('This domain is not authorized. Please add it to Firebase.', 'error');
+                    } else if (redirectError.code !== 'auth/redirect-cancelled-by-user') {
+                        showNotification(`Sign in failed: ${redirectError.message}`, 'error');
                     }
                 }
+                
+                // NOW set up the auth state listener
+                auth.onAuthStateChanged((user) => {
+                    console.log('Auth state changed:', user ? user.email : 'No user');
+                    handleAuthStateChange(user);
+                });
+                
+                // Check current auth state
+                const currentUser = auth.currentUser;
+                console.log('Current user on init:', currentUser ? currentUser.email : 'None');
                 
                 loadVideosData();
                 updateConnectionStatus('connected');
@@ -522,6 +547,8 @@
                 handleFirebaseError();
             }
         }
+
+        
 
         function handleFirebaseError() {
             updateConnectionStatus('demo');
@@ -584,32 +611,66 @@
             }
         }
 
-        // Improved sign-in function
+
+
+
+        // STEP 2: Replace your signIn function with this one
+        // Find "function signIn() {" and replace the entire function
         async function signIn() {
             if (!auth) {
                 showNotification('Authentication not available in demo mode', 'info');
                 return;
             }
             
+            console.log('Sign in button clicked');
+            console.log('Current URL:', window.location.href);
+            console.log('Auth domain:', firebaseConfig.authDomain);
+            
             const provider = new firebase.auth.GoogleAuthProvider();
             provider.addScope('profile');
             provider.addScope('email');
             
-            // Always prefer redirect method for better compatibility  
             try {
+                console.log('Starting redirect sign in...');
                 showNotification('Redirecting to Google sign-in...', 'info');
+                
+                // Store a flag to track that we initiated sign in
+                sessionStorage.setItem('signingIn', 'true');
+                
                 await auth.signInWithRedirect(provider);
+                console.log('Redirect initiated - browser should navigate away now');
+                
             } catch (error) {
                 console.error('Sign in error:', error);
-                showNotification(`Sign in failed: ${error.message}`, 'error');
+                sessionStorage.removeItem('signingIn');
                 
-                // If redirect fails, try popup as last resort
                 if (error.code === 'auth/operation-not-allowed') {
-                    showNotification('Sign-in method not enabled. Please check Firebase console.', 'error');
+                    showNotification('Google sign-in is not enabled in Firebase Console', 'error');
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    showNotification('This domain is not authorized in Firebase', 'error');
+                } else {
+                    showNotification(`Sign in failed: ${error.message}`, 'error');
                 }
             }
         }
+        
+        // STEP 3: Add this NEW function after the signIn function
+        function checkSignInStatus() {
+            if (sessionStorage.getItem('signingIn')) {
+                console.log('Was attempting to sign in before redirect');
+                sessionStorage.removeItem('signingIn');
+                
+                // If we're back but not signed in, something went wrong
+                setTimeout(() => {
+                    if (!currentUser) {
+                        console.log('Sign in appears to have failed - no user after redirect');
+                        showNotification('Sign in may have failed. Please try again.', 'error');
+                    }
+                }, 2000);
+            }
+        }
 
+ 
         async function signOut() {
             if (auth) {
                 try {
@@ -1166,15 +1227,22 @@
             });
         }
 
+
+
+        // STEP 4: Replace your init function with this one
+        // Find "function init() {" near the bottom and replace it
         function init() {
             updateConnectionStatus('connecting');
+            
+            // Check if we were signing in
+            checkSignInStatus();
             
             initializeFirebase();
             
             setupFilters();
             
             setupRealtimeUpdates();
-
+        
             document.getElementById('authButton').addEventListener('click', () => {
                 if (currentUser) {
                     signOut();
@@ -1183,7 +1251,7 @@
                 }
             });
         }
-
+ 
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
