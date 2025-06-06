@@ -656,32 +656,35 @@
 
         async function initializeFirebase() {
             try {
+                console.log('🔥 Initializing Firebase...');
                 app = firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
                 
-                console.log('Firebase initialized successfully');
+                console.log('✅ Firebase services initialized');
+                console.log('🔒 Setting auth persistence...');
                 
                 await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                console.log('✅ Auth persistence set');
                 
-                console.log('Checking for redirect result...');
+                console.log('🔄 Checking for redirect result...');
                 try {
                     const result = await auth.getRedirectResult();
-                    console.log('Redirect result:', result);
+                    console.log('🔄 Redirect result:', result);
                     
                     if (result.user) {
-                        console.log('User signed in via redirect:', result.user.email);
+                        console.log('👤 User signed in via redirect:', result.user.email);
                         showNotification(`Welcome ${result.user.displayName || result.user.email}! You're now signed in.`, 'success');
                         handleAuthStateChange(result.user);
                     } else if (result.credential) {
-                        console.log('Got credential but no user - possible error');
+                        console.log('🔑 Got credential but no user - possible error');
                     } else {
-                        console.log('No redirect result - normal page load');
+                        console.log('ℹ️ No redirect result - normal page load');
                     }
                 } catch (redirectError) {
-                    console.error('Redirect error:', redirectError);
-                    console.error('Error code:', redirectError.code);
-                    console.error('Error message:', redirectError.message);
+                    console.error('❌ Redirect error:', redirectError);
+                    console.error('❌ Error code:', redirectError.code);
+                    console.error('❌ Error message:', redirectError.message);
                     
                     if (redirectError.code === 'auth/unauthorized-domain') {
                         showNotification('This domain is not authorized. Please add it to Firebase.', 'error');
@@ -691,7 +694,7 @@
                 }
 
                 auth.onAuthStateChanged((user) => {
-                    console.log('Auth state changed:', user ? user.email : 'No user');
+                    console.log('🔄 Auth state changed:', user ? user.email : 'No user');
                     if (user) {
                         isSigningIn = false;
                     }
@@ -699,13 +702,25 @@
                 });
                 
                 const currentUser = auth.currentUser;
-                console.log('Current user on init:', currentUser ? currentUser.email : 'None');
+                console.log('👤 Current user on init:', currentUser ? currentUser.email : 'None');
                 
+                // Test Firestore permissions
+                console.log('🧪 Testing Firestore read permissions...');
+                try {
+                    await db.collection('videos').limit(1).get();
+                    console.log('✅ Firestore read permission confirmed');
+                } catch (permError) {
+                    console.error('❌ Firestore permission error:', permError);
+                    throw permError;
+                }
+                
+                console.log('📊 Starting to load videos data...');
                 loadVideosData();
                 updateConnectionStatus('connected');
                 
             } catch (error) {
-                console.error('Firebase initialization failed:', error);
+                console.error('❌ Firebase initialization failed:', error);
+                console.error('❌ Error details:', error.message, error.code);
                 handleFirebaseError();
             }
         }
@@ -843,16 +858,21 @@
                     return;
                 }
 
-                console.log('Loading videos from Firebase...');
+                console.log('✅ Database connected, loading videos from Firebase...');
+                console.log('📊 Querying videos collection...');
+                
                 const videosSnapshot = await db.collection('videos').orderBy('episodeNumber').get();
+                console.log('📋 Query completed. Documents found:', videosSnapshot.size);
                 
                 if (videosSnapshot.empty) {
-                    console.log('No videos found - initializing sample data');
+                    console.log('📝 No videos found - initializing sample data...');
                     await initializeFirebaseData();
+                    console.log('✅ Sample data initialized successfully');
                 } else {
-                    console.log('Loading existing videos from Firebase');
+                    console.log('📖 Loading existing videos from Firebase...');
                     videos = videosSnapshot.docs.map(doc => {
                         const data = doc.data();
+                        console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
                         // Ensure segments have proper ratings structure
                         if (data.segments) {
                             data.segments = data.segments.map(segment => ({
@@ -865,37 +885,58 @@
                             ...data
                         };
                     });
+                    console.log(`✅ Successfully loaded ${videos.length} videos`);
                 }
                 
+                console.log('🎨 Rendering videos...');
                 renderVideos();
                 updateStats();
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('videoGrid').style.display = 'grid';
                 document.getElementById('statsBar').style.display = 'block';
                 updateConnectionStatus('connected');
+                console.log('✅ Videos loaded and rendered successfully!');
                 
             } catch (error) {
-                console.error('Error loading videos:', error);
+                console.error('❌ Error loading videos:', error);
+                console.error('❌ Error details:', error.message);
+                console.error('❌ Error code:', error.code);
                 showNotification('Error loading videos. Using demo data.', 'error');
                 initializeDemoMode();
             }
         }
 
         async function initializeFirebaseData() {
+            console.log('🚀 Starting to generate sample videos...');
             const sampleVideos = generateSampleVideos();
+            console.log(`📊 Generated ${sampleVideos.length} sample videos`);
             
             if (db) {
-                const batch = db.batch();
-                sampleVideos.forEach((video, index) => {
-                    const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
-                    batch.set(docRef, video);
-                });
-                
-                await batch.commit();
-                console.log('Sample data saved to Firebase');
+                try {
+                    console.log('💾 Saving sample data to Firebase...');
+                    const batch = db.batch();
+                    sampleVideos.forEach((video, index) => {
+                        const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
+                        batch.set(docRef, video);
+                        if (index < 3) { // Log first 3 for debugging
+                            console.log(`📄 Preparing to save Episode ${video.episodeNumber}:`, video.title);
+                        }
+                    });
+                    
+                    console.log('⏳ Committing batch write to Firebase...');
+                    await batch.commit();
+                    console.log('✅ Sample data saved to Firebase successfully!');
+                } catch (batchError) {
+                    console.error('❌ Error saving to Firebase:', batchError);
+                    console.error('❌ Batch error details:', batchError.message);
+                    throw batchError; // Re-throw so the calling function handles it
+                }
+            } else {
+                console.log('⚠️ No database connection - keeping data in memory only');
             }
             
             videos = sampleVideos;
+            console.log(`✅ Videos array populated with ${videos.length} items`);
         }
 
         function getYouTubeId(episodeNumber) {
