@@ -1625,65 +1625,147 @@
         }
 
         function createSegmentHtml(segment, videoId, segmentIndex) {
-            const segmentId = segment.id;
+            console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
             
-            // Ensure segment has ratings - if not, use defaults
-            const segmentRatings = segment.ratings || defaultRatings;
-            const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
+            try {
+                const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
+                console.log(`📋 Segment ID: ${segmentId}`);
+                
+                // Ensure segment has ratings - if not, use defaults
+                const segmentRatings = segment.ratings || defaultRatings;
+                console.log(`⭐ Segment ratings:`, segmentRatings);
+                
+                const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
+                console.log(`📊 Average rating: ${avgRating}`);
 
-            const wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+                // Process words with extensive debugging
+                console.log(`🔤 Processing words for segment:`, segment.words);
+                console.log(`🔤 Words type:`, typeof segment.words, `Is Array:`, Array.isArray(segment.words));
+                
+                let wordsHtml = '';
+                if (segment.words) {
+                    if (Array.isArray(segment.words)) {
+                        console.log(`✅ Words is array with ${segment.words.length} items`);
+                        wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+                            console.log(`🔤 Processing word ${wordIndex}:`, wordCandidates);
+                            try {
+                                return `
+                                    <div style="margin-bottom: 15px;">
+                                        <div class="segment-label">Word ${wordIndex + 1}</div>
+                                        <div class="word-list">
+                                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
+                                        </div>
+                                        <div class="add-word-form">
+                                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
+                                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            } catch (wordError) {
+                                console.error(`❌ Error processing word ${wordIndex}:`, wordError);
+                                return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
+                            }
+                        }).join('');
+                    } else if (typeof segment.words === 'object') {
+                        console.log(`🔄 Converting words object to array`);
+                        const wordEntries = Object.entries(segment.words);
+                        console.log(`🔤 Word entries:`, wordEntries);
+                        wordsHtml = wordEntries.map(([wordKey, wordValue], wordIndex) => {
+                            console.log(`🔤 Processing word entry ${wordIndex} (${wordKey}):`, wordValue);
+                            try {
+                                // Convert single word to candidate format
+                                let wordCandidates = [];
+                                if (typeof wordValue === 'string') {
+                                    wordCandidates = [{word: wordValue, votes: 5, voters: []}];
+                                } else if (wordValue && wordValue.word) {
+                                    wordCandidates = [wordValue];
+                                } else {
+                                    wordCandidates = [{word: 'unknown', votes: 1, voters: []}];
+                                }
+                                
+                                return `
+                                    <div style="margin-bottom: 15px;">
+                                        <div class="segment-label">Word ${wordIndex + 1}</div>
+                                        <div class="word-list">
+                                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
+                                        </div>
+                                        <div class="add-word-form">
+                                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
+                                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            } catch (wordError) {
+                                console.error(`❌ Error processing word entry ${wordIndex}:`, wordError);
+                                return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
+                            }
+                        }).join('');
+                    } else {
+                        console.log(`⚠️ Words is neither array nor object:`, segment.words);
+                        wordsHtml = '<div class="no-words">No words available</div>';
+                    }
+                } else {
+                    console.log(`⚠️ No words found in segment`);
+                    wordsHtml = '<div class="no-words">No words available</div>';
+                }
+
+                console.log(`✅ Successfully created segment HTML for ${segmentId}`);
+
                 return `
-                    <div style="margin-bottom: 15px;">
-                        <div class="segment-label">Word ${wordIndex + 1}</div>
-                        <div class="word-list">
-                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
+                    <div class="segment" data-segment="${segmentId}">
+                        <div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
+                            <div class="segment-info">
+                                <div class="segment-title">Segment ${segmentIndex + 1}</div>
+                                <div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
+                            </div>
+                            <div class="segment-expand-icon">▶</div>
                         </div>
-                        <div class="add-word-form">
-                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
-                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
-                                Add
-                            </button>
+                        <div class="segment-content">
+                            <div class="segment-details">
+                                <div class="words-management">
+                                    <h5>Crowdsourced Words (vote on accuracy)</h5>
+                                    ${wordsHtml}
+                                </div>
+                                <div class="segment-ratings">
+                                    <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
+                                    ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
+                                        <div class="rating-category">
+                                            <div class="rating-info">
+                                                <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                                                <span class="rating-stats">${segmentRatings[category].average.toFixed(1)}★ (${segmentRatings[category].count} ratings)</span>
+                                            </div>
+                                            <div class="rating-controls">
+                                                <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
+                                                    ${createStarRating(category, videoId, segmentRatings[category].average, segmentRatings[category].count, segmentId)}
+                                                </div>
+                                                ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
-            }).join('');
-
-            return `
-                <div class="segment" data-segment="${segmentId}">
-                    <div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
-                        <div class="segment-info">
-                            <div class="segment-title">Segment ${segmentIndex + 1}</div>
-                            <div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
-                        </div>
-                        <div class="segment-expand-icon">▶</div>
-                    </div>
-                    <div class="segment-content">
-                        <div class="segment-details">
-                            <div class="words-management">
-                                <h5>Crowdsourced Words (vote on accuracy)</h5>
-                                ${wordsHtml}
-                            </div>
-                            <div class="segment-ratings">
-                                <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
-                                ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
-                                    <div class="rating-category">
-                                        <div class="rating-info">
-                                            <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                            <span class="rating-stats">${segmentRatings[category].average.toFixed(1)}★ (${segmentRatings[category].count} ratings)</span>
-                                        </div>
-                                        <div class="rating-controls">
-                                            <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
-                                                ${createStarRating(category, videoId, segmentRatings[category].average, segmentRatings[category].count, segmentId)}
-                                            </div>
-                                            ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
-                                        </div>
-                                    </div>
-                                `).join('')}
+                
+            } catch (error) {
+                console.error(`❌ Error in createSegmentHtml for ${videoId}-${segmentIndex}:`, error);
+                console.error(`❌ Segment data:`, segment);
+                return `
+                    <div class="segment segment-error">
+                        <div class="segment-header">
+                            <div class="segment-info">
+                                <div class="segment-title">Segment ${segmentIndex + 1} (Error)</div>
+                                <div class="segment-rating-summary">Unable to load</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
 
         function renderVideos() {
