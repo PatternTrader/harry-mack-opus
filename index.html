@@ -904,41 +904,50 @@
                     console.log('✅ Sample data initialized successfully');
                 } else {
                     console.log('📖 Loading existing videos from Firebase...');
-                    videos = videosSnapshot.docs.map(doc => {
+                    videos = [];
+                    
+                    videosSnapshot.docs.forEach(doc => {
                         const data = doc.data();
                         console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
-                        console.log(`📊 Segments data type:`, typeof data.segments, data.segments);
+                        console.log(`📊 Segments data:`, data.segments);
+                        console.log(`📊 Segments type:`, typeof data.segments);
+                        console.log(`📊 Is array:`, Array.isArray(data.segments));
                         
-                        // Ensure segments exist and are an array
-                        let segments = [];
+                        // Safely handle segments data
+                        let processedSegments = [];
+                        
                         if (data.segments && Array.isArray(data.segments)) {
                             console.log(`✅ Valid segments array with ${data.segments.length} items`);
-                            segments = data.segments.map(segment => ({
+                            processedSegments = data.segments.map(segment => ({
                                 ...segment,
-                                ratings: segment.ratings || defaultRatings
+                                ratings: segment.ratings || { ...defaultRatings }
                             }));
-                        } else if (data.segments) {
-                            console.log(`⚠️ Segments exists but is not an array:`, data.segments);
-                            // Try to convert object to array if possible
-                            if (typeof data.segments === 'object') {
-                                segments = Object.values(data.segments).map(segment => ({
-                                    ...segment,
-                                    ratings: segment.ratings || defaultRatings
-                                }));
-                                console.log(`🔄 Converted segments object to array with ${segments.length} items`);
-                            }
+                        } else if (data.segments && typeof data.segments === 'object') {
+                            console.log(`🔄 Converting segments object to array`);
+                            const segmentValues = Object.values(data.segments);
+                            processedSegments = segmentValues.map(segment => ({
+                                ...segment,
+                                ratings: segment.ratings || { ...defaultRatings }
+                            }));
+                            console.log(`🔄 Converted to array with ${processedSegments.length} items`);
                         } else {
-                            console.log(`❌ No segments found for Episode ${data.episodeNumber} - generating default segments`);
-                            // Generate default segments if none exist
-                            segments = generateDefaultSegments();
+                            console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
+                            processedSegments = generateDefaultSegments();
                         }
                         
-                        return {
+                        const processedVideo = {
                             id: doc.id,
-                            ...data,
-                            segments: segments
+                            episodeNumber: data.episodeNumber,
+                            title: data.title || `Omegle Bars Episode #${data.episodeNumber}`,
+                            youtubeId: data.youtubeId || getYouTubeId(data.episodeNumber),
+                            segments: processedSegments,
+                            ratings: data.ratings || { ...defaultRatings }
                         };
+                        
+                        videos.push(processedVideo);
+                        console.log(`✅ Processed Episode ${data.episodeNumber} with ${processedSegments.length} segments`);
                     });
+                    
                     console.log(`✅ Successfully loaded ${videos.length} videos`);
                 }
                 
@@ -955,6 +964,7 @@
                 console.error('❌ Error loading videos:', error);
                 console.error('❌ Error details:', error.message);
                 console.error('❌ Error code:', error.code);
+                console.error('❌ Error stack:', error.stack);
                 showNotification('Error loading videos. Using demo data.', 'error');
                 initializeDemoMode();
             }
@@ -1533,12 +1543,52 @@
         }
 
         function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
-            // Sort by votes (highest first) and filter out any invalid candidates
-            const validCandidates = wordCandidates.filter(candidate => 
-                candidate && candidate.word && typeof candidate.word === 'string' && candidate.word.trim() !== ''
-            );
+            console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
+            console.log(`📊 Type:`, typeof wordCandidates, `Is Array:`, Array.isArray(wordCandidates));
             
-            const sortedCandidates = validCandidates.sort((a, b) => b.votes - a.votes);
+            // Ensure we have a valid array of candidates
+            let validCandidates = [];
+            
+            if (Array.isArray(wordCandidates)) {
+                // It's already an array - filter out invalid entries
+                validCandidates = wordCandidates.filter(candidate => 
+                    candidate && 
+                    candidate.word && 
+                    typeof candidate.word === 'string' && 
+                    candidate.word.trim() !== ''
+                );
+                console.log(`✅ Filtered ${validCandidates.length} valid candidates from ${wordCandidates.length} total`);
+            } else if (wordCandidates && typeof wordCandidates === 'object') {
+                // It's an object - convert to array
+                console.log(`🔄 Converting object to array of candidates`);
+                const candidateValues = Object.values(wordCandidates);
+                validCandidates = candidateValues.filter(candidate => 
+                    candidate && 
+                    candidate.word && 
+                    typeof candidate.word === 'string' && 
+                    candidate.word.trim() !== ''
+                );
+                console.log(`🔄 Converted object with ${candidateValues.length} values to ${validCandidates.length} valid candidates`);
+            } else if (typeof wordCandidates === 'string') {
+                // It's just a string - create a simple candidate object
+                console.log(`🔧 Converting string "${wordCandidates}" to candidate object`);
+                validCandidates = [{
+                    word: wordCandidates,
+                    votes: 5, // Default vote count
+                    voters: []
+                }];
+            } else {
+                // Fallback - create a default word
+                console.log(`⚠️ Unknown word candidates format, creating fallback`);
+                validCandidates = [{
+                    word: 'unknown',
+                    votes: 1,
+                    voters: []
+                }];
+            }
+            
+            // Sort by votes (highest first)
+            const sortedCandidates = validCandidates.sort((a, b) => (b.votes || 0) - (a.votes || 0));
             
             return sortedCandidates.map(candidate => {
                 const voteKey = `${videoId}_${segmentId}_${wordIndex}_${candidate.word}`;
