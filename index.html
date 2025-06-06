@@ -111,7 +111,7 @@
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -152,49 +152,208 @@
             color: #2c3e50;
         }
 
-        .words-section {
+        .overall-rating {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .overall-rating h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .segments-section {
             margin-bottom: 20px;
         }
 
-        .words-section h4 {
+        .segments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .segments-header h4 {
             color: #8e44ad;
-            margin-bottom: 10px;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .word-segments {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .word-tag {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        .expand-toggle {
+            background: #8e44ad;
             color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: background 0.3s ease;
         }
 
-        .word-tag:hover {
-            transform: scale(1.05);
+        .expand-toggle:hover {
+            background: #7d3c98;
         }
 
-        .segment-label {
+        .segment {
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e74c3c;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .segment-header {
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .segment-header:hover {
+            background: #f8f9fa;
+        }
+
+        .segment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .segment-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .segment-rating-summary {
             font-size: 0.75rem;
             color: #7f8c8d;
-            margin-bottom: 5px;
-            font-weight: 600;
         }
 
-        .rating-section {
-            border-top: 2px solid #ecf0f1;
+        .segment-expand-icon {
+            color: #8e44ad;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .segment.expanded .segment-expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .segment-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .segment.expanded .segment-content {
+            max-height: 600px;
+        }
+
+        .segment-details {
+            padding: 20px;
+        }
+
+        .words-management {
+            margin-bottom: 20px;
+        }
+
+        .words-management h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .word-item {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            gap: 5px;
+        }
+
+        .word-votes {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .vote-buttons {
+            display: flex;
+            gap: 2px;
+        }
+
+        .vote-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            transition: background 0.2s ease;
+        }
+
+        .vote-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .vote-btn.voted {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        .add-word-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .add-word-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .add-word-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+
+        .add-word-btn:hover {
+            background: #229954;
+        }
+
+        .segment-ratings {
+            border-top: 1px solid #eee;
             padding-top: 15px;
         }
 
@@ -214,11 +373,11 @@
         .rating-label {
             font-weight: 600;
             color: #34495e;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .rating-stats {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #7f8c8d;
             margin-top: 2px;
         }
@@ -232,12 +391,12 @@
 
         .stars {
             display: flex;
-            gap: 4px;
+            gap: 3px;
         }
 
         .star {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             color: #ddd;
@@ -255,7 +414,7 @@
         }
 
         .user-rating-indicator {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #e74c3c;
             font-weight: bold;
         }
@@ -406,9 +565,9 @@
             </div>
             
             <h1>🎤 Harry Mack Community Hub</h1>
-            <p>Rate and explore all 100 Omegle Bars episodes with the global Harry Mack fan community!</p>
+            <p>Rate each segment and crowdsource words with the global Harry Mack fan community!</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
-                ✨ Browse and see community ratings without signing in • Sign in only when you want to vote ✨
+                ✨ Rate individual segments • Add missing words • Vote on word accuracy ✨
             </p>
         </div>
 
@@ -480,17 +639,13 @@
             appId: "1:1035009511388:web:23b2e932da2ac74466c919"
         };
 
- 
-        
         let app, auth, db;
         let currentUser = null;
-        let isSigningIn = false; // Reset the flag on page load
+        let isSigningIn = false;
         let videos = [];
         let userRatings = {};
+        let userWordVotes = {};
 
-
-        
-        // STEP 1: Replace your initializeFirebase function with this one
         async function initializeFirebase() {
             try {
                 app = firebase.initializeApp(firebaseConfig);
@@ -499,10 +654,8 @@
                 
                 console.log('Firebase initialized successfully');
                 
-                // Set persistence to LOCAL for better redirect handling
                 await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                 
-                // IMPORTANT: Check for redirect result BEFORE setting up auth state listener
                 console.log('Checking for redirect result...');
                 try {
                     const result = await auth.getRedirectResult();
@@ -511,7 +664,6 @@
                     if (result.user) {
                         console.log('User signed in via redirect:', result.user.email);
                         showNotification(`Welcome ${result.user.displayName || result.user.email}! You're now signed in.`, 'success');
-                        // Force update the UI
                         handleAuthStateChange(result.user);
                     } else if (result.credential) {
                         console.log('Got credential but no user - possible error');
@@ -529,19 +681,15 @@
                         showNotification(`Sign in failed: ${redirectError.message}`, 'error');
                     }
                 }
-                
-       
 
                 auth.onAuthStateChanged((user) => {
                     console.log('Auth state changed:', user ? user.email : 'No user');
                     if (user) {
-                        isSigningIn = false; // Reset flag on successful sign-in
+                        isSigningIn = false;
                     }
                     handleAuthStateChange(user);
                 });
                 
-                
-                // Check current auth state
                 const currentUser = auth.currentUser;
                 console.log('Current user on init:', currentUser ? currentUser.email : 'None');
                 
@@ -553,8 +701,6 @@
                 handleFirebaseError();
             }
         }
-
-        
 
         function handleFirebaseError() {
             updateConnectionStatus('demo');
@@ -608,24 +754,23 @@
                 authButton.onclick = signOut;
                 
                 loadUserRatings();
+                loadUserWordVotes();
                 
             } else {
                 userInfo.style.display = 'none';
                 authButton.textContent = 'Sign In with Google';
                 authButton.onclick = signIn;
                 userRatings = {};
+                userWordVotes = {};
             }
         }
 
-
-        // Replace your signIn function with this:
         async function signIn() {
             if (!auth) {
                 showNotification('Authentication not available in demo mode', 'info');
                 return;
             }
             
-            // Prevent multiple simultaneous sign-in attempts
             if (isSigningIn) {
                 console.log('Sign-in already in progress');
                 return;
@@ -755,21 +900,76 @@
             
             for (let i = 1; i <= 100; i++) {
                 const segments = [];
+                const numSegments = Math.random() < 0.8 ? 3 : (Math.random() < 0.5 ? 2 : 4); // Mostly 3, sometimes 2 or 4
                 
-                for (let j = 0; j < 3; j++) {
+                for (let j = 0; j < numSegments; j++) {
+                    const numWords = Math.random() < 0.7 ? 3 : (Math.random() < 0.5 ? 2 : 4); // Mostly 3, sometimes 2 or 4
                     const segmentWords = [];
                     
-                    for (let k = 0; k < 3; k++) {
-                        segmentWords.push(wordBank[Math.floor(Math.random() * wordBank.length)]);
+                    // Generate candidate words with vote counts
+                    for (let k = 0; k < numWords; k++) {
+                        const candidateWords = [];
+                        const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+                        
+                        // Add the main word with high votes
+                        candidateWords.push({
+                            word: baseWord,
+                            votes: Math.floor(Math.random() * 15) + 10,
+                            voters: []
+                        });
+                        
+                        // Sometimes add alternative words with fewer votes
+                        if (Math.random() < 0.3) {
+                            candidateWords.push({
+                                word: wordBank[Math.floor(Math.random() * wordBank.length)],
+                                votes: Math.floor(Math.random() * 5) + 1,
+                                voters: []
+                            });
+                        }
+                        
+                        segmentWords.push(candidateWords);
                     }
-                    segments.push({ words: segmentWords });
+                    
+                    // Generate ratings for this segment
+                    const lyrics = Math.random() * 2 + 3;
+                    const beats = Math.random() * 2 + 3;
+                    const reaction = Math.random() * 2 + 3;
+                    const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
+                    
+                    const baseRatingCount = Math.floor(Math.random() * 50) + 5;
+                    
+                    segments.push({
+                        id: `segment_${j + 1}`,
+                        words: segmentWords,
+                        ratings: {
+                            lyrics: { 
+                                average: Math.max(1, Math.min(5, lyrics)),
+                                count: baseRatingCount + Math.floor(Math.random() * 10) 
+                            },
+                            beats: { 
+                                average: Math.max(1, Math.min(5, beats)), 
+                                count: baseRatingCount + Math.floor(Math.random() * 12) 
+                            },
+                            reaction: { 
+                                average: Math.max(1, Math.min(5, reaction)), 
+                                count: baseRatingCount + Math.floor(Math.random() * 15) 
+                            },
+                            overall: { 
+                                average: Math.max(1, Math.min(5, overall)), 
+                                count: baseRatingCount + Math.floor(Math.random() * 8) 
+                            }
+                        }
+                    });
                 }
 
-                const baseRatingCount = Math.floor(Math.random() * 150) + 10;
-                const lyrics = Math.random() * 2 + 3;
-                const beats = Math.random() * 2 + 3;
-                const reaction = Math.random() * 2 + 3;
-                const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
+                // Calculate overall video ratings from segment averages
+                const videoLyrics = segments.reduce((sum, seg) => sum + seg.ratings.lyrics.average, 0) / segments.length;
+                const videoBeats = segments.reduce((sum, seg) => sum + seg.ratings.beats.average, 0) / segments.length;
+                const videoReaction = segments.reduce((sum, seg) => sum + seg.ratings.reaction.average, 0) / segments.length;
+                const videoOverall = segments.reduce((sum, seg) => sum + seg.ratings.overall.average, 0) / segments.length;
+                
+                const totalSegmentRatings = segments.reduce((sum, seg) => 
+                    sum + seg.ratings.lyrics.count + seg.ratings.beats.count + seg.ratings.reaction.count + seg.ratings.overall.count, 0);
 
                 const video = {
                     episodeNumber: i,
@@ -778,20 +978,20 @@
                     segments: segments,
                     ratings: {
                         lyrics: { 
-                            average: Math.max(1, Math.min(5, lyrics)),
-                            count: baseRatingCount + Math.floor(Math.random() * 20) 
+                            average: videoLyrics,
+                            count: Math.floor(totalSegmentRatings * 0.25) 
                         },
                         beats: { 
-                            average: Math.max(1, Math.min(5, beats)), 
-                            count: baseRatingCount + Math.floor(Math.random() * 25) 
+                            average: videoBeats, 
+                            count: Math.floor(totalSegmentRatings * 0.25) 
                         },
                         reaction: { 
-                            average: Math.max(1, Math.min(5, reaction)), 
-                            count: baseRatingCount + Math.floor(Math.random() * 30) 
+                            average: videoReaction, 
+                            count: Math.floor(totalSegmentRatings * 0.25) 
                         },
                         overall: { 
-                            average: Math.max(1, Math.min(5, overall)), 
-                            count: baseRatingCount + Math.floor(Math.random() * 15) 
+                            average: videoOverall, 
+                            count: Math.floor(totalSegmentRatings * 0.25) 
                         }
                     }
                 };
@@ -815,7 +1015,19 @@
                 
                 ratingsSnapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    userRatings[data.videoId] = data.ratings;
+                    if (data.segmentId) {
+                        // Segment-level rating
+                        if (!userRatings[data.videoId]) {
+                            userRatings[data.videoId] = { segments: {} };
+                        }
+                        userRatings[data.videoId].segments[data.segmentId] = data.ratings;
+                    } else {
+                        // Video-level rating (legacy)
+                        if (!userRatings[data.videoId]) {
+                            userRatings[data.videoId] = {};
+                        }
+                        userRatings[data.videoId].video = data.ratings;
+                    }
                 });
                 
                 updateUserRatingDisplay();
@@ -825,49 +1037,121 @@
             }
         }
 
+        async function loadUserWordVotes() {
+            if (!currentUser || !db) return;
+
+            try {
+                const votesSnapshot = await db.collection('userWordVotes')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                userWordVotes = {};
+                
+                votesSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const key = `${data.videoId}_${data.segmentId}_${data.wordIndex}_${data.word}`;
+                    userWordVotes[key] = data.voteType; // 'up' or 'down'
+                });
+                
+            } catch (error) {
+                console.error('Error loading user word votes:', error);
+            }
+        }
+
         function updateUserRatingDisplay() {
             Object.keys(userRatings).forEach(videoId => {
-                const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+                if (userRatings[videoId].segments) {
+                    Object.keys(userRatings[videoId].segments).forEach(segmentId => {
+                        const segmentRatings = userRatings[videoId].segments[segmentId];
+                        const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+                        
+                        categories.forEach(category => {
+                            const rating = segmentRatings[category];
+                            if (rating > 0) {
+                                const starsContainer = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars');
+                                if (starsContainer) {
+                                    updateStarDisplay(starsContainer, rating, true);
+                                    
+                                    const controls = starsContainer.closest('.rating-controls');
+                                    if (controls && !controls.querySelector('.user-rating-indicator')) {
+                                        const indicator = document.createElement('div');
+                                        indicator.className = 'user-rating-indicator';
+                                        indicator.textContent = `Your rating: ${rating}★`;
+                                        controls.appendChild(indicator);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
                 
-                categories.forEach(category => {
-                    const rating = userRatings[videoId][category];
-                    if (rating > 0) {
-                        const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]`)?.closest('.stars');
-                        if (starsContainer) {
-                            updateStarDisplay(starsContainer, rating, true);
-                            
-                            const controls = starsContainer.closest('.rating-controls');
-                            if (controls && !controls.querySelector('.user-rating-indicator')) {
-                                const indicator = document.createElement('div');
-                                indicator.className = 'user-rating-indicator';
-                                indicator.textContent = `Your rating: ${rating}★`;
-                                controls.appendChild(indicator);
+                // Handle video-level ratings (legacy)
+                if (userRatings[videoId].video) {
+                    const videoRatings = userRatings[videoId].video;
+                    const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+                    
+                    categories.forEach(category => {
+                        const rating = videoRatings[category];
+                        if (rating > 0) {
+                            const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
+                            if (starsContainer) {
+                                updateStarDisplay(starsContainer, rating, true);
+                                
+                                const controls = starsContainer.closest('.rating-controls');
+                                if (controls && !controls.querySelector('.user-rating-indicator')) {
+                                    const indicator = document.createElement('div');
+                                    indicator.className = 'user-rating-indicator';
+                                    indicator.textContent = `Your rating: ${rating}★`;
+                                    controls.appendChild(indicator);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             });
         }
 
-        async function submitRating(videoId, category, rating) {
+        async function submitRating(videoId, category, rating, segmentId = null) {
             try {
                 if (!userRatings[videoId]) {
-                    userRatings[videoId] = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+                    userRatings[videoId] = { segments: {} };
                 }
-                userRatings[videoId][category] = rating;
+                
+                if (segmentId) {
+                    if (!userRatings[videoId].segments[segmentId]) {
+                        userRatings[videoId].segments[segmentId] = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+                    }
+                    userRatings[videoId].segments[segmentId][category] = rating;
+                } else {
+                    if (!userRatings[videoId].video) {
+                        userRatings[videoId].video = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+                    }
+                    userRatings[videoId].video[category] = rating;
+                }
 
                 if (db) {
-                    await db.collection('userRatings').doc(`${currentUser.uid}_${videoId}`).set({
+                    const docId = segmentId ? 
+                        `${currentUser.uid}_${videoId}_${segmentId}` : 
+                        `${currentUser.uid}_${videoId}`;
+                    
+                    const ratingsData = {
                         userId: currentUser.uid,
                         videoId: videoId,
-                        ratings: userRatings[videoId],
+                        ratings: segmentId ? userRatings[videoId].segments[segmentId] : userRatings[videoId].video,
                         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    };
+                    
+                    if (segmentId) {
+                        ratingsData.segmentId = segmentId;
+                    }
 
-                    await updateVideoRating(videoId, category, rating);
+                    await db.collection('userRatings').doc(docId).set(ratingsData);
+
+                    await updateVideoRating(videoId, category, rating, segmentId);
                 }
 
-                showNotification(`Rated ${category}: ${rating} stars! Thanks for contributing to the community!`, 'success');
+                const segmentText = segmentId ? ` (${segmentId})` : '';
+                showNotification(`Rated ${category}${segmentText}: ${rating} stars! Thanks for contributing!`, 'success');
                 
             } catch (error) {
                 console.error('Error submitting rating:', error);
@@ -875,12 +1159,12 @@
             }
         }
 
-        async function updateVideoRating(videoId, category, newRating) {
+        async function updateVideoRating(videoId, category, newRating, segmentId = null) {
             if (!db) return;
 
             try {
-                const videoRef = db.collection('videos').doc(videoId);
-                const ratingsRef = db.collection('ratings').doc(`${videoId}_${category}`);
+                const docId = segmentId ? `${videoId}_${segmentId}_${category}` : `${videoId}_${category}`;
+                const ratingsRef = db.collection(segmentId ? 'segmentRatings' : 'ratings').doc(docId);
                 
                 await db.runTransaction(async (transaction) => {
                     const ratingsDoc = await transaction.get(ratingsRef);
@@ -899,187 +1183,475 @@
                     transaction.set(ratingsRef, {
                         totalRating: totalRating,
                         count: count,
-                        average: average
+                        average: average,
+                        videoId: videoId,
+                        category: category
                     });
                     
-                    transaction.update(videoRef, {
-                        [`ratings.${category}.average`]: average,
-                        [`ratings.${category}.count`]: count
-                    });
+                    if (segmentId) {
+                        transaction.set(ratingsRef, {
+                            ...ratingsRef.data,
+                            segmentId: segmentId
+                        });
+                    }
+                    
+                    // Update the video document
+                    const videoRef = db.collection('videos').doc(`episode_${videoId}`);
+                    if (segmentId) {
+                        transaction.update(videoRef, {
+                            [`segments.${segmentId}.ratings.${category}.average`]: average,
+                            [`segments.${segmentId}.ratings.${category}.count`]: count
+                        });
+                    } else {
+                        transaction.update(videoRef, {
+                            [`ratings.${category}.average`]: average,
+                            [`ratings.${category}.count`]: count
+                        });
+                    }
                 });
                 
+                // Update local data
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (video) {
-                    const currentData = video.ratings[category];
-                    const newTotal = (currentData.average * currentData.count) + newRating;
-                    const newCount = currentData.count + 1;
-                    video.ratings[category] = {
-                        average: newTotal / newCount,
-                        count: newCount
-                    };
+                    if (segmentId) {
+                        const segment = video.segments.find(s => s.id === segmentId);
+                        if (segment) {
+                            const currentData = segment.ratings[category];
+                            const newTotal = (currentData.average * currentData.count) + newRating;
+                            const newCount = currentData.count + 1;
+                            segment.ratings[category] = { average: newTotal / newCount, count: newCount };
+                        }
+                    } else {
+                        const currentData = video.ratings[category];
+                        const newTotal = (currentData.average * currentData.count) + newRating;
+                        const newCount = currentData.count + 1;
+                        video.ratings[category] = { average: newTotal / newCount, count: newCount };
+                    }
+                    renderVideos();
+                    updateStats();
                 }
-                
-                renderVideos();
-                updateStats();
-                
             } catch (error) {
-                console.error('Error updating video rating:', error);
+                console.error('Error updating rating:', error);
             }
         }
 
-        function createStarRating(category, videoId, currentRating, ratingCount) {
+        async function voteOnWord(videoId, segmentId, wordIndex, word, voteType) {
+            if (!currentUser) {
+                showSignInPrompt('word voting', 0);
+                return;
+            }
+            try {
+                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${word}`;
+                const currentVote = userWordVotes[voteKey];
+
+                // Toggle vote or change vote type
+                let newVoteType = null;
+                if (currentVote === voteType) {
+                    // Remove vote if clicking same type
+                    newVoteType = null;
+                } else {
+                    // Set new vote type
+                    newVoteType = voteType;
+                }
+                userWordVotes[voteKey] = newVoteType;
+
+                if (db) {
+                    const voteDocId = `${currentUser.uid}_${voteKey}`;
+                    if (newVoteType) {
+                        await db.collection('userWordVotes').doc(voteDocId).set({
+                            userId: currentUser.uid,
+                            videoId: videoId,
+                            segmentId: segmentId,
+                            wordIndex: wordIndex,
+                            word: word,
+                            voteType: newVoteType,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        await db.collection('userWordVotes').doc(voteDocId).delete();
+                    }
+
+                    await updateWordVotes(videoId, segmentId, wordIndex, word, currentVote, newVoteType);
+                }
+
+                renderVideos();
+                showNotification(`${newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on'} word: ${word}`, 'success');
+                
+            } catch (error) {
+                console.error('Error voting on word:', error);
+                showNotification('Failed to save vote. Please try again.', 'error');
+            }
+        }
+
+        async function updateWordVotes(videoId, segmentId, wordIndex, word, oldVote, newVote) {
+            if (!db) return;
+
+            try {
+                const video = videos.find(v => v.episodeNumber.toString() === videoId);
+                if (!video) return;
+
+                const segment = video.segments.find(s => s.id === segmentId);
+                if (!segment || !segment.words[wordIndex]) return;
+
+                const wordCandidate = segment.words[wordIndex].find(w => w.word === word);
+                if (!wordCandidate) return;
+
+                // Update vote counts
+                if (oldVote === 'up') wordCandidate.votes--;
+                if (oldVote === 'down') wordCandidate.votes++;
+                if (newVote === 'up') wordCandidate.votes++;
+                if (newVote === 'down') wordCandidate.votes--;
+
+                // Ensure votes don't go below 0
+                wordCandidate.votes = Math.max(0, wordCandidate.votes);
+
+                // Update in Firebase
+                const videoRef = db.collection('videos').doc(`episode_${videoId}`);
+                await videoRef.update({
+                    [`segments`]: video.segments
+                });
+
+            } catch (error) {
+                console.error('Error updating word votes:', error);
+            }
+        }
+
+        async function addNewWord(videoId, segmentId, wordIndex, newWord) {
+            if (!currentUser) {
+                showSignInPrompt('add words', 0);
+                return;
+            }
+
+            if (!newWord.trim()) {
+                showNotification('Please enter a word', 'error');
+                return;
+            }
+
+            try {
+                const video = videos.find(v => v.episodeNumber.toString() === videoId);
+                if (!video) return;
+
+                const segment = video.segments.find(s => s.id === segmentId);
+                if (!segment) return;
+
+                // Check if word already exists
+                const existingWord = segment.words[wordIndex].find(w => w.word.toLowerCase() === newWord.trim().toLowerCase()
+                );
+
+                if (existingWord) {
+                    showNotification('This word already exists for this position', 'info');
+                    return;
+                }
+
+                // Add new word
+                const newWordObj = {
+                    word: newWord.trim(),
+                    votes: 1, // Start with 1 vote from the submitter
+                    voters: [currentUser.uid]
+                };
+                segment.words[wordIndex].push(newWordObj);
+
+                if (db) {
+                    const videoRef = db.collection('videos').doc(`episode_${videoId}`);
+                    await videoRef.update({
+                        [`segments`]: video.segments
+                    });
+
+                    // Auto-vote for the word the user just added
+                    const voteKey = `${videoId}_${segmentId}_${wordIndex}_${newWord.trim()}`;
+                    userWordVotes[voteKey] = 'up';
+                    const voteDocId = `${currentUser.uid}_${voteKey}`;
+                    await db.collection('userWordVotes').doc(voteDocId).set({
+                        userId: currentUser.uid,
+                        videoId: videoId,
+                        segmentId: segmentId,
+                        wordIndex: wordIndex,
+                        word: newWord.trim(),
+                        voteType: 'up',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                renderVideos();
+                showNotification(`Added new word: ${newWord.trim()}`, 'success');
+
+            } catch (error) {
+                console.error('Error adding word:', error);
+                showNotification('Failed to add word. Please try again.', 'error');
+            }
+        }
+
+        function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
             let starsHtml = '';
-            const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
-            
+            const ratingKey = segmentId ? (userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : (userRatings[videoId]?.video?.[category] || 0);
+
             for (let i = 1; i <= 5; i++) {
                 const activeClass = i <= Math.round(currentRating) ? 'active' : '';
-                const userRatedClass = userRating > 0 && i <= userRating ? 'user-rated' : '';
-                starsHtml += `<span class="star ${activeClass} ${userRatedClass}" data-rating="${i}" data-category="${category}" data-video="${videoId}">★</span>`;
+                const userRatedClass = ratingKey > 0 && i <= ratingKey ? 'user-rated' : '';
+                const dataAttrs = segmentId ? `data-rating="${i}" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : `data-rating="${i}" data-category="${category}" data-video="${videoId}"`;
+                starsHtml += `<span class="star ${activeClass} ${userRatedClass}" ${dataAttrs}>★</span>`;
             }
             return starsHtml;
         }
 
-        function createVideoCard(video) {
-            const wordsHtml = video.segments.map((segment, index) => `
-                <div>
-                    <div class="segment-label">Segment ${index + 1}</div>
-                    <div class="word-segments">
-                        ${segment.words.map(word => `<span class="word-tag">${word}</span>`).join('')}
+        function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
+            // Sort by votes (highest first)
+            const sortedCandidates = [...wordCandidates].sort((a, b) => b.votes - a.votes);
+            return sortedCandidates.map(candidate => {
+                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${candidate.word}`;
+                const userVote = userWordVotes[voteKey];
+                return `
+                    <div class="word-item">
+                        <span>${candidate.word}</span>
+                        <span class="word-votes">${candidate.votes}</span>
+                        <div class="vote-buttons">
+                            <button class="vote-btn ${userVote === 'up' ? 'voted' : ''}" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${candidate.word}', 'up')">
+                                ↑
+                            </button>
+                            <button class="vote-btn ${userVote === 'down' ? 'voted' : ''}" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${candidate.word}', 'down')">
+                                ↓
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
 
-            const videoId = video.episodeNumber.toString();
-            const userVideoRatings = userRatings[videoId] || { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+        function createSegmentHtml(segment, videoId, segmentIndex) {
+            const segmentId = segment.id;
+            const avgRating = (segment.ratings.lyrics.average + segment.ratings.beats.average + segment.ratings.reaction.average + segment.ratings.overall.average) / 4;
+
+            const wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+                const topWord = wordCandidates.sort((a, b) => b.votes - a.votes)[0];
+                return `
+                    <div style="margin-bottom: 15px;">
+                        <div class="segment-label">Word ${wordIndex + 1}</div>
+                        <div class="word-list">
+                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
+                        </div>
+                        <div class="add-word-form">
+                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
+                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
             return `
-                <div class="video-card" data-episode="${video.episodeNumber}">
-                    <div class="video-embed" style="position: relative; cursor: pointer; background-image: url('https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg'); background-size: cover; background-position: center;" onclick="window.open('https://www.youtube.com/watch?v=${video.youtubeId}', '_blank')">
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-                            <div style="text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-                                <div style="font-size: 4rem; margin-bottom: 10px;">▶️</div>
-                                <div style="font-size: 1.1rem; font-weight: bold;">Episode #${video.episodeNumber}</div>
-                                <div style="font-size: 0.9rem; opacity: 0.9;">Click to watch on YouTube</div>
-                            </div>
+                <div class="segment" data-segment="${segmentId}">
+                    <div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
+                        <div class="segment-info">
+                            <div class="segment-title">Segment ${segmentIndex + 1}</div>
+                            <div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
                         </div>
+                        <div class="segment-expand-icon">▶</div>
                     </div>
-                            
-                    <div class="video-content">
-                        <div class="video-title">${video.title}</div>
-                        
-                        <div class="words-section">
-                            <h4>Improvised Words</h4>
-                            ${wordsHtml}
-                        </div>
-
-                        <div class="rating-section">
-                            ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
-                                <div class="rating-category">
-                                    <div class="rating-info">
-                                        <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                        <span class="rating-stats">${video.ratings[category].average.toFixed(1)}★ (${video.ratings[category].count} ratings)</span>
+                    <div class="segment-content">
+                        <div class="segment-details">
+                            <div class="words-management">
+                                <h5>Crowdsourced Words (vote on accuracy)</h5>
+                                ${wordsHtml}
+                            </div>
+                            <div class="segment-ratings">
+                                <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
+                                ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
+                                    <div class="rating-category">
+                                        <div class="rating-info">
+                                            <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                                            <span class="rating-stats">${segment.ratings[category].average.toFixed(1)}★ (${segment.ratings[category].count} ratings)</span>
+                                        </div>
+                                        <div class="rating-controls">
+                                            <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
+                                                ${createStarRating(category, videoId, segment.ratings[category].average, segment.ratings[category].count, segmentId)}
+                                            </div>
+                                            ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
+                                        </div>
                                     </div>
-                                    <div class="rating-controls">
-                                        <div class="stars">${createStarRating(category, videoId, video.ratings[category].average, video.ratings[category].count)}</div>
-                                        ${userVideoRatings[category] > 0 ? `<div class="user-rating-indicator">Your rating: ${userVideoRatings[category]}★</div>` : ''}
-                                    </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function renderVideos(videosToShow = videos) {
-            const grid = document.getElementById('videoGrid');
-            grid.innerHTML = videosToShow.map(createVideoCard).join('');
-            
+        function renderVideos() {
+            const videoGrid = document.getElementById('videoGrid');
+            videoGrid.innerHTML = ''; // Clear existing videos
+
+            let filteredVideos = [...videos];
+
+            // Apply filters
+            const sortFilter = document.getElementById('sortFilter').value;
+            const ratingFilter = parseFloat(document.getElementById('ratingFilter').value);
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            // Filter by rating
+            if (ratingFilter > 0) {
+                filteredVideos = filteredVideos.filter(video => video.ratings.overall.average >= ratingFilter);
+            }
+
+            // Filter by search term
+            if (searchFilter) {
+                filteredVideos = filteredVideos.filter(video =>
+                    video.title.toLowerCase().includes(searchFilter) ||
+                    video.segments.some(segment =>
+                        segment.words.flat().some(wordObj =>
+                            wordObj.word.toLowerCase().includes(searchFilter)
+                        )
+                    )
+                );
+            }
+
+            // Sort videos
+            filteredVideos.sort((a, b) => {
+                if (sortFilter === 'episode') {
+                    return a.episodeNumber - b.episodeNumber;
+                } else {
+                    return b.ratings[sortFilter].average - a.ratings[sortFilter].average;
+                }
+            });
+
+            filteredVideos.forEach((video, index) => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.innerHTML = `
+                    <div class="video-embed">
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${video.youtubeId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-content">
+                        <h3 class="video-title">Episode #${video.episodeNumber}: ${video.title}</h3>
+                        <div class="overall-rating">
+                            <h4>Overall Video Rating</h4>
+                            <div class="rating-category">
+                                <div class="rating-info">
+                                    <span class="rating-label">Overall</span>
+                                    <span class="rating-stats">${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)</span>
+                                </div>
+                                <div class="rating-controls">
+                                    <div class="stars" data-category="overall" data-video="${video.episodeNumber}">
+                                        ${createStarRating('overall', video.episodeNumber, video.ratings.overall.average, video.ratings.overall.count)}
+                                    </div>
+                                    ${userRatings[video.episodeNumber]?.video?.overall ? `<div class="user-rating-indicator">Your rating: ${userRatings[video.episodeNumber].video.overall}★</div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="segments-section">
+                            <div class="segments-header">
+                                <h4>Segments</h4>
+                                <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
+                            </div>
+                            <div class="segments-container" data-video="${video.episodeNumber}">
+                                ${video.segments.map((segment, segIndex) => createSegmentHtml(segment, video.episodeNumber, segIndex)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                videoGrid.appendChild(videoCard);
+            });
+
+            // Attach star rating event listeners
             document.querySelectorAll('.star').forEach(star => {
-                star.addEventListener('click', handleStarClick);
-                star.addEventListener('mouseenter', handleStarHover);
-                star.addEventListener('mouseleave', handleStarLeave);
+                star.onclick = function() {
+                    const rating = parseInt(this.dataset.rating);
+                    const category = this.dataset.category;
+                    const videoId = this.dataset.video;
+                    const segmentId = this.dataset.segment || null;
+                    if (currentUser) {
+                        submitRating(videoId, category, rating, segmentId);
+                    } else {
+                        showSignInPrompt('rate segments', 0);
+                    }
+                };
             });
         }
 
-        function handleStarClick(e) {
-            const rating = parseInt(e.target.dataset.rating);
-            const category = e.target.dataset.category;
-            const videoId = e.target.dataset.video;
-            
-            if (!currentUser) {
-                showSignInPrompt(category, rating);
-                return;
-            }
-            
-            submitRating(videoId, category, rating);
-            updateStarDisplay(e.target.closest('.stars'), rating, true);
-        }
-
-        function handleStarHover(e) {
-            const rating = parseInt(e.target.dataset.rating);
-            const stars = e.target.closest('.stars');
-            updateStarDisplay(stars, rating);
-        }
-
-        function handleStarLeave(e) {
-            const stars = e.target.closest('.stars');
-            const videoId = e.target.dataset.video;
-            const category = e.target.dataset.category;
-            
-            const video = videos.find(v => v.episodeNumber.toString() === videoId);
-            if (video) {
-                const userRating = userRatings[videoId] ? userRatings[videoId][category] : 0;
-                const displayRating = userRating > 0 ? userRating : video.ratings[category].average;
-                updateStarDisplay(stars, displayRating, userRating > 0);
-            }
-        }
-
-        function updateStarDisplay(starsContainer, rating, isUserRating = false) {
+        function updateStarDisplay(starsContainer, rating, userRated = false) {
             const stars = starsContainer.querySelectorAll('.star');
             stars.forEach((star, index) => {
                 star.classList.remove('active', 'user-rated');
-                if (index < Math.round(rating)) {
-                    star.classList.add(isUserRating ? 'user-rated' : 'active');
+                if (index < rating) {
+                    star.classList.add('active');
+                }
+                if (userRated && index < rating) {
+                    star.classList.add('user-rated');
                 }
             });
+        }
+
+        function toggleSegment(videoId, segmentId) {
+            const segmentElement = document.querySelector(`.segment[data-segment="${segmentId}"]`);
+            if (segmentElement) {
+                segmentElement.classList.toggle('expanded');
+            }
+        }
+
+        function toggleAllSegments(videoId) {
+            const container = document.querySelector(`.segments-container[data-video="${videoId}"]`);
+            if (container) {
+                const segments = container.querySelectorAll('.segment');
+                let allExpanded = true;
+                segments.forEach(segment => {
+                    if (!segment.classList.contains('expanded')) {
+                        allExpanded = false;
+                    }
+                });
+
+                segments.forEach(segment => {
+                    if (allExpanded) {
+                        segment.classList.remove('expanded');
+                    } else {
+                        segment.classList.add('expanded');
+                    }
+                });
+            }
+        }
+
+        function addWordFromInput(videoId, segmentId, wordIndex) {
+            const inputId = `newWord_${videoId}_${segmentId}_${wordIndex}`;
+            const inputElement = document.getElementById(inputId);
+            const newWord = inputElement.value;
+            addNewWord(videoId, segmentId, wordIndex, newWord);
+            inputElement.value = ''; // Clear input after adding
         }
 
         function updateStats() {
             let totalRatings = 0;
             let totalOverallRating = 0;
-            let validOverallRatings = 0;
-            let topEpisode = { number: 0, rating: 0 };
+            let overallRatingCount = 0;
+            let maxOverallRating = 0;
+            let topEpisode = '#--';
 
             videos.forEach(video => {
-                Object.values(video.ratings).forEach(rating => {
-                    totalRatings += rating.count;
-                });
-
                 if (video.ratings.overall.count > 0) {
-                    totalOverallRating += video.ratings.overall.average;
-                    validOverallRatings++;
+                    totalOverallRating += video.ratings.overall.average * video.ratings.overall.count;
+                    overallRatingCount += video.ratings.overall.count;
+                }
 
-                    if (video.ratings.overall.average > topEpisode.rating) {
-                        topEpisode = {
-                            number: video.episodeNumber,
-                            rating: video.ratings.overall.average
-                        };
-                    }
+                if (video.segments) {
+                    video.segments.forEach(segment => {
+                        Object.values(segment.ratings).forEach(rating => {
+                            totalRatings += rating.count;
+                        });
+                    });
+                }
+                
+                if (video.ratings.overall.average > maxOverallRating) {
+                    maxOverallRating = video.ratings.overall.average;
+                    topEpisode = `#${video.episodeNumber}`;
                 }
             });
 
-            document.getElementById('totalRatings').textContent = totalRatings.toLocaleString();
-            document.getElementById('avgOverall').textContent = validOverallRatings > 0 ? 
-                (totalOverallRating / validOverallRatings).toFixed(1) : '0.0';
-            document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
-            document.getElementById('topEpisode').textContent = topEpisode.number > 0 ? 
-                `#${topEpisode.number}` : '#--';
+            document.getElementById('totalRatings').textContent = totalRatings;
+            document.getElementById('avgOverall').textContent = overallRatingCount > 0 ? (totalOverallRating / overallRatingCount).toFixed(1) : '0.0';
+            document.getElementById('activeUsers').textContent = 'N/A'; // This would come from a separate user count
+            document.getElementById('topEpisode').textContent = topEpisode;
         }
-
-        function showNotification(message, type = 'info') {
-            document.querySelectorAll('.notification').forEach(n => n.remove());
-
+        
+        function showNotification(message, type) {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
@@ -1087,127 +1659,43 @@
 
             setTimeout(() => {
                 notification.remove();
-            }, 4000);
+            }, 3000);
         }
 
-        function showSignInPrompt(category, rating) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 2000;
-                animation: fadeIn 0.3s ease;
-            `;
+        function showSignInPrompt(action, delay = 0) {
+            setTimeout(() => {
+                showNotification(`Please sign in to ${action}.`, 'info');
+            }, delay);
+        }
+
+        function init() {
+            updateConnectionStatus('connecting');
             
-            modal.innerHTML = `
-                <div style="
-                    background: white;
-                    padding: 30px;
-                    border-radius: 15px;
-                    text-align: center;
-                    max-width: 400px;
-                    margin: 20px;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                ">
-                    <h3 style="margin-bottom: 15px; color: #2c3e50;">Join the Community!</h3>
-                    <p style="margin-bottom: 20px; color: #7f8c8d; line-height: 1.5;">
-                        Sign in to rate this ${category} as ${rating} star${rating > 1 ? 's' : ''} and help other Harry Mack fans discover the best episodes!
-                    </p>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button id="modalSignIn" style="
-                            background: #3498db;
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 8px;
-                            cursor: pointer;
-                            font-weight: bold;
-                        ">Sign In with Google</button>
-                        <button id="modalCancel" style="
-                            background: #95a5a6;
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 8px;
-                            cursor: pointer;
-                        ">Maybe Later</button>
-                    </div>
-                </div>
-            `;
+            initializeFirebase();
             
-            document.body.appendChild(modal);
+            // Setup filters (these are already in HTML, just need to add event listeners)
+            document.getElementById('sortFilter').addEventListener('change', applyFilters);
+            document.getElementById('ratingFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchFilter').addEventListener('input', applyFilters); // Use 'input' for real-time search
             
-            document.getElementById('modalSignIn').onclick = () => {
-                modal.remove();
-                signIn();
-            };
-            
-            document.getElementById('modalCancel').onclick = () => {
-                modal.remove();
-            };
-            
-            modal.onclick = (e) => {
-                if (e.target === modal) {
-                    modal.remove();
+            setupRealtimeUpdates();
+        
+            document.getElementById('authButton').addEventListener('click', () => {
+                if (currentUser) {
+                    signOut();
+                } else {
+                    signIn();
                 }
-            };
-        }
-
-        function setupFilters() {
-            const sortFilter = document.getElementById('sortFilter');
-            const ratingFilter = document.getElementById('ratingFilter');
-            const searchFilter = document.getElementById('searchFilter');
-
-            [sortFilter, ratingFilter, searchFilter].forEach(filter => {
-                filter.addEventListener('change', applyFilters);
-                filter.addEventListener('input', applyFilters);
             });
         }
 
         function applyFilters() {
-            let filteredVideos = [...videos];
-            
-            const minRating = parseFloat(document.getElementById('ratingFilter').value);
-            if (minRating > 0) {
-                filteredVideos = filteredVideos.filter(video => 
-                    video.ratings.overall.average >= minRating
-                );
-            }
-            
-            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
-            if (searchTerm) {
-                filteredVideos = filteredVideos.filter(video => {
-                    const titleMatch = video.title.toLowerCase().includes(searchTerm);
-                    const episodeMatch = video.episodeNumber.toString().includes(searchTerm);
-                    const wordsMatch = video.segments.some(segment => 
-                        segment.words.some(word => word.toLowerCase().includes(searchTerm))
-                    );
-                    return titleMatch || episodeMatch || wordsMatch;
-                });
-            }
-            
-            const sortBy = document.getElementById('sortFilter').value;
-            filteredVideos.sort((a, b) => {
-                if (sortBy === 'episode') {
-                    return a.episodeNumber - b.episodeNumber;
-                } else {
-                    return b.ratings[sortBy].average - a.ratings[sortBy].average;
-                }
-            });
-            
-            renderVideos(filteredVideos);
+            renderVideos(); // Re-render videos based on current filter settings
         }
 
         function setupRealtimeUpdates() {
-            if (!db) return;
-
+            if (!db) return; // Don't setup if in demo mode
+            
             db.collection('videos').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'modified') {
@@ -1226,30 +1714,11 @@
             });
         }
 
-
-
-        // STEP 4: Replace your init function with this one
-        // Find "function init() {" near the bottom and replace it
-        function init() {
-            updateConnectionStatus('connecting');
-            
-            // Check if we were signing in
-            //checkSignInStatus();
-            
-            initializeFirebase();
-            
-            setupFilters();
-            
-            setupRealtimeUpdates();
-        
-            document.getElementById('authButton').addEventListener('click', () => {
-                if (currentUser) {
-                    signOut();
-                } else {
-                    signIn();
-                }
-            });
-        }
+        // Make functions globally available for onclick handlers
+        window.voteOnWord = voteOnWord;
+        window.addWordFromInput = addWordFromInput;
+        window.toggleSegment = toggleSegment;
+        window.toggleAllSegments = toggleAllSegments;
  
         document.addEventListener('DOMContentLoaded', init);
     </script>
