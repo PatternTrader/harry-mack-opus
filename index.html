@@ -646,6 +646,14 @@
         let userRatings = {};
         let userWordVotes = {};
 
+        // Default ratings structure
+        const defaultRatings = {
+            lyrics: { average: 3.0, count: 0 },
+            beats: { average: 3.0, count: 0 },
+            reaction: { average: 3.0, count: 0 },
+            overall: { average: 3.0, count: 0 }
+        };
+
         async function initializeFirebase() {
             try {
                 app = firebase.initializeApp(firebaseConfig);
@@ -828,26 +836,35 @@
         }
 
         async function loadVideosData() {
-            if (!db) {
-                generateSampleVideos();
-                renderVideos();
-                updateStats();
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('videoGrid').style.display = 'grid';
-                document.getElementById('statsBar').style.display = 'block';
-                return;
-            }
-
             try {
+                if (!db) {
+                    console.log('No database connection - using demo mode');
+                    initializeDemoMode();
+                    return;
+                }
+
+                console.log('Loading videos from Firebase...');
                 const videosSnapshot = await db.collection('videos').orderBy('episodeNumber').get();
                 
                 if (videosSnapshot.empty) {
+                    console.log('No videos found - initializing sample data');
                     await initializeFirebaseData();
                 } else {
-                    videos = videosSnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
+                    console.log('Loading existing videos from Firebase');
+                    videos = videosSnapshot.docs.map(doc => {
+                        const data = doc.data();
+                        // Ensure segments have proper ratings structure
+                        if (data.segments) {
+                            data.segments = data.segments.map(segment => ({
+                                ...segment,
+                                ratings: segment.ratings || defaultRatings
+                            }));
+                        }
+                        return {
+                            id: doc.id,
+                            ...data
+                        };
+                    });
                 }
                 
                 renderVideos();
@@ -855,6 +872,7 @@
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('videoGrid').style.display = 'grid';
                 document.getElementById('statsBar').style.display = 'block';
+                updateConnectionStatus('connected');
                 
             } catch (error) {
                 console.error('Error loading videos:', error);
@@ -866,13 +884,17 @@
         async function initializeFirebaseData() {
             const sampleVideos = generateSampleVideos();
             
-            const batch = db.batch();
-            sampleVideos.forEach((video, index) => {
-                const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
-                batch.set(docRef, video);
-            });
+            if (db) {
+                const batch = db.batch();
+                sampleVideos.forEach((video, index) => {
+                    const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
+                    batch.set(docRef, video);
+                });
+                
+                await batch.commit();
+                console.log('Sample data saved to Firebase');
+            }
             
-            await batch.commit();
             videos = sampleVideos;
         }
 
@@ -900,10 +922,10 @@
             
             for (let i = 1; i <= 100; i++) {
                 const segments = [];
-                const numSegments = Math.random() < 0.8 ? 3 : (Math.random() < 0.5 ? 2 : 4); // Mostly 3, sometimes 2 or 4
+                const numSegments = Math.random() < 0.8 ? 3 : (Math.random() < 0.5 ? 2 : 4);
                 
                 for (let j = 0; j < numSegments; j++) {
-                    const numWords = Math.random() < 0.7 ? 3 : (Math.random() < 0.5 ? 2 : 4); // Mostly 3, sometimes 2 or 4
+                    const numWords = Math.random() < 0.7 ? 3 : (Math.random() < 0.5 ? 2 : 4);
                     const segmentWords = [];
                     
                     // Generate candidate words with vote counts
@@ -1059,16 +1081,43 @@
         }
 
         function updateUserRatingDisplay() {
-            Object.keys(userRatings).forEach(videoId => {
-                if (userRatings[videoId].segments) {
-                    Object.keys(userRatings[videoId].segments).forEach(segmentId => {
-                        const segmentRatings = userRatings[videoId].segments[segmentId];
+            // This will be called after renderVideos to update the display
+            setTimeout(() => {
+                Object.keys(userRatings).forEach(videoId => {
+                    if (userRatings[videoId].segments) {
+                        Object.keys(userRatings[videoId].segments).forEach(segmentId => {
+                            const segmentRatings = userRatings[videoId].segments[segmentId];
+                            const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+                            
+                            categories.forEach(category => {
+                                const rating = segmentRatings[category];
+                                if (rating > 0) {
+                                    const starsContainer = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars');
+                                    if (starsContainer) {
+                                        updateStarDisplay(starsContainer, rating, true);
+                                        
+                                        const controls = starsContainer.closest('.rating-controls');
+                                        if (controls && !controls.querySelector('.user-rating-indicator')) {
+                                            const indicator = document.createElement('div');
+                                            indicator.className = 'user-rating-indicator';
+                                            indicator.textContent = `Your rating: ${rating}★`;
+                                            controls.appendChild(indicator);
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    }
+                    
+                    // Handle video-level ratings (legacy)
+                    if (userRatings[videoId].video) {
+                        const videoRatings = userRatings[videoId].video;
                         const categories = ['lyrics', 'beats', 'reaction', 'overall'];
                         
                         categories.forEach(category => {
-                            const rating = segmentRatings[category];
+                            const rating = videoRatings[category];
                             if (rating > 0) {
-                                const starsContainer = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars');
+                                const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
                                 if (starsContainer) {
                                     updateStarDisplay(starsContainer, rating, true);
                                     
@@ -1082,33 +1131,9 @@
                                 }
                             }
                         });
-                    });
-                }
-                
-                // Handle video-level ratings (legacy)
-                if (userRatings[videoId].video) {
-                    const videoRatings = userRatings[videoId].video;
-                    const categories = ['lyrics', 'beats', 'reaction', 'overall'];
-                    
-                    categories.forEach(category => {
-                        const rating = videoRatings[category];
-                        if (rating > 0) {
-                            const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
-                            if (starsContainer) {
-                                updateStarDisplay(starsContainer, rating, true);
-                                
-                                const controls = starsContainer.closest('.rating-controls');
-                                if (controls && !controls.querySelector('.user-rating-indicator')) {
-                                    const indicator = document.createElement('div');
-                                    indicator.className = 'user-rating-indicator';
-                                    indicator.textContent = `Your rating: ${rating}★`;
-                                    controls.appendChild(indicator);
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+                    }
+                });
+            }, 100);
         }
 
         async function submitRating(videoId, category, rating, segmentId = null) {
@@ -1146,7 +1171,6 @@
                     }
 
                     await db.collection('userRatings').doc(docId).set(ratingsData);
-
                     await updateVideoRating(videoId, category, rating, segmentId);
                 }
 
@@ -1215,7 +1239,7 @@
                 if (video) {
                     if (segmentId) {
                         const segment = video.segments.find(s => s.id === segmentId);
-                        if (segment) {
+                        if (segment && segment.ratings) {
                             const currentData = segment.ratings[category];
                             const newTotal = (currentData.average * currentData.count) + newRating;
                             const newCount = currentData.count + 1;
@@ -1419,10 +1443,12 @@
 
         function createSegmentHtml(segment, videoId, segmentIndex) {
             const segmentId = segment.id;
-            const avgRating = (segment.ratings.lyrics.average + segment.ratings.beats.average + segment.ratings.reaction.average + segment.ratings.overall.average) / 4;
+            
+            // Ensure segment has ratings - if not, use defaults
+            const segmentRatings = segment.ratings || defaultRatings;
+            const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
 
             const wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
-                const topWord = wordCandidates.sort((a, b) => b.votes - a.votes)[0];
                 return `
                     <div style="margin-bottom: 15px;">
                         <div class="segment-label">Word ${wordIndex + 1}</div>
@@ -1460,11 +1486,11 @@
                                     <div class="rating-category">
                                         <div class="rating-info">
                                             <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                            <span class="rating-stats">${segment.ratings[category].average.toFixed(1)}★ (${segment.ratings[category].count} ratings)</span>
+                                            <span class="rating-stats">${segmentRatings[category].average.toFixed(1)}★ (${segmentRatings[category].count} ratings)</span>
                                         </div>
                                         <div class="rating-controls">
                                             <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
-                                                ${createStarRating(category, videoId, segment.ratings[category].average, segment.ratings[category].count, segmentId)}
+                                                ${createStarRating(category, videoId, segmentRatings[category].average, segmentRatings[category].count, segmentId)}
                                             </div>
                                             ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
                                         </div>
@@ -1497,9 +1523,12 @@
             if (searchFilter) {
                 filteredVideos = filteredVideos.filter(video =>
                     video.title.toLowerCase().includes(searchFilter) ||
+                    video.episodeNumber.toString().includes(searchFilter) ||
                     video.segments.some(segment =>
-                        segment.words.flat().some(wordObj =>
-                            wordObj.word.toLowerCase().includes(searchFilter)
+                        segment.words && segment.words.some(wordCandidates =>
+                            wordCandidates.some(candidate =>
+                                candidate.word.toLowerCase().includes(searchFilter)
+                            )
                         )
                     )
                 );
@@ -1518,11 +1547,17 @@
                 const videoCard = document.createElement('div');
                 videoCard.className = 'video-card';
                 videoCard.innerHTML = `
-                    <div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${video.youtubeId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-embed" style="position: relative; cursor: pointer; background-image: url('https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg'); background-size: cover; background-position: center;" onclick="window.open('https://www.youtube.com/watch?v=${video.youtubeId}', '_blank')">
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
+                                <div style="font-size: 4rem; margin-bottom: 10px;">▶️</div>
+                                <div style="font-size: 1.1rem; font-weight: bold;">Episode #${video.episodeNumber}</div>
+                                <div style="font-size: 0.9rem; opacity: 0.9;">Click to watch on YouTube</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="video-content">
-                        <h3 class="video-title">Episode #${video.episodeNumber}: ${video.title}</h3>
+                        <h3 class="video-title">${video.title}</h3>
                         <div class="overall-rating">
                             <h4>Overall Video Rating</h4>
                             <div class="rating-category">
@@ -1541,7 +1576,7 @@
 
                         <div class="segments-section">
                             <div class="segments-header">
-                                <h4>Segments</h4>
+                                <h4>Segments (${video.segments.length})</h4>
                                 <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
                             </div>
                             <div class="segments-container" data-video="${video.episodeNumber}">
@@ -1567,6 +1602,9 @@
                     }
                 };
             });
+
+            // Update user rating display after rendering
+            updateUserRatingDisplay();
         }
 
         function updateStarDisplay(starsContainer, rating, userRated = false) {
@@ -1607,6 +1645,12 @@
                         segment.classList.add('expanded');
                     }
                 });
+                
+                // Update button text
+                const button = container.closest('.video-card').querySelector('.expand-toggle');
+                if (button) {
+                    button.textContent = allExpanded ? 'Expand All' : 'Collapse All';
+                }
             }
         }
 
@@ -1633,9 +1677,11 @@
 
                 if (video.segments) {
                     video.segments.forEach(segment => {
-                        Object.values(segment.ratings).forEach(rating => {
-                            totalRatings += rating.count;
-                        });
+                        if (segment.ratings) {
+                            Object.values(segment.ratings).forEach(rating => {
+                                totalRatings += rating.count;
+                            });
+                        }
                     });
                 }
                 
@@ -1647,7 +1693,7 @@
 
             document.getElementById('totalRatings').textContent = totalRatings;
             document.getElementById('avgOverall').textContent = overallRatingCount > 0 ? (totalOverallRating / overallRatingCount).toFixed(1) : '0.0';
-            document.getElementById('activeUsers').textContent = 'N/A'; // This would come from a separate user count
+            document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
             document.getElementById('topEpisode').textContent = topEpisode;
         }
         
@@ -1673,10 +1719,10 @@
             
             initializeFirebase();
             
-            // Setup filters (these are already in HTML, just need to add event listeners)
+            // Setup filters
             document.getElementById('sortFilter').addEventListener('change', applyFilters);
             document.getElementById('ratingFilter').addEventListener('change', applyFilters);
-            document.getElementById('searchFilter').addEventListener('input', applyFilters); // Use 'input' for real-time search
+            document.getElementById('searchFilter').addEventListener('input', applyFilters);
             
             setupRealtimeUpdates();
         
