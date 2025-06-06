@@ -484,6 +484,7 @@
         
         let app, auth, db;
         let currentUser = null;
+        let isSigningIn = false; // Reset the flag on page load
         let videos = [];
         let userRatings = {};
 
@@ -529,11 +530,16 @@
                     }
                 }
                 
-                // NOW set up the auth state listener
+       
+
                 auth.onAuthStateChanged((user) => {
                     console.log('Auth state changed:', user ? user.email : 'No user');
+                    if (user) {
+                        isSigningIn = false; // Reset flag on successful sign-in
+                    }
                     handleAuthStateChange(user);
                 });
+                
                 
                 // Check current auth state
                 const currentUser = auth.currentUser;
@@ -612,10 +618,6 @@
         }
 
 
-
-        // Add this variable at the top of your script section
-        let isSigningIn = false;
-        
         // Replace your signIn function with this:
         async function signIn() {
             if (!auth) {
