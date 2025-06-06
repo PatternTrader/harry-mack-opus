@@ -979,7 +979,7 @@
                     const baseRatingCount = Math.floor(Math.random() * 50) + 5;
                     
                     segments.push({
-                        id: `segment_${j + 1}`,
+                        id: `segment_${i}_${j + 1}`, // Make ID unique with video number
                         words: segmentWords,
                         ratings: {
                             lyrics: { 
@@ -1645,9 +1645,13 @@
         }
 
         function toggleSegment(videoId, segmentId) {
-            const segmentElement = document.querySelector(`.segment[data-segment="${segmentId}"]`);
-            if (segmentElement) {
-                segmentElement.classList.toggle('expanded');
+            // Find the segment within the specific video container
+            const videoContainer = document.querySelector(`.segments-container[data-video="${videoId}"]`);
+            if (videoContainer) {
+                const segmentElement = videoContainer.querySelector(`.segment[data-segment="${segmentId}"]`);
+                if (segmentElement) {
+                    segmentElement.classList.toggle('expanded');
+                }
             }
         }
 
