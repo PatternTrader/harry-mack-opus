@@ -931,7 +931,10 @@
                     // Generate candidate words with vote counts
                     for (let k = 0; k < numWords; k++) {
                         const candidateWords = [];
-                        const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+                        
+                        // Get a random word for the main candidate
+                        const baseWordIndex = Math.floor(Math.random() * wordBank.length);
+                        const baseWord = wordBank[baseWordIndex];
                         
                         // Add the main word with high votes
                         candidateWords.push({
@@ -940,13 +943,28 @@
                             voters: []
                         });
                         
-                        // Sometimes add alternative words with fewer votes
-                        if (Math.random() < 0.3) {
-                            candidateWords.push({
-                                word: wordBank[Math.floor(Math.random() * wordBank.length)],
-                                votes: Math.floor(Math.random() * 5) + 1,
-                                voters: []
-                            });
+                        // Sometimes add 1-2 alternative words with fewer votes (but not too many)
+                        const numAlternatives = Math.random() < 0.4 ? 1 : (Math.random() < 0.2 ? 2 : 0);
+                        
+                        for (let alt = 0; alt < numAlternatives; alt++) {
+                            let altWordIndex;
+                            let altWord;
+                            
+                            // Make sure alternative word is different from base word
+                            do {
+                                altWordIndex = Math.floor(Math.random() * wordBank.length);
+                                altWord = wordBank[altWordIndex];
+                            } while (altWord === baseWord);
+                            
+                            // Only add if this word isn't already in the candidates
+                            const wordExists = candidateWords.some(candidate => candidate.word === altWord);
+                            if (!wordExists) {
+                                candidateWords.push({
+                                    word: altWord,
+                                    votes: Math.floor(Math.random() * 5) + 1,
+                                    voters: []
+                                });
+                            }
                         }
                         
                         segmentWords.push(candidateWords);
@@ -1419,15 +1437,20 @@
         }
 
         function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
-            // Sort by votes (highest first)
-            const sortedCandidates = [...wordCandidates].sort((a, b) => b.votes - a.votes);
+            // Sort by votes (highest first) and filter out any invalid candidates
+            const validCandidates = wordCandidates.filter(candidate => 
+                candidate && candidate.word && typeof candidate.word === 'string' && candidate.word.trim() !== ''
+            );
+            
+            const sortedCandidates = validCandidates.sort((a, b) => b.votes - a.votes);
+            
             return sortedCandidates.map(candidate => {
                 const voteKey = `${videoId}_${segmentId}_${wordIndex}_${candidate.word}`;
                 const userVote = userWordVotes[voteKey];
                 return `
                     <div class="word-item">
                         <span>${candidate.word}</span>
-                        <span class="word-votes">${candidate.votes}</span>
+                        <span class="word-votes">${candidate.votes || 0}</span>
                         <div class="vote-buttons">
                             <button class="vote-btn ${userVote === 'up' ? 'voted' : ''}" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${candidate.word}', 'up')">
                                 ↑
@@ -1526,7 +1549,8 @@
                     video.episodeNumber.toString().includes(searchFilter) ||
                     video.segments.some(segment =>
                         segment.words && segment.words.some(wordCandidates =>
-                            wordCandidates.some(candidate =>
+                            wordCandidates && wordCandidates.some(candidate =>
+                                candidate && candidate.word && 
                                 candidate.word.toLowerCase().includes(searchFilter)
                             )
                         )
