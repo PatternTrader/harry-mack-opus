@@ -631,45 +631,31 @@
             provider.addScope('email');
             
             try {
-                console.log('Starting redirect sign in...');
-                showNotification('Redirecting to Google sign-in...', 'info');
+                console.log('Starting popup sign in...');
+                showNotification('Opening Google sign-in popup...', 'info');
                 
-                // Store a flag to track that we initiated sign in
-                sessionStorage.setItem('signingIn', 'true');
+                // Use signInWithPopup instead of signInWithRedirect
+                const result = await auth.signInWithPopup(provider);
                 
-                await auth.signInWithRedirect(provider);
-                console.log('Redirect initiated - browser should navigate away now');
+                console.log('Sign in successful:', result.user);
+                showNotification('Successfully signed in!', 'success');
                 
             } catch (error) {
                 console.error('Sign in error:', error);
-                sessionStorage.removeItem('signingIn');
                 
                 if (error.code === 'auth/operation-not-allowed') {
                     showNotification('Google sign-in is not enabled in Firebase Console', 'error');
                 } else if (error.code === 'auth/unauthorized-domain') {
                     showNotification('This domain is not authorized in Firebase', 'error');
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    showNotification('Sign-in popup was closed. Please try again.', 'info');
+                } else if (error.code === 'auth/popup-blocked') {
+                    showNotification('Sign-in popup was blocked by browser. Please allow popups and try again.', 'error');
                 } else {
                     showNotification(`Sign in failed: ${error.message}`, 'error');
                 }
             }
         }
-        
-        // STEP 3: Add this NEW function after the signIn function
-        function checkSignInStatus() {
-            if (sessionStorage.getItem('signingIn')) {
-                console.log('Was attempting to sign in before redirect');
-                sessionStorage.removeItem('signingIn');
-                
-                // If we're back but not signed in, something went wrong
-                setTimeout(() => {
-                    if (!currentUser) {
-                        console.log('Sign in appears to have failed - no user after redirect');
-                        showNotification('Sign in may have failed. Please try again.', 'error');
-                    }
-                }, 2000);
-            }
-        }
-
  
         async function signOut() {
             if (auth) {
@@ -1235,7 +1221,7 @@
             updateConnectionStatus('connecting');
             
             // Check if we were signing in
-            checkSignInStatus();
+            //checkSignInStatus();
             
             initializeFirebase();
             
