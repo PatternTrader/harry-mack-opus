@@ -951,14 +951,28 @@
                     console.log(`✅ Successfully loaded ${videos.length} videos`);
                 }
                 
-                console.log('🎨 Rendering videos...');
-                renderVideos();
-                updateStats();
-                document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('videoGrid').style.display = 'grid';
-                document.getElementById('statsBar').style.display = 'block';
-                updateConnectionStatus('connected');
-                console.log('✅ Videos loaded and rendered successfully!');
+                // Separate rendering from data loading to prevent fallback on render errors
+                console.log('🎨 Starting to render videos...');
+                try {
+                    renderVideos();
+                    updateStats();
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('videoGrid').style.display = 'grid';
+                    document.getElementById('statsBar').style.display = 'block';
+                    updateConnectionStatus('connected');
+                    console.log('✅ Videos loaded and rendered successfully!');
+                } catch (renderError) {
+                    console.error('❌ Error during rendering (keeping loaded data):', renderError);
+                    console.error('❌ Render error details:', renderError.message);
+                    console.error('❌ Render error stack:', renderError.stack);
+                    showNotification('Error rendering videos. Data loaded but display may be incomplete.', 'error');
+                    
+                    // Show basic UI even if rendering fails
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('videoGrid').style.display = 'grid';
+                    document.getElementById('statsBar').style.display = 'block';
+                    updateConnectionStatus('connected');
+                }
                 
             } catch (error) {
                 console.error('❌ Error loading videos:', error);
@@ -1006,12 +1020,12 @@
         function getYouTubeId(episodeNumber) {
             const youtubeIds = {
                 1: 'GWhycrbmuhM',
-                2: 'dQw4w9WgXcQ', // Valid placeholder video
-                3: 'dQw4w9WgXcQ', // Valid placeholder video
+                2: 'kI8-xlLZvH8', // Another Harry Mack video
+                3: 'QIwWYx70RZE', // Another Harry Mack video
             };
             
-            // Return known ID or a valid placeholder that won't 404
-            return youtubeIds[episodeNumber] || 'dQw4w9WgXcQ'; // Rick Roll as safe fallback
+            // Return known ID or create a placeholder that won't 404
+            return youtubeIds[episodeNumber] || `GWhycrbmuhM`; // Use Episode 1 as fallback
         }
         
         function generateSampleVideos() {
