@@ -1214,15 +1214,135 @@
         }
 
         function getYouTubeId(episodeNumber) {
-            const youtubeIds = {
-                1: 'GWhycrbmuhM',
-                2: 'kI8-xlLZvH8', // Another Harry Mack video
-                3: 'QIwWYx70RZE', // Another Harry Mack video
-            };
+            const youtubeIds = [
+                'NPdKxsSE5JQ',  // Episode 1
+                'BgCUCg9aMyA',  // Episode 2
+                '37duQAUSYXo',  // Episode 3
+                'jrNapeXr3TY',  // Episode 4
+                'Gh7Wbix9UwY',  // Episode 5
+                'dwFhTq5x0Tc',  // Episode 6
+                '75j7pEjRAIQ',  // Episode 7
+                'O6ve-5b_x5U',  // Episode 8
+                'oxuUDgOdoRw',  // Episode 9
+                '7GAuu0Ro9PM',  // Episode 10
+                'Rqv6oiyddn8',  // Episode 11
+                'hZcpRm80EBk',  // Episode 12
+                '6c5Y47TYQWQ',  // Episode 13
+                'Ap4dVD_CRm8',  // Episode 14
+                'lt0r0JNDeeo',  // Episode 15
+                'XTfaaoBRjvs',  // Episode 16
+                'QwnqI4dyPI8',  // Episode 17
+                'VBBMfHGMs7I',  // Episode 18
+                'EWThDBgYj9U',  // Episode 19
+                'Tf84L54lSTE',  // Episode 20
+                're1sJCcYZy4',  // Episode 21
+                '3Y-0TUj1amk',  // Episode 22
+                'JeRZWJ7NMGU',  // Episode 23
+                'ZC6kl6ohAjo',  // Episode 24
+                '1kN6LAf_7eg',  // Episode 25
+                'U6dbmuCfdyk',  // Episode 26
+                'dlnQOB15Sq8',  // Episode 27
+                'ZOhE4fUduUU',  // Episode 28
+                '2JHSSISCVww',  // Episode 29
+                'vtjdWxFcOc4',  // Episode 30
+                'fP4SftKI4LQ',  // Episode 31
+                'Z3FjhBuFKyM',  // Episode 32
+                'p-GYLYqpTP8',  // Episode 33
+                'PPS8RLQkw04',  // Episode 34
+                'YPLX5YpSMfI',  // Episode 35
+                'QaD5-e6hjmY',  // Episode 36
+                '1XZJKKNopEw',  // Episode 37
+                'eStSbs0PklY',  // Episode 38
+                'dkcnYy_VjRc',  // Episode 39
+                '4dMm3q1rldE',  // Episode 40
+                '25ceuw4CuK8',  // Episode 41
+                'wy6qazFc2FQ',  // Episode 42
+                'oXI3ysg3s3s',  // Episode 43
+                'UlIzq76NZJA',  // Episode 44
+                'OBM1UVnsQQo',  // Episode 45
+                'KSc0UuBLRhg',  // Episode 46
+                'n1K9P5Dtph4',  // Episode 47
+                '5yTm4j6KaBQ',  // Episode 48
+                '1dfh0G8Ik1c',  // Episode 49
+                '-pRhkKkM2Ms',  // Episode 50
+                'mwWw-1t3hyw',  // Episode 51
+                '3ZhcM7-bh4c',  // Episode 52
+                'Js2Q8tJLgig',  // Episode 53
+                'eX9uZQoXAdY',  // Episode 54
+                'AYc7Q6CSeGE',  // Episode 55
+                'tKXnmUUM-IA',  // Episode 56
+                'pRd_fE6rx88',  // Episode 57
+                'Djm0fwEX9ls',  // Episode 58
+                'UI2qbARbQEw',  // Episode 59
+                'sfFpAz8ZHVg',  // Episode 60
+                'CKnUOb6My5Y',  // Episode 61
+                'BbcTwW_aKxI',  // Episode 62
+                'I0ng6LIjAOg',  // Episode 63
+                'g25N4i6leas',  // Episode 64
+                'abuAR-yoWSU',  // Episode 65
+                'izM7RQctoPc',  // Episode 66
+                'BNC68gQluSE',  // Episode 67
+                'TJk3eDFwiaY',  // Episode 68
+                'FxLKfWt3Kq4',  // Episode 69
+                'QaRkdWCTKkM',  // Episode 70
+                'O9AxmMO9xKw',  // Episode 71
+                'AO0yvg0pLiM',  // Episode 72
+                'qQKgwgWzg58',  // Episode 73
+                'xqCEjV48TWA',  // Episode 74
+                'SnJpkJ0or5o',  // Episode 75
+                '2kfaZHwzda8',  // Episode 76
+                '4yeyJVkbX8Y',  // Episode 77
+                'Xm8Z4bGH_Ok',  // Episode 78
+                'yxb2mb4wkF4',  // Episode 79
+                'NKtwLntS4Pg',  // Episode 80
+                'MiU7GJYeTas',  // Episode 81
+                'TwRATtm76cI',  // Episode 82
+                'bt0DLDPVE1M',  // Episode 83
+                '6Phbw1vg5Wc',  // Episode 84
+                '16xwgMHig-A',  // Episode 85
+                'REllMQ6EQi8',  // Episode 86
+                '6mfIBMQMYTw',  // Episode 87
+                'gBgJRYcIcWA',  // Episode 88
+                'WG0ZmvMYVrM',  // Episode 89
+                'cXKJ3uv_XIk',  // Episode 90
+                '_SZbXNGBWGk',  // Episode 91
+                'uhiwj4ho4V4',  // Episode 92
+                'qG37EIdryFo',  // Episode 93
+                '90-aXcTQw34',  // Episode 94
+                'hr6sqlk73AI',  // Episode 95
+                'rjBtpTI0MAc',  // Episode 96
+                'bJgAtUirT7I',  // Episode 97
+                '1suTTTUn7iA',  // Episode 98
+                'TFaKz7SQsgg',  // Episode 99
+                'qlfHCE9nl34',  // Episode 100
+                'vL4W6n--r5A',  // Episode 101
+                '-70WqAfeEYE',  // Episode 102
+                'ijVGIcVRIbk',  // Episode 103
+                '6sYh6iuMUA8',  // Episode 104
+                'elpFOcnxTZY',  // Episode 105
+                'sfAjqVYDISQ',  // Episode 106
+                'BXFq6Y1iW7k',  // Episode 107
+                'E6dqj45rjlE',  // Episode 108
+                '2bMkeJ6Vu2s',  // Episode 109
+                'HuCyL-QEIhQ',  // Episode 110
+                '6u8Yt12uZnk',  // Episode 111
+                'dfAQMcKqxM0',  // Episode 112
+                'jSZmrM-1qpw'   // Episode 113
+            ];
             
-            // Return known ID or create a placeholder that won't 404
-            return youtubeIds[episodeNumber] || `GWhycrbmuhM`; // Use Episode 1 as fallback
+            // Return the corresponding YouTube ID (episodeNumber - 1 because array is 0-indexed)
+            const index = episodeNumber - 1;
+            
+            // If episode number is within our range, return the correct ID
+            if (index >= 0 && index < youtubeIds.length) {
+                return youtubeIds[index];
+            }
+            
+            // Fallback for episodes beyond 113 (cycle through existing IDs)
+            return youtubeIds[index % youtubeIds.length];
         }
+        
+      
         
         function generateSampleVideos() {
             const wordBank = [
