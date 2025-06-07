@@ -1006,7 +1006,34 @@
                             console.log('🔍 EPISODE 2 DEBUG - Segments is array:', Array.isArray(data.segments));
                             console.log('🔍 EPISODE 2 DEBUG - Segments content:', data.segments);
                         }
-                        
+
+                        if (data.episodeNumber === 2 && DEBUG_EPISODE_2) {
+                            console.log('🔍 EPISODE 2 DETAILED ANALYSIS:');
+                            
+                            // Show the complete segments object structure
+                            console.log('📊 Complete segments object:', JSON.stringify(data.segments, null, 2));
+                            
+                            // Analyze each segment
+                            Object.entries(data.segments).forEach(([key, segment]) => {
+                                console.log(`📋 Segment "${key}" details:`);
+                                console.log(`   - Has ratings:`, !!segment.ratings);
+                                console.log(`   - Has words:`, !!segment.words);
+                                console.log(`   - Has id:`, !!segment.id);
+                                console.log(`   - All properties:`, Object.keys(segment));
+                                console.log(`   - Full segment:`, segment);
+                                
+                                if (segment.words) {
+                                    console.log(`   - Words type:`, typeof segment.words);
+                                    console.log(`   - Words is array:`, Array.isArray(segment.words));
+                                    console.log(`   - Words content:`, segment.words);
+                                }
+                                
+                                if (segment.ratings) {
+                                    console.log(`   - Ratings:`, segment.ratings);
+                                }
+                            });
+                        }
+                                                
                         // Safely handle segments data
                         let processedSegments = [];
                         
