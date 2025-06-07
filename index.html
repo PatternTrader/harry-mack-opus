@@ -767,6 +767,63 @@
 			color: #e74c3c;
 		}
 		/* ===== END NOTES CSS ===== */
+		
+		
+        
+        /* ===== SEGMENT SUMMARY CSS ===== */
+        .segments-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .segments-summary h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .segments-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .segment-preview {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: space-between;
+        }
+
+        .segment-preview-label {
+            font-weight: 600;
+        }
+
+        .segment-preview-rating {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .no-segments-preview {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        /* ===== END SEGMENT SUMMARY CSS ===== */
+
+
     </style>
 </head>
 
@@ -2630,10 +2687,32 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="segments-section">
-                                <div class="segments-header">
-                                    <h4>Segments (${video.segments ? video.segments.length : 0})</h4>
+ 
+							<div class="segments-summary">
+								<h4>Segment Ratings</h4>
+								<div class="segments-preview">
+									${video.segments ? video.segments.map((segment, index) => {
+										const segmentRatings = segment.ratings || defaultRatings;
+										const avgRating = [
+											segmentRatings.lyrics?.average || 0,
+											segmentRatings.beats?.average || 0, 
+											segmentRatings.reaction?.average || 0,
+											segmentRatings.overall?.average || 0
+										].reduce((sum, val) => sum + val, 0) / 4;
+										
+										return `
+											<div class="segment-preview">
+												<span class="segment-preview-label">Segment ${String.fromCharCode(65 + index)}</span>
+												<span class="segment-preview-rating">${avgRating.toFixed(1)}★</span>
+											</div>
+										`;
+									}).join('') : '<div class="no-segments-preview">No segments available</div>'}
+								</div>
+							</div>		
+							<div class="segments-section">
+								<div class="segments-header">
+									<h4>Detailed Segments (${video.segments ? video.segments.length : 0})</h4>
+		
                                     <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
                                 </div>
                                 <div class="segments-container" data-video="${video.episodeNumber}">
