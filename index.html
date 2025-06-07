@@ -702,7 +702,8 @@
         let videos = [];
         let userRatings = {};
         let userWordVotes = {};
-
+        let isAddingWord = false; // Add this flag
+        
         // Default ratings structure
         const defaultRatings = {
             lyrics: { average: 3.0, count: 0 },
@@ -1849,12 +1850,17 @@
             }
         }
 
+
         async function addNewWord(videoId, segmentId, wordIndex, newWord) {
             console.log('🔍 Adding word:', { videoId, segmentId, wordIndex, newWord });
+            
+            // SET FLAG TO PREVENT REAL-TIME UPDATES
+            isAddingWord = true;
             
             // Step 1: Check if user is signed in
             if (!currentUser) {
                 console.log('❌ No user signed in');
+                isAddingWord = false; // Reset flag
                 showSignInPrompt('add words', 0);
                 return;
             }
@@ -1862,6 +1868,7 @@
             // Step 2: Validate the word
             if (!newWord || !newWord.trim()) {
                 console.log('❌ Empty word provided');
+                isAddingWord = false; // Reset flag
                 showNotification('Please enter a word', 'error');
                 return;
             }
@@ -1873,12 +1880,14 @@
                 // Step 3: Find the video and segment
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (!video) {
+                    isAddingWord = false; // Reset flag
                     showNotification('Video not found', 'error');
                     return;
                 }
         
                 const segment = video.segments.find(s => s.id === segmentId);
                 if (!segment || !segment.words || !segment.words[wordIndex]) {
+                    isAddingWord = false; // Reset flag
                     showNotification('Invalid word position', 'error');
                     return;
                 }
@@ -1889,11 +1898,12 @@
                 );
         
                 if (existingWord) {
+                    isAddingWord = false; // Reset flag
                     showNotification('This word already exists for this position', 'info');
                     return;
                 }
         
-                // Step 5: Add word to local data first (this always works)
+                // Step 5: Add word to local data first
                 const newWordObj = {
                     word: trimmedWord,
                     votes: 1,
@@ -1902,25 +1912,17 @@
                 segment.words[wordIndex].push(newWordObj);
                 console.log('✅ Word added to local data');
         
-                // DEBUG: Check local data after adding
-                console.log('🔍 DEBUG: Local data after adding word:');
-                console.log('Full segment words:', JSON.stringify(segment.words, null, 2));
-                console.log('Specific word position:', JSON.stringify(segment.words[wordIndex], null, 2));
-        
-                // Step 6: Save to Firebase with better error handling
+                // Step 6: Save to Firebase
                 if (db) {
                     console.log('💾 Saving to Firebase...');
                     
                     try {
-                        // Create a safe copy for Firebase
                         const segmentsForFirebase = video.segments.map(seg => {
-                            // Deep clone the segment to avoid modifying original data
                             const safeSeg = {
                                 id: seg.id,
                                 ratings: { ...seg.ratings }
                             };
                             
-                            // Convert nested arrays to objects for Firebase
                             if (seg.words && Array.isArray(seg.words)) {
                                 safeSeg.words = seg.words.map(wordCandidates => {
                                     if (Array.isArray(wordCandidates)) {
@@ -1936,15 +1938,13 @@
                                         });
                                         return wordObj;
                                     }
-                                    return wordCandidates; // Already in object format
+                                    return wordCandidates;
                                 });
                             }
                             
                             return safeSeg;
                         });
         
-                        console.log('🔍 Firebase data structure:', segmentsForFirebase[0]?.words?.[0]);
-                        
                         const videoRef = db.collection('videos').doc(`episode_${videoId}`);
                         await videoRef.update({
                             segments: segmentsForFirebase
@@ -1953,11 +1953,9 @@
                         
                     } catch (firebaseError) {
                         console.error('❌ Firebase save failed:', firebaseError);
-                        console.log('⚠️ Word added locally but not synced to Firebase');
-                        // Don't throw - local data still works
                     }
         
-                    // Step 7: Save user vote
+                    // Save user vote
                     try {
                         const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
                         userWordVotes[voteKey] = 'up';
@@ -1973,49 +1971,31 @@
                         });
                         console.log('✅ Vote record saved');
                     } catch (voteError) {
-                        console.log('⚠️ Vote record failed (non-critical):', voteError.message);
+                        console.log('⚠️ Vote record failed:', voteError.message);
                     }
                 }
                 
-                // Step 8: Update the display surgically (don't rebuild everything)
+                // Step 7: Update UI surgically
                 const segmentElement = document.querySelector(
                     `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
                 );
         
                 if (segmentElement) {
-                    console.log('✅ Found segment element, updating word list surgically');
-                    
-                    // Find the specific word list for this word position
                     const wordListElements = segmentElement.querySelectorAll('.word-list');
                     if (wordListElements[wordIndex]) {
-                        console.log(`✅ Found word list for position ${wordIndex}, adding new word`);
-                        
-                        // Create HTML for the new word
                         const newWordHtml = `
                             <div class="word-item">
                                 <span>${trimmedWord}</span>
                                 <span class="word-votes">1</span>
                                 <div class="vote-buttons">
-                                    <button class="vote-btn voted" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'up')">
-                                        ↑
-                                    </button>
-                                    <button class="vote-btn" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'down')">
-                                        ↓
-                                    </button>
+                                    <button class="vote-btn voted" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'up')">↑</button>
+                                    <button class="vote-btn" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'down')">↓</button>
                                 </div>
                             </div>
                         `;
-                        
-                        // Add the new word to the existing list
                         wordListElements[wordIndex].insertAdjacentHTML('beforeend', newWordHtml);
                         console.log('✅ New word added to UI');
-                    } else {
-                        console.log('⚠️ Could not find word list element, falling back to full re-render');
-                        renderVideos();
                     }
-                } else {
-                    console.log('⚠️ Could not find segment element, falling back to full re-render');
-                    renderVideos();
                 }
         
                 showNotification(`Added new word: ${trimmedWord}`, 'success');
@@ -2024,9 +2004,16 @@
             } catch (error) {
                 console.error('❌ Error adding word:', error);
                 showNotification('Failed to add word. Please try again.', 'error');
+            } finally {
+                // ALWAYS RESET FLAG WHEN DONE
+                setTimeout(() => {
+                    isAddingWord = false;
+                    console.log('🔄 Real-time updates re-enabled');
+                }, 1000); // Wait 1 second before re-enabling
             }
         }
-
+        
+        
     
 
         function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
@@ -2596,9 +2583,10 @@
                     }
                 });
                 
-                if (snapshot.docChanges().length > 0) {
-                    applyFilters();
-                    updateStats();
+                // ADD THIS CHECK: Don't re-render if we're adding a word
+                if (snapshot.docChanges().length > 0 && !isAddingWord) {
+                        applyFilters();
+                        updateStats();
                 }
             });
         }
