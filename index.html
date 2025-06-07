@@ -766,34 +766,43 @@
         
     
 
-        
+
         function sanitizeSegmentData(segment, videoId, segmentIndex) {
             console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
             
-            // Create a clean segment structure
             const sanitized = {
                 id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
                 ratings: segment?.ratings || { ...defaultRatings },
                 words: []
             };
-            
+        
+            // FIXED: Don't convert if data is already in correct format
             if (segment?.words) {
                 console.log(`🔄 Processing words for ${videoId}-${segmentIndex}`);
-                try {
-                    // Use our helper function to handle both formats
-                    sanitized.words = convertWordsObjectToArray(segment.words);
-                    console.log(`✅ Words converted successfully for ${videoId}-${segmentIndex}`);
-                } catch (conversionError) {
-                    console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
-                    // Fallback to default structure
-                    sanitized.words = [
-                        [{word: 'word1', votes: 5, voters: []}],
-                        [{word: 'word2', votes: 5, voters: []}],
-                        [{word: 'word3', votes: 5, voters: []}]
-                    ];
+                
+                // Check if words are already in correct format (array of arrays)
+                if (Array.isArray(segment.words) && 
+                    segment.words.length > 0 && 
+                    Array.isArray(segment.words[0])) {
+                    
+                    console.log(`✅ Words already in correct format for ${videoId}-${segmentIndex}`);
+                    sanitized.words = segment.words; // Use as-is, no conversion needed
+                    
+                } else {
+                    console.log(`🔄 Converting words format for ${videoId}-${segmentIndex}`);
+                    try {
+                        sanitized.words = convertWordsObjectToArray(segment.words);
+                        console.log(`✅ Words converted successfully for ${videoId}-${segmentIndex}`);
+                    } catch (conversionError) {
+                        console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
+                        sanitized.words = [
+                            [{word: 'word1', votes: 5, voters: []}],
+                            [{word: 'word2', votes: 5, voters: []}],
+                            [{word: 'word3', votes: 5, voters: []}]
+                        ];
+                    }
                 }
             } else {
-                // No words at all - create default
                 console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default`);
                 sanitized.words = [
                     [{word: 'word1', votes: 5, voters: []}],
@@ -801,7 +810,7 @@
                     [{word: 'word3', votes: 5, voters: []}]
                 ];
             }
-
+        
             console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex}:`, sanitized);
             return sanitized;
         }
