@@ -80,10 +80,28 @@
             gap: 8px;
         }
         
+        .auth-button {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            border-radius: 24px;
+            padding: 10px 16px;
+            font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15);
+            gap: 12px;
+            min-height: 40px;
+        }
+        
         .auth-button:hover {
             background: #f8f9fa;
             border-color: #c1c7cd;
-            box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15);
+            box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15), 0 1px 2px 0 rgba(60,64,67,0.30);
         }
         
         .auth-button:active {
@@ -597,7 +615,10 @@
                 <div class="user-info" id="userInfo" style="display: none;">
                     Welcome, <span id="userName"></span>!
                 </div>
-                <button class="auth-button" id="authButton">Sign In with Google</button>
+                <button class="auth-button" id="authButton">
+                    <img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+                    Sign in with Google
+                </button>
             </div>
             
             <h1>🎤 Harry Mack Community Hub</h1>
@@ -915,7 +936,7 @@
             if (user) {
                 userInfo.style.display = 'block';
                 userName.textContent = user.displayName || user.email;
-                authButton.textContent = 'Sign Out';
+                authButton.innerHTML = 'Sign Out';
                 authButton.onclick = signOut;
                 
                 loadUserRatings();
@@ -923,7 +944,7 @@
                 
             } else {
                 userInfo.style.display = 'none';
-                authButton.textContent = 'Sign In with Google';
+                authButton.innerHTML = '<img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">Sign in with Google';
                 authButton.onclick = signIn;
                 userRatings = {};
                 userWordVotes = {};
