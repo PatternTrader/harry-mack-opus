@@ -293,7 +293,7 @@
         }
 
         .segment.expanded .segment-content {
-            max-height: 600px;
+            max-height: 800px;
         }
 
         .segment-details {
@@ -601,6 +601,172 @@
                 align-items: stretch;
             }
         }
+		
+		
+		
+		
+		
+		/* Add these CSS rules to your existing <style> section */
+		/* Notes Section Styles */
+		.notes-section {
+			border-top: 1px solid #eee;
+			padding-top: 15px;
+			margin-top: 15px;
+		}
+
+		.notes-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+			cursor: pointer;
+			padding: 8px;
+			border-radius: 8px;
+			transition: background 0.2s ease;
+		}
+
+		.notes-header:hover {
+			background: #f8f9fa;
+		}
+
+		.notes-title {
+			font-weight: 600;
+			color: #2c3e50;
+			font-size: 0.85rem;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.notes-expand-icon {
+			color: #8e44ad;
+			font-size: 1rem;
+			transition: transform 0.3s ease;
+		}
+
+		.notes-section.expanded .notes-expand-icon {
+			transform: rotate(90deg);
+		}
+
+		.notes-content {
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.3s ease;
+		}
+
+		.notes-section.expanded .notes-content {
+			max-height: 400px;
+		}
+
+		.notes-textarea {
+			width: 100%;
+			min-height: 80px;
+			max-height: 200px;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			font-size: 0.85rem;
+			font-family: inherit;
+			resize: vertical;
+			transition: border-color 0.2s ease;
+		}
+
+		.notes-textarea:focus {
+			outline: none;
+			border-color: #8e44ad;
+			box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.1);
+		}
+
+		.notes-actions {
+			display: flex;
+			gap: 8px;
+			margin-top: 10px;
+			justify-content: flex-end;
+		}
+
+		.notes-save-btn {
+			background: #27ae60;
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 0.8rem;
+			cursor: pointer;
+			transition: background 0.2s ease;
+		}
+
+		.notes-save-btn:hover {
+			background: #229954;
+		}
+
+		.notes-save-btn:disabled {
+			background: #bdc3c7;
+			cursor: not-allowed;
+		}
+
+		.notes-cancel-btn {
+			background: #95a5a6;
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 0.8rem;
+			cursor: pointer;
+			transition: background 0.2s ease;
+		}
+
+		.notes-cancel-btn:hover {
+			background: #7f8c8d;
+		}
+
+		.notes-display {
+			background: #f8f9fa;
+			border: 1px solid #e9ecef;
+			border-radius: 8px;
+			padding: 12px;
+			font-size: 0.85rem;
+			line-height: 1.4;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			min-height: 40px;
+		}
+
+		.notes-display.empty {
+			color: #6c757d;
+			font-style: italic;
+		}
+
+		.notes-edit-btn {
+			background: #3498db;
+			color: white;
+			border: none;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-size: 0.75rem;
+			cursor: pointer;
+			transition: background 0.2s ease;
+			margin-top: 8px;
+		}
+
+		.notes-edit-btn:hover {
+			background: #2980b9;
+		}
+
+		.notes-char-count {
+			font-size: 0.7rem;
+			color: #6c757d;
+			text-align: right;
+			margin-top: 4px;
+		}
+
+		.notes-char-count.warning {
+			color: #f39c12;
+		}
+
+		.notes-char-count.error {
+			color: #e74c3c;
+		}
+		/* ===== END NOTES CSS ===== */
     </style>
 </head>
 
@@ -705,7 +871,13 @@
         let isAddingWord = false;
 		let isVotingOnWord = false;
         let realtimeUpdateTimeout = null; // Add this to debounce real-time updates
-        
+		let userNotes = {};
+		let isSavingNote = false;
+		let editingNotes = {};
+		
+		// Note configuration
+		const MAX_NOTE_LENGTH = 1000;
+				
         // Default ratings structure
         const defaultRatings = {
             lyrics: { average: 3.0, count: 0 },
@@ -1028,30 +1200,38 @@
             }
         }
 
-        function handleAuthStateChange(user) {
-            currentUser = user;
-            
-            const userInfo = document.getElementById('userInfo');
-            const userName = document.getElementById('userName');
-            const authButton = document.getElementById('authButton');
 
-            if (user) {
-                userInfo.style.display = 'block';
-                userName.textContent = user.displayName || user.email;
-                authButton.innerHTML = 'Sign Out';
-                authButton.onclick = signOut;
-                
-                loadUserRatings();
-                loadUserWordVotes();
-                
-            } else {
-                userInfo.style.display = 'none';
-                authButton.innerHTML = '<img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">Sign in with Google';
-                authButton.onclick = signIn;
-                userRatings = {};
-                userWordVotes = {};
-            }
-        }
+		// UPDATED: handleAuthStateChange to load notes
+		function handleAuthStateChange(user) {
+			currentUser = user;
+			
+			const userInfo = document.getElementById('userInfo');
+			const userName = document.getElementById('userName');
+			const authButton = document.getElementById('authButton');
+
+			if (user) {
+				userInfo.style.display = 'block';
+				userName.textContent = user.displayName || user.email;
+				authButton.innerHTML = 'Sign Out';
+				authButton.onclick = signOut;
+				
+				loadUserRatings();
+				loadUserWordVotes();
+				loadUserNotes(); // NEW: Load user notes
+				
+			} else {
+				userInfo.style.display = 'none';
+				authButton.innerHTML = '<img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">Sign in with Google';
+				authButton.onclick = signIn;
+				userRatings = {};
+				userWordVotes = {};
+				userNotes = {}; // NEW: Clear notes on sign out
+				editingNotes = {}; // NEW: Clear editing state
+			}
+		}
+
+
+
 
         async function signIn() {
             if (!auth) {
@@ -2171,10 +2351,26 @@
             }).join('');
         }
 
-        
-		// FIXED: createSegmentHtml function - fixes star duplication
+
+        // NOTES: Create the display HTML, must be placed before createSegmentHtml
+        function createNoteDisplayHTML(videoId, segmentId, noteText) {
+            const hasNote = noteText && noteText.trim();
+            return `
+                <div class="notes-display ${hasNote ? '' : 'empty'}">
+                    ${hasNote ? noteText : 'Click "Add Note" to add your private notes for this segment...'}
+                </div>
+                <button class="notes-edit-btn" onclick="startEditingNote('${videoId}', '${segmentId}')">
+                    ${hasNote ? 'Edit Note' : 'Add Note'}
+                </button>
+            `;
+        }
+		
+		
+		
 		function createSegmentHtml(segment, videoId, segmentIndex) {
 			console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
+			console.log('🧪 TESTING NOTES SECTION - userNotes:', userNotes); // ADD THIS LINE
+			
 			
 			try {
 				const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
@@ -2215,7 +2411,16 @@
 					wordsHtml = '<div class="no-words">No words available</div>';
 				}
 
+				// Get user's note for this segment
+				const userNote = userNotes[videoId]?.[segmentId] || '';
+				const hasNote = userNote && userNote.trim();
+
+				console.log('🧪 NOTES DEBUG:', { videoId, segmentId, userNote, hasNote }); // ADD THIS LINE HERE
+				console.log('🧪 TESTING createNoteDisplayHTML:', createNoteDisplayHTML(videoId, segmentId, userNote));				
+				console.log('🧪 ABOUT TO RETURN HTML - includes notes section'); // ADD THIS LINE HERE
+				
 				return `
+				
 					<div class="segment" data-segment="${segmentId}">
 						<div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
 							<div class="segment-info">
@@ -2247,9 +2452,22 @@
 										</div>
 									`).join('')}
 								</div>
+								
+								<div class="notes-section" data-video="${videoId}" data-segment="${segmentId}">
+									<div class="notes-header" onclick="toggleNotesSection('${videoId}', '${segmentId}')">
+										<div class="notes-title">
+											📝 My Notes
+											${hasNote ? '<span style="color: #27ae60; font-size: 0.7rem; margin-left: 5px;">●</span>' : ''}
+										</div>
+										<div class="notes-expand-icon">▶</div>
+									</div>
+									<div class="notes-content">
+										${createNoteDisplayHTML(videoId, segmentId, userNote)}
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
+					</div>					
 				`;
 				
 			} catch (error) {
@@ -2266,6 +2484,9 @@
 				`;
 			}
 		}
+
+		
+		
 		
 		
         function preserveExpandedState() {
@@ -2608,7 +2829,8 @@
 
 
 
-		// FIXED: setupRealtimeUpdates - prevent collapse during word voting
+
+		// UPDATED: setupRealtimeUpdates to prevent collapse during note saving
 		function setupRealtimeUpdates() {
 			if (!db) return;
 			
@@ -2618,8 +2840,8 @@
 					clearTimeout(realtimeUpdateTimeout);
 				}
 
-				// IMPROVED: Only process if not currently voting on words or adding words
-				if (!isAddingWord && !isVotingOnWord && snapshot.docChanges().length > 0) {
+				// IMPROVED: Only process if not currently voting on words, adding words, or saving notes
+				if (!isAddingWord && !isVotingOnWord && !isSavingNote && snapshot.docChanges().length > 0) {
 					console.log('📡 Real-time update received, processing changes...');
 					
 					let hasChanges = false;
@@ -2656,14 +2878,270 @@
 							console.log('🔄 Applying real-time updates to UI...');
 							applyFilters();
 							updateStats();
-						}, 2000); // Increased delay to 2 seconds
+						}, 2000); // Wait 2 seconds before updating UI
 					}
-				} else if (isAddingWord || isVotingOnWord) {
-					console.log('⏸️ Skipping real-time update - word operation in progress');
+				} else if (isAddingWord || isVotingOnWord || isSavingNote) {
+					console.log('⏸️ Skipping real-time update - user operation in progress');
 				}
 			});
 		}
 
+
+
+
+       // ===== ADD ALL THE NOTES FUNCTIONS HERE ===== 
+        
+        // NOTES: Load user notes from Firebase
+        async function loadUserNotes() {
+            if (!currentUser || !db) return;
+
+            try {
+                console.log('📝 Loading user notes...');
+                const notesSnapshot = await db.collection('userNotes')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                userNotes = {};
+                
+                notesSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    if (!userNotes[data.videoId]) {
+                        userNotes[data.videoId] = {};
+                    }
+                    userNotes[data.videoId][data.segmentId] = data.noteText;
+                });
+                
+                console.log(`✅ Loaded ${notesSnapshot.size} notes`);
+                updateNotesDisplay();
+                
+            } catch (error) {
+                console.error('❌ Error loading user notes:', error);
+            }
+        }
+
+        // NOTES: Update notes display in DOM (without re-rendering)
+        function updateNotesDisplay() {
+            setTimeout(() => {
+                Object.keys(userNotes).forEach(videoId => {
+                    Object.keys(userNotes[videoId]).forEach(segmentId => {
+                        const noteText = userNotes[videoId][segmentId];
+                        updateNoteInDOM(videoId, segmentId, noteText);
+                    });
+                });
+            }, 100);
+        }
+
+        // NOTES: Update a specific note in the DOM without re-rendering
+        function updateNoteInDOM(videoId, segmentId, noteText) {
+            const notesDisplay = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"] .notes-display`
+            );
+            
+            if (notesDisplay) {
+                if (noteText && noteText.trim()) {
+                    notesDisplay.textContent = noteText;
+                    notesDisplay.classList.remove('empty');
+                } else {
+                    notesDisplay.textContent = 'Click "Edit" to add your private notes for this segment...';
+                    notesDisplay.classList.add('empty');
+                }
+            }
+        }
+
+        // NOTES: Toggle notes section expansion
+        function toggleNotesSection(videoId, segmentId) {
+            const notesSection = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"] .notes-section`
+            );
+            
+            if (notesSection) {
+                notesSection.classList.toggle('expanded');
+            }
+        }
+
+        // NOTES: Start editing a note
+        function startEditingNote(videoId, segmentId) {
+            if (!currentUser) {
+                showSignInPrompt('add notes', 0);
+                return;
+            }
+
+            const editKey = `${videoId}_${segmentId}`;
+            if (editingNotes[editKey]) {
+                console.log('Already editing this note');
+                return;
+            }
+
+            console.log(`📝 Starting to edit note for ${videoId}-${segmentId}`);
+            
+            const segmentElement = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+            );
+            
+            if (!segmentElement) return;
+
+            const notesContent = segmentElement.querySelector('.notes-content');
+            const currentNote = userNotes[videoId]?.[segmentId] || '';
+            
+            // Set editing flag
+            editingNotes[editKey] = true;
+            
+            // Replace display with edit form
+            notesContent.innerHTML = createNoteEditForm(videoId, segmentId, currentNote);
+            
+            // Focus on textarea
+            const textarea = notesContent.querySelector('.notes-textarea');
+            if (textarea) {
+                textarea.focus();
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            }
+        }
+
+        // NOTES: Create the edit form HTML
+        function createNoteEditForm(videoId, segmentId, currentNote) {
+            return `
+                <div class="notes-edit-form">
+                    <textarea class="notes-textarea" placeholder="Add your private notes for this segment..." maxlength="${MAX_NOTE_LENGTH}" data-video="${videoId}" data-segment="${segmentId}" oninput="updateCharCount('${videoId}', '${segmentId}')">${currentNote}</textarea>
+                    <div class="notes-char-count" id="charCount_${videoId}_${segmentId}">
+                        ${currentNote.length}/${MAX_NOTE_LENGTH}
+                    </div>
+                    <div class="notes-actions">
+                        <button class="notes-cancel-btn" onclick="cancelEditingNote('${videoId}', '${segmentId}')">
+                            Cancel
+                        </button>
+                        <button class="notes-save-btn" onclick="saveNote('${videoId}', '${segmentId}')" id="saveBtn_${videoId}_${segmentId}">
+                            Save Note
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+
+
+        // NOTES: Update character count
+        function updateCharCount(videoId, segmentId) {
+            const textarea = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"].notes-textarea`);
+            const charCountElement = document.getElementById(`charCount_${videoId}_${segmentId}`);
+            
+            if (textarea && charCountElement) {
+                const length = textarea.value.length;
+                charCountElement.textContent = `${length}/${MAX_NOTE_LENGTH}`;
+                
+                // Update styling based on length
+                charCountElement.classList.remove('warning', 'error');
+                if (length > MAX_NOTE_LENGTH * 0.9) {
+                    charCountElement.classList.add('warning');
+                }
+                if (length >= MAX_NOTE_LENGTH) {
+                    charCountElement.classList.add('error');
+                }
+                
+                // Enable/disable save button
+                const saveBtn = document.getElementById(`saveBtn_${videoId}_${segmentId}`);
+                if (saveBtn) {
+                    saveBtn.disabled = length > MAX_NOTE_LENGTH;
+                }
+            }
+        }
+
+
+        // NOTES: Save note
+        async function saveNote(videoId, segmentId) {
+            if (!currentUser) {
+                showSignInPrompt('save notes', 0);
+                return;
+            }
+            
+            if (isSavingNote) {
+                console.log('Already saving a note');
+                return;
+            }
+
+            const editKey = `${videoId}_${segmentId}`;
+            isSavingNote = true;
+            
+            try {
+                const textarea = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"].notes-textarea`);
+                if (!textarea) return;
+                
+                const noteText = textarea.value.trim();
+                const saveBtn = document.getElementById(`saveBtn_${videoId}_${segmentId}`);
+                
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
+                }
+                
+                console.log(`💾 Saving note for ${videoId}-${segmentId}:`, noteText);
+
+                // Update local data
+                if (!userNotes[videoId]) {
+                    userNotes[videoId] = {};
+                }
+                userNotes[videoId][segmentId] = noteText;
+
+                // Save to Firebase
+                if (db) {
+                    const noteDocId = `${currentUser.uid}_${videoId}_${segmentId}`;
+                    
+                    if (noteText) {
+                        await db.collection('userNotes').doc(noteDocId).set({
+                            userId: currentUser.uid,
+                            videoId: videoId,
+                            segmentId: segmentId,
+                            noteText: noteText,
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        // Delete empty notes
+                        await db.collection('userNotes').doc(noteDocId).delete();
+                    }
+                }
+
+                // Update UI to display mode
+                const notesContent = document.querySelector(
+                    `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"] .notes-content`
+                );
+                
+                if (notesContent) {
+                    notesContent.innerHTML = createNoteDisplayHTML(videoId, segmentId, noteText);
+                }
+
+                // Clear editing flag
+                delete editingNotes[editKey];
+
+                showNotification(noteText ? 'Note saved!' : 'Note deleted!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error saving note:', error);
+                showNotification('Failed to save note. Please try again.', 'error');
+            } finally {
+                isSavingNote = false;
+            }
+        }
+
+        // NOTES: Cancel editing
+        function cancelEditingNote(videoId, segmentId) {
+            const editKey = `${videoId}_${segmentId}`;
+            const currentNote = userNotes[videoId]?.[segmentId] || '';
+            
+            const notesContent = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"] .notes-content`
+            );
+            
+            if (notesContent) {
+                notesContent.innerHTML = createNoteDisplayHTML(videoId, segmentId, currentNote);
+            }
+            
+            // Clear editing flag
+            delete editingNotes[editKey];
+        }
+
+        // ===== END NOTES FUNCTIONS =====
+		
+		
+		
 
 
         // Make functions globally available for onclick handlers
@@ -2671,6 +3149,14 @@
         window.addWordFromInput = addWordFromInput;
         window.toggleSegment = toggleSegment;
         window.toggleAllSegments = toggleAllSegments;
+		
+		// Make notes functions globally available for onclick handlers
+		window.toggleNotesSection = toggleNotesSection;
+		window.startEditingNote = startEditingNote;
+		window.saveNote = saveNote;
+		window.cancelEditingNote = cancelEditingNote;
+		window.updateCharCount = updateCharCount;
+
  
         document.addEventListener('DOMContentLoaded', init);
     </script>
