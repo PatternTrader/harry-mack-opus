@@ -1712,8 +1712,16 @@
                 // Ensure segment has ratings - if not, use defaults
                 const segmentRatings = segment.ratings || defaultRatings;
                 
-                const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
+                //const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
 
+                // Safe calculation with fallback values
+                const avgRating = [
+                    segmentRatings.lyrics?.average || 0,
+                    segmentRatings.beats?.average || 0, 
+                    segmentRatings.reaction?.average || 0,
+                    segmentRatings.overall?.average || 0
+                ].reduce((sum, val) => sum + val, 0) / 4;
+                
                 // Process words with extensive debugging
                 let wordsHtml = '';
                 if (segment.words && Array.isArray(segment.words)) {
@@ -1775,11 +1783,13 @@
                                         <div class="rating-category">
                                             <div class="rating-info">
                                                 <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                                <span class="rating-stats">${segmentRatings[category].average.toFixed(1)}★ (${segmentRatings[category].count} ratings)</span>
+                                                //<span class="rating-stats">${segmentRatings[category].average.toFixed(1)}★ (${segmentRatings[category].count} ratings)</span>
+                                                <span class="rating-stats">${(segmentRatings[category]?.average || 0).toFixed(1)}★ (${segmentRatings[category]?.count || 0} ratings)</span>
                                             </div>
                                             <div class="rating-controls">
                                                 <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
-                                                    ${createStarRating(category, videoId, segmentRatings[category].average, segmentRatings[category].count, segmentId)}
+                                                    //${createStarRating(category, videoId, segmentRatings[category].average, segmentRatings[category].count, segmentId)}
+                                                    ${createStarRating(category, videoId, segmentRatings[category]?.average || 0, segmentRatings[category]?.count || 0, segmentId)}                                                    
                                                 </div>
                                                 ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
                                             </div>
