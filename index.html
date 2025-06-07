@@ -1763,7 +1763,7 @@
             }
         }
 
-        // FIXED: Improved addNewWord function
+        // FIXED: Improved addNewWord function - no more collapsing!
         async function addNewWord(videoId, segmentId, wordIndex, newWord) {
             console.log('🔍 Adding word:', { videoId, segmentId, wordIndex, newWord });
             
@@ -1822,24 +1822,25 @@
                     voters: [currentUser.uid]
                 };
                 
-                // IMPORTANT: Make a deep copy to avoid reference issues
-                const updatedSegments = JSON.parse(JSON.stringify(video.segments));
-                const targetSegment = updatedSegments.find(s => s.id === segmentId);
-                targetSegment.words[wordIndex].push(newWordObj);
-
-                // Update local video data
-                video.segments = updatedSegments;
+                // Add to the actual segment data
+                segment.words[wordIndex].push(newWordObj);
                 console.log('✅ Word added to local data');
 
-                // Save to Firebase if available
+                // Save user vote locally
+                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
+                userWordVotes[voteKey] = 'up';
+
+                // Update ONLY the specific word list in the DOM - no re-rendering!
+                updateWordListInDOM(videoId, segmentId, wordIndex, segment.words[wordIndex]);
+
+                // Save to Firebase in background
                 if (db) {
                     console.log('💾 Saving to Firebase...');
                     
                     // Convert to Firebase format
-                    const segmentsForFirebase = updatedSegments.map(seg => ({
+                    const segmentsForFirebase = video.segments.map(seg => ({
                         id: seg.id,
                         ratings: { ...seg.ratings },
-                        // Convert word arrays to objects for Firebase
                         words: seg.words.map(wordCandidates => {
                             const wordObj = {};
                             wordCandidates.forEach((candidate, index) => {
@@ -1859,9 +1860,7 @@
                     await videoRef.update({ segments: segmentsForFirebase });
                     console.log('✅ Firebase update successful!');
 
-                    // Save user vote
-                    const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
-                    userWordVotes[voteKey] = 'up';
+                    // Save user vote to Firebase
                     const voteDocId = `${currentUser.uid}_${voteKey}`;
                     await db.collection('userWordVotes').doc(voteDocId).set({
                         userId: currentUser.uid,
@@ -1875,10 +1874,8 @@
                     console.log('✅ Vote record saved');
                 }
 
-                // Update UI immediately
-                renderVideos();
                 showNotification(`Added new word: ${trimmedWord}`, 'success');
-                console.log('✅ Word addition completed successfully');
+                console.log('✅ Word addition completed successfully - no re-render needed!');
 
             } catch (error) {
                 console.error('❌ Error adding word:', error);
@@ -1888,8 +1885,35 @@
                 setTimeout(() => {
                     isAddingWord = false;
                     console.log('🔄 Word addition flag reset');
-                }, 2000);
+                }, 1000); // Reduced timeout since no re-render
             }
+        }
+
+        // NEW: Function to update just one word list without re-rendering everything
+        function updateWordListInDOM(videoId, segmentId, wordIndex, wordCandidates) {
+            console.log('🎯 Updating word list in DOM for:', videoId, segmentId, wordIndex);
+            
+            // Find the specific word list element
+            const segmentElement = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+            );
+
+            if (!segmentElement) {
+                console.warn('⚠️ Segment element not found');
+                return;
+            }
+
+            const wordListElements = segmentElement.querySelectorAll('.word-list');
+            if (!wordListElements[wordIndex]) {
+                console.warn('⚠️ Word list element not found for index:', wordIndex);
+                return;
+            }
+
+            // Update just this word list
+            const targetWordList = wordListElements[wordIndex];
+            targetWordList.innerHTML = createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex);
+            
+            console.log('✅ Word list updated in DOM without collapsing!');
         }
 
         function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
