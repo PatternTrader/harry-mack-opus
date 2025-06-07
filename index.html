@@ -1973,11 +1973,54 @@
                     }
                 }
                 
-                // Step 8: Update the display
-                renderVideos();
+
+
+                // Step 8: Update the display surgically (don't rebuild everything)
+                const segmentElement = document.querySelector(
+                    `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+                );
+                
+                if (segmentElement) {
+                    console.log('✅ Found segment element, updating word list surgically');
+                    
+                    // Find the specific word list for this word position
+                    const wordListElements = segmentElement.querySelectorAll('.word-list');
+                    if (wordListElements[wordIndex]) {
+                        console.log(`✅ Found word list for position ${wordIndex}, adding new word`);
+                        
+                        // Create HTML for the new word
+                        const newWordHtml = `
+                            <div class="word-item">
+                                <span>${trimmedWord}</span>
+                                <span class="word-votes">1</span>
+                                <div class="vote-buttons">
+                                    <button class="vote-btn voted" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'up')">
+                                        ↑
+                                    </button>
+                                    <button class="vote-btn" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${trimmedWord}', 'down')">
+                                        ↓
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add the new word to the existing list
+                        wordListElements[wordIndex].insertAdjacentHTML('beforeend', newWordHtml);
+                        console.log('✅ New word added to UI');
+                    } else {
+                        console.log('⚠️ Could not find word list element, falling back to full re-render');
+                        renderVideos();
+                    }
+                } else {
+                    console.log('⚠️ Could not find segment element, falling back to full re-render');
+                    renderVideos();
+                }
+                
                 showNotification(`Added new word: ${trimmedWord}`, 'success');
                 console.log('✅ Word addition completed successfully');
-        
+
+
+                
             } catch (error) {
                 console.error('❌ Error adding word:', error);
                 showNotification('Failed to add word. Please try again.', 'error');
@@ -2175,8 +2218,45 @@
             }
         }
 
+
+
+        // Add this function before your renderVideos function
+        function preserveExpandedState() {
+            const expandedSegments = [];
+            document.querySelectorAll('.segment.expanded').forEach(segment => {
+                const videoId = segment.closest('.segments-container').dataset.video;
+                const segmentId = segment.dataset.segment;
+                expandedSegments.push(`${videoId}_${segmentId}`);
+            });
+            return expandedSegments;
+        }
+        
+        function restoreExpandedState(expandedSegments) {
+            setTimeout(() => {
+                expandedSegments.forEach(segmentKey => {
+                    const [videoId, segmentId] = segmentKey.split('_', 2);
+                    const segmentElement = document.querySelector(
+                        `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+                    );
+                    if (segmentElement) {
+                        segmentElement.classList.add('expanded');
+                    }
+                });
+            }, 100);
+        }
+
+        
         function renderVideos() {
             console.log('🎨 Starting renderVideos function...');
+
+            // PRESERVE EXPANDED STATE
+            const expandedSegments = preserveExpandedState();
+            
+            console.log(`📊 Videos to render: ${videos.length}`);
+            
+            const videoGrid = document.getElementById('videoGrid');
+            videoGrid.innerHTML = ''; // Clear existing videos
+                
             console.log(`📊 Videos to render: ${videos.length}`);
             
             const videoGrid = document.getElementById('videoGrid');
@@ -2364,6 +2444,9 @@
             } catch (displayError) {
                 console.error('❌ Error updating user rating display:', displayError);
             }
+             
+            // RESTORE EXPANDED STATE
+            restoreExpandedState(expandedSegments);
         }
 
         function updateStarDisplay(starsContainer, rating, userRated = false) {
