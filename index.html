@@ -807,33 +807,6 @@
             return sanitized;
         }
 
-        // NEW: Function to update just one word list without re-rendering everything
-        function updateWordListInDOM(videoId, segmentId, wordIndex, wordCandidates) {
-            console.log('🎯 Updating word list in DOM for:', videoId, segmentId, wordIndex);
-            
-            // Find the specific word list element
-            const segmentElement = document.querySelector(
-                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
-            );
-
-            if (!segmentElement) {
-                console.warn('⚠️ Segment element not found');
-                return;
-            }
-
-            const wordListElements = segmentElement.querySelectorAll('.word-list');
-            if (!wordListElements[wordIndex]) {
-                console.warn('⚠️ Word list element not found for index:', wordIndex);
-                return;
-            }
-
-            // Update just this word list
-            const targetWordList = wordListElements[wordIndex];
-            targetWordList.innerHTML = createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex);
-            
-            console.log('✅ Word list updated in DOM without collapsing!');
-        }
-
         // NEW: Calculate weighted video ratings from segment ratings
         function calculateVideoOverallRating(video) {
             console.log(`🧮 Calculating weighted video rating for Episode ${video.episodeNumber}`);
@@ -910,6 +883,8 @@
 
             console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
         }
+
+        function generateDefaultSegments() {
             console.log('🔧 Generating default segments...');
             const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
             const numSegments = 3; // Default to 3 segments
@@ -1620,25 +1595,7 @@
                 console.error('Error loading user word votes:', error);
             }
         }
-            if (!currentUser || !db) return;
-
-            try {
-                const votesSnapshot = await db.collection('userWordVotes')
-                    .where('userId', '==', currentUser.uid)
-                    .get();
-                
-                userWordVotes = {};
-                
-                votesSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    const key = `${data.videoId}_${data.segmentId}_${data.wordIndex}_${data.word}`;
-                    userWordVotes[key] = data.voteType;
-                });
-                
-            } catch (error) {
-                console.error('Error loading user word votes:', error);
-            }
-        }
+         
 
         function updateUserRatingDisplay() {
             setTimeout(() => {
@@ -2030,81 +1987,30 @@
         }
 
         // NEW: Function to update just one word list without re-rendering everything
-        // NEW: Calculate weighted video ratings from segment ratings
-        function calculateVideoOverallRating(video) {
-            console.log(`🧮 Calculating weighted video rating for Episode ${video.episodeNumber}`);
+        function updateWordListInDOM(videoId, segmentId, wordIndex, wordCandidates) {
+            console.log('🎯 Updating word list in DOM for:', videoId, segmentId, wordIndex);
             
-            if (!video.segments || video.segments.length === 0) {
-                console.log('⚠️ No segments found, using default ratings');
-                return { ...defaultRatings };
-            }
+            // Find the specific word list element
+            const segmentElement = document.querySelector(
+                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+            );
 
-            const categories = ['lyrics', 'beats', 'reaction', 'overall'];
-            const videoRatings = {};
-
-            categories.forEach(category => {
-                let totalWeightedScore = 0;
-                let totalRatingCount = 0;
-
-                // Sum up weighted scores from all segments
-                video.segments.forEach(segment => {
-                    if (segment.ratings && segment.ratings[category]) {
-                        const segmentRating = segment.ratings[category];
-                        const average = segmentRating.average || 0;
-                        const count = segmentRating.count || 0;
-                        
-                        totalWeightedScore += (average * count);
-                        totalRatingCount += count;
-                    }
-                });
-
-                // Calculate weighted average
-                const weightedAverage = totalRatingCount > 0 ? totalWeightedScore / totalRatingCount : 0;
-                
-                videoRatings[category] = {
-                    average: Math.max(0, Math.min(5, weightedAverage)), // Clamp between 0-5
-                    count: totalRatingCount
-                };
-
-                console.log(`📊 ${category}: ${weightedAverage.toFixed(2)}★ (${totalRatingCount} total ratings)`);
-            });
-
-            return videoRatings;
-        }
-
-        // NEW: Update video rating and refresh UI
-        function updateVideoRatingDisplay(video) {
-            console.log(`🎨 Updating video rating display for Episode ${video.episodeNumber}`);
-            
-            // Find the video card in the DOM
-            const videoCards = document.querySelectorAll('.video-card');
-            let targetCard = null;
-            
-            videoCards.forEach(card => {
-                const starsElement = card.querySelector('[data-video]');
-                if (starsElement && starsElement.dataset.video === video.episodeNumber.toString()) {
-                    targetCard = card;
-                }
-            });
-
-            if (!targetCard) {
-                console.log('⚠️ Video card not found in DOM');
+            if (!segmentElement) {
+                console.warn('⚠️ Segment element not found');
                 return;
             }
 
-            // Update the overall rating display
-            const ratingStats = targetCard.querySelector('.overall-rating .rating-stats');
-            if (ratingStats) {
-                ratingStats.textContent = `${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`;
+            const wordListElements = segmentElement.querySelectorAll('.word-list');
+            if (!wordListElements[wordIndex]) {
+                console.warn('⚠️ Word list element not found for index:', wordIndex);
+                return;
             }
 
-            // Update the stars display
-            const starsContainer = targetCard.querySelector('.overall-rating .stars');
-            if (starsContainer) {
-                updateStarDisplay(starsContainer, video.ratings.overall.average, false);
-            }
-
-            console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
+            // Update just this word list
+            const targetWordList = wordListElements[wordIndex];
+            targetWordList.innerHTML = createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex);
+            
+            console.log('✅ Word list updated in DOM without collapsing!');
         }
 
         function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
@@ -2656,7 +2562,6 @@
         window.toggleSegment = toggleSegment;
         window.toggleAllSegments = toggleAllSegments;
  
-        // Initialize the application when DOM is ready
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
