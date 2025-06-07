@@ -389,6 +389,46 @@
             background: #229954;
         }
 
+        .personal-notes-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .personal-notes-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            resize: vertical;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .personal-notes-textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .personal-notes-textarea:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .notes-signin-prompt {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
         .segment-ratings {
             border-top: 1px solid #eee;
             padding-top: 15px;
@@ -624,7 +664,7 @@
             <h1>🎤 Harry Mack Community Hub</h1>
             <p>Rate each segment and crowdsource words with the global Harry Mack fan community!</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
-                ✨ Rate individual segments • Add missing words • Vote on word accuracy ✨
+                ✨ Rate individual segments • Add missing words • Vote on word accuracy • Save personal notes ✨
             </p>
         </div>
 
@@ -702,8 +742,10 @@
         let videos = [];
         let userRatings = {};
         let userWordVotes = {};
+        let userNotes = {}; // NEW: Store user's personal notes
         let isAddingWord = false;
-        let realtimeUpdateTimeout = null; // Add this to debounce real-time updates
+        let realtimeUpdateTimeout = null;
+        let notesSaveTimeout = {}; // NEW: Debounce note saving // Add this to debounce real-time updates
         
         // Default ratings structure
         const defaultRatings = {
@@ -883,8 +925,6 @@
 
             console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
         }
-
-        function generateDefaultSegments() {
             console.log('🔧 Generating default segments...');
             const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
             const numSegments = 3; // Default to 3 segments
@@ -1042,6 +1082,7 @@
                 
                 loadUserRatings();
                 loadUserWordVotes();
+                loadUserNotes(); // NEW: Load user's saved notes
                 
             } else {
                 userInfo.style.display = 'none';
@@ -1049,6 +1090,7 @@
                 authButton.onclick = signIn;
                 userRatings = {};
                 userWordVotes = {};
+                userNotes = {}; // NEW: Clear notes when signed out
             }
         }
 
@@ -1595,7 +1637,125 @@
                 console.error('Error loading user word votes:', error);
             }
         }
-         
+
+        async function loadUserNotes() {
+            if (!currentUser || !db) return;
+
+            try {
+                console.log('📝 Loading user notes...');
+                const notesSnapshot = await db.collection('userNotes')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                userNotes = {};
+                
+                notesSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const key = `${data.videoId}_${data.segmentId}`;
+                    userNotes[key] = data.note || '';
+                });
+                
+                console.log(`✅ Loaded ${Object.keys(userNotes).length} user notes`);
+                displayUserNotes(); // Update UI with loaded notes
+                updateStats(); // Update stats to show notes count
+                
+            } catch (error) {
+                console.error('Error loading user notes:', error);
+            }
+        }
+
+        function displayUserNotes() {
+            // Update all note textareas with saved notes
+            Object.keys(userNotes).forEach(key => {
+                const [videoId, segmentId] = key.split('_', 2);
+                const noteElement = document.getElementById(`note_${videoId}_${segmentId}`);
+                if (noteElement) {
+                    noteElement.value = userNotes[key];
+                }
+            });
+        }
+
+        async function saveUserNote(videoId, segmentId, noteText) {
+            if (!currentUser || !db) {
+                showNotification('Please sign in to save notes', 'info');
+                return;
+            }
+
+            try {
+                const noteKey = `${videoId}_${segmentId}`;
+                userNotes[noteKey] = noteText;
+
+                const docId = `${currentUser.uid}_${videoId}_${segmentId}`;
+                
+                if (noteText.trim() === '') {
+                    // Delete empty notes
+                    await db.collection('userNotes').doc(docId).delete();
+                    console.log('🗑️ Empty note deleted');
+                    updateStats(); // Update stats when note is deleted
+                } else {
+                    // Save/update note
+                    await db.collection('userNotes').doc(docId).set({
+                        userId: currentUser.uid,
+                        videoId: videoId,
+                        segmentId: segmentId,
+                        note: noteText,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('💾 Note saved successfully');
+                    
+                    // Brief visual feedback that note was saved
+                    const noteElement = document.getElementById(`note_${videoId}_${segmentId}`);
+                    if (noteElement) {
+                        noteElement.style.borderColor = '#27ae60';
+                        setTimeout(() => {
+                            noteElement.style.borderColor = '#ddd';
+                        }, 1000);
+                    }
+                    
+                    // Update stats to reflect new note count
+                    updateStats();
+                }
+                
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showNotification('Failed to save note. Please try again.', 'error');
+            }
+        }
+
+        function handleNoteInput(videoId, segmentId, noteText) {
+            // Debounced auto-save for notes
+            const noteKey = `${videoId}_${segmentId}`;
+            
+            // Clear existing timeout for this note
+            if (notesSaveTimeout[noteKey]) {
+                clearTimeout(notesSaveTimeout[noteKey]);
+            }
+            
+            // Set new timeout to save after 2 seconds of no typing
+            notesSaveTimeout[noteKey] = setTimeout(() => {
+                saveUserNote(videoId, segmentId, noteText);
+                console.log(`📝 Auto-saved note for ${videoId}-${segmentId}`);
+            }, 2000);
+        }
+            if (!currentUser || !db) return;
+
+            try {
+                const votesSnapshot = await db.collection('userWordVotes')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+                
+                userWordVotes = {};
+                
+                votesSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const key = `${data.videoId}_${data.segmentId}_${data.wordIndex}_${data.word}`;
+                    userWordVotes[key] = data.voteType;
+                });
+                
+            } catch (error) {
+                console.error('Error loading user word votes:', error);
+            }
+        }
 
         function updateUserRatingDisplay() {
             setTimeout(() => {
@@ -2126,6 +2286,22 @@
                                     <h5>Crowdsourced Words (vote on accuracy)</h5>
                                     ${wordsHtml}
                                 </div>
+                                
+                                <div class="personal-notes-section">
+                                    <h5 style="color: #2c3e50; margin-bottom: 10px; font-size: 0.85rem;">
+                                        📝 Your Personal Notes 
+                                        ${currentUser ? '<span style="color: #27ae60; font-size: 0.7rem;">(Auto-saved)</span>' : ''}
+                                    </h5>
+                                    <textarea 
+                                        id="note_${videoId}_${segmentId}"
+                                        class="personal-notes-textarea" 
+                                        placeholder="${currentUser ? 'Add your thoughts about this segment... (saves automatically)' : 'Sign in to save personal notes'}"
+                                        ${!currentUser ? 'disabled' : ''}
+                                        oninput="handleNoteInput('${videoId}', '${segmentId}', this.value)"
+                                    ></textarea>
+                                    ${!currentUser ? '<div class="notes-signin-prompt">💡 Sign in to save personal notes for each segment - perfect for keeping track of your favorite moments!</div>' : ''}
+                                </div>
+                                
                                 <div class="segment-ratings">
                                     <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
                                     ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
@@ -2359,6 +2535,7 @@
 
             try {
                 updateUserRatingDisplay();
+                displayUserNotes(); // NEW: Display user notes after rendering
                 console.log('✅ User rating display updated');
             } catch (displayError) {
                 console.error('❌ Error updating user rating display:', displayError);
@@ -2457,6 +2634,12 @@
             document.getElementById('avgOverall').textContent = overallRatingCount > 0 ? (totalOverallRating / overallRatingCount).toFixed(1) : '0.0';
             document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
             document.getElementById('topEpisode').textContent = topEpisode;
+            
+            // NEW: Update personal notes count if user is signed in
+            if (currentUser) {
+                const personalNotesCount = Object.keys(userNotes).filter(key => userNotes[key].trim() !== '').length;
+                document.getElementById('activeUsers').textContent = `${Object.keys(userRatings).length} • ${personalNotesCount} notes`;
+            }
         }
         
         function showNotification(message, type) {
@@ -2561,7 +2744,9 @@
         window.addWordFromInput = addWordFromInput;
         window.toggleSegment = toggleSegment;
         window.toggleAllSegments = toggleAllSegments;
+        window.handleNoteInput = handleNoteInput; // NEW: Make note handler global
  
+        // Initialize the application when DOM is ready
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
