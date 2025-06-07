@@ -1222,12 +1222,6 @@
                     
                     console.log(`✅ Successfully loaded ${videos.length} videos`);
                 }
-
-                // ADD THIS: Load words from Firebase before rendering
-                console.log('📥 Loading words from Firebase...');
-                await loadWordsFromFirebase();
-                console.log('✅ Words loaded from Firebase');
-
                 
                 // Separate rendering from data loading to prevent fallback on render errors
                 console.log('🎨 Starting to render videos...');
@@ -1792,108 +1786,53 @@
             }
         }
 
-    
         async function voteOnWord(videoId, segmentId, wordIndex, word, voteType) {
             if (!currentUser) {
                 showSignInPrompt('word voting', 0);
                 return;
             }
-            
             try {
                 const voteKey = `${videoId}_${segmentId}_${wordIndex}_${word}`;
                 const currentVote = userWordVotes[voteKey];
-        
+
                 // Toggle vote or change vote type
                 let newVoteType = null;
                 if (currentVote === voteType) {
-                    newVoteType = null; // Remove vote
+                    // Remove vote if clicking same type
+                    newVoteType = null;
                 } else {
-                    newVoteType = voteType; // Set new vote
+                    // Set new vote type
+                    newVoteType = voteType;
                 }
-                
                 userWordVotes[voteKey] = newVoteType;
-        
-                // Update local data immediately
-                const video = videos.find(v => v.episodeNumber.toString() === videoId);
-                if (video) {
-                    const segment = video.segments.find(s => s.id === segmentId);
-                    if (segment && segment.words[wordIndex]) {
-                        const wordCandidate = segment.words[wordIndex].find(w => w.word === word);
-                        if (wordCandidate) {
-                            // Update vote counts
-                            if (currentVote === 'up') wordCandidate.votes--;
-                            if (currentVote === 'down') wordCandidate.votes++;
-                            if (newVoteType === 'up') wordCandidate.votes++;
-                            if (newVoteType === 'down') wordCandidate.votes--;
-                            
-                            wordCandidate.votes = Math.max(0, wordCandidate.votes);
-                        }
-                    }
-                }
-        
-                // Save to Firebase
+
                 if (db) {
-                    try {
-                        // Save/update user vote
-                        const voteDocId = `${currentUser.uid}_${voteKey}`;
-                        if (newVoteType) {
-                            await db.collection('userWordVotes').doc(voteDocId).set({
-                                userId: currentUser.uid,
-                                videoId: parseInt(videoId),
-                                segmentId: segmentId,
-                                wordIndex: parseInt(wordIndex),
-                                word: word,
-                                voteType: newVoteType,
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        } else {
-                            // Remove vote
-                            await db.collection('userWordVotes').doc(voteDocId).delete();
-                        }
-        
-                        // Update the word document in Firebase
-                        const wordQuery = await db.collection('words')
-                            .where('videoId', '==', parseInt(videoId))
-                            .where('segmentId', '==', segmentId)
-                            .where('wordIndex', '==', parseInt(wordIndex))
-                            .where('word', '==', word)
-                            .limit(1)
-                            .get();
-        
-                        if (!wordQuery.empty) {
-                            const wordDoc = wordQuery.docs[0];
-                            const currentData = wordDoc.data();
-                            
-                            // Calculate new vote count
-                            let newVotes = currentData.votes || 1;
-                            if (currentVote === 'up') newVotes--;
-                            if (currentVote === 'down') newVotes++;
-                            if (newVoteType === 'up') newVotes++;
-                            if (newVoteType === 'down') newVotes--;
-                            
-                            await wordDoc.ref.update({
-                                votes: Math.max(0, newVotes)
-                            });
-                        }
-                        
-                        console.log('✅ Vote saved to Firebase');
-                        
-                    } catch (firebaseError) {
-                        console.error('❌ Firebase vote save failed:', firebaseError);
-                        showNotification('Vote updated locally but failed to sync to Firebase', 'warning');
+                    const voteDocId = `${currentUser.uid}_${voteKey}`;
+                    if (newVoteType) {
+                        await db.collection('userWordVotes').doc(voteDocId).set({
+                            userId: currentUser.uid,
+                            videoId: videoId,
+                            segmentId: segmentId,
+                            wordIndex: wordIndex,
+                            word: word,
+                            voteType: newVoteType,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        await db.collection('userWordVotes').doc(voteDocId).delete();
                     }
+
+                    await updateWordVotes(videoId, segmentId, wordIndex, word, currentVote, newVoteType);
                 }
-        
+
                 renderVideos();
-                const voteText = newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on';
-                showNotification(`${voteText} word: ${word}`, 'success');
+                showNotification(`${newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on'} word: ${word}`, 'success');
                 
             } catch (error) {
                 console.error('Error voting on word:', error);
                 showNotification('Failed to save vote. Please try again.', 'error');
             }
         }
-        
 
         async function updateWordVotes(videoId, segmentId, wordIndex, word, oldVote, newVote) {
             if (!db) return;
@@ -1932,20 +1871,25 @@
         async function addNewWord(videoId, segmentId, wordIndex, newWord) {
             console.log('🔍 Adding word:', { videoId, segmentId, wordIndex, newWord });
             
+            // Step 1: Check if user is signed in
             if (!currentUser) {
+                console.log('❌ No user signed in');
                 showSignInPrompt('add words', 0);
                 return;
             }
         
+            // Step 2: Validate the word
             if (!newWord || !newWord.trim()) {
+                console.log('❌ Empty word provided');
                 showNotification('Please enter a word', 'error');
                 return;
             }
         
             const trimmedWord = newWord.trim();
+            console.log('✅ User authenticated, word validated:', trimmedWord);
         
             try {
-                // Step 1: Update local data first (immediate UI update)
+                // Step 3: Find the video and segment
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (!video) {
                     showNotification('Video not found', 'error');
@@ -1958,7 +1902,7 @@
                     return;
                 }
         
-                // Check if word already exists locally
+                // Step 4: Check if word already exists
                 const existingWord = segment.words[wordIndex].find(w => 
                     w && w.word && w.word.toLowerCase() === trimmedWord.toLowerCase()
                 );
@@ -1968,66 +1912,69 @@
                     return;
                 }
         
-                // Add to local data immediately
+                // Step 5: Add word to local data first (this always works)
                 const newWordObj = {
                     word: trimmedWord,
                     votes: 1,
-                    voters: [currentUser.uid],
-                    id: `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}_${Date.now()}` // Unique ID
+                    voters: [currentUser.uid]
                 };
                 segment.words[wordIndex].push(newWordObj);
                 console.log('✅ Word added to local data');
         
-                // Step 2: Save to Firebase using separate collection (no nested arrays!)
+                // Step 6: Save to Firebase (the tricky part)
                 if (db) {
-                    console.log('💾 Saving to Firebase...');
+                    console.log('💾 Converting data for Firebase...');
                     
-                    try {
-                        // Save word to separate collection
-                        const wordDocRef = db.collection('words').doc(newWordObj.id);
-                        await wordDocRef.set({
-                            videoId: parseInt(videoId),
-                            segmentId: segmentId,
-                            wordIndex: parseInt(wordIndex),
-                            word: trimmedWord,
-                            votes: 1,
-                            voters: [currentUser.uid],
-                            addedBy: currentUser.uid,
-                            addedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            // Add metadata for easier querying
-                            videoSegmentWord: `${videoId}_${segmentId}_${wordIndex}` // Composite key for queries
-                        });
-                        
-                        console.log('✅ Word saved to Firebase words collection');
+                    // THE KEY: Convert nested arrays to objects for Firebase
+                    const segmentsForFirebase = video.segments.map(seg => ({
+                        id: seg.id,
+                        ratings: seg.ratings,
+                        // Convert each word position's array to an object
+                        words: seg.words.map(wordCandidates => {
+                            const wordObj = {};
+                            wordCandidates.forEach((candidate, index) => {
+                                wordObj[index.toString()] = candidate;
+                            });
+                            return wordObj;
+                        })
+                    }));
         
-                        // Also save user vote
+                    // Try to save the converted data
+                    try {
+                        const videoRef = db.collection('videos').doc(`episode_${videoId}`);
+                        await videoRef.update({
+                            segments: segmentsForFirebase
+                        });
+                        console.log('✅ Firebase update successful!');
+                    } catch (firebaseError) {
+                        console.log('⚠️ Firebase save failed, but local data is updated:', firebaseError.message);
+                        // Don't throw error - local data is still working
+                    }
+        
+                    // Step 7: Save user vote
+                    try {
                         const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
                         userWordVotes[voteKey] = 'up';
-                        
                         const voteDocId = `${currentUser.uid}_${voteKey}`;
                         await db.collection('userWordVotes').doc(voteDocId).set({
                             userId: currentUser.uid,
-                            videoId: parseInt(videoId),
+                            videoId: videoId,
                             segmentId: segmentId,
                             wordIndex: parseInt(wordIndex),
                             word: trimmedWord,
                             voteType: 'up',
-                            wordDocId: newWordObj.id, // Link to the word document
                             timestamp: firebase.firestore.FieldValue.serverTimestamp()
                         });
-                        
-                        console.log('✅ Vote saved to Firebase');
-                        
-                    } catch (firebaseError) {
-                        console.error('❌ Firebase save failed:', firebaseError);
-                        showNotification('Word added locally but failed to sync to Firebase', 'warning');
+                        console.log('✅ Vote record saved');
+                    } catch (voteError) {
+                        console.log('⚠️ Vote record failed (non-critical):', voteError.message);
                     }
                 }
                 
-                // Step 3: Update display
+                // Step 8: Update the display
                 renderVideos();
                 showNotification(`Added new word: ${trimmedWord}`, 'success');
-                console.log('✅ Word addition completed');
+                console.log('✅ Word addition completed successfully');
         
             } catch (error) {
                 console.error('❌ Error adding word:', error);
@@ -2035,96 +1982,8 @@
             }
         }
 
-        // Function to load words from Firebase and merge with local video data
-        async function loadWordsFromFirebase() {
-            if (!db) {
-                console.log('No database connection');
-                return;
-            }
-        
-            try {
-                console.log('📥 Loading words from Firebase...');
-                
-                // Get all words from the words collection
-                const wordsSnapshot = await db.collection('words').get();
-                console.log(`📋 Found ${wordsSnapshot.size} words in Firebase`);
-                
-                // Group words by video and segment
-                const wordsByVideo = {};
-                
-                wordsSnapshot.docs.forEach(doc => {
-                    const wordData = doc.data();
-                    const videoId = wordData.videoId.toString();
-                    const segmentId = wordData.segmentId;
-                    const wordIndex = wordData.wordIndex;
-                    
-                    // Initialize structure if needed
-                    if (!wordsByVideo[videoId]) {
-                        wordsByVideo[videoId] = {};
-                    }
-                    if (!wordsByVideo[videoId][segmentId]) {
-                        wordsByVideo[videoId][segmentId] = {};
-                    }
-                    if (!wordsByVideo[videoId][segmentId][wordIndex]) {
-                        wordsByVideo[videoId][segmentId][wordIndex] = [];
-                    }
-                    
-                    // Add word to the appropriate position
-                    wordsByVideo[videoId][segmentId][wordIndex].push({
-                        id: doc.id,
-                        word: wordData.word,
-                        votes: wordData.votes || 1,
-                        voters: wordData.voters || [],
-                        addedBy: wordData.addedBy,
-                        addedAt: wordData.addedAt
-                    });
-                });
-                
-                console.log('📊 Organized words by video:', wordsByVideo);
-                
-                // Merge Firebase words with local video data
-                videos.forEach(video => {
-                    const videoId = video.episodeNumber.toString();
-                    const firebaseWords = wordsByVideo[videoId];
-                    
-                    if (firebaseWords) {
-                        video.segments.forEach(segment => {
-                            const segmentWords = firebaseWords[segment.id];
-                            
-                            if (segmentWords) {
-                                // Replace local words with Firebase words for each position
-                                Object.keys(segmentWords).forEach(wordIndex => {
-                                    const index = parseInt(wordIndex);
-                                    if (segment.words[index]) {
-                                        // Keep existing words and add Firebase words
-                                        const existingWords = segment.words[index];
-                                        const firebaseWordsAtPosition = segmentWords[wordIndex];
-                                        
-                                        // Merge without duplicates
-                                        firebaseWordsAtPosition.forEach(fbWord => {
-                                            const exists = existingWords.find(existing => 
-                                                existing.word.toLowerCase() === fbWord.word.toLowerCase()
-                                            );
-                                            if (!exists) {
-                                                existingWords.push(fbWord);
-                                            }
-                                        });
-                                        
-                                        // Sort by votes (highest first)
-                                        segment.words[index].sort((a, b) => (b.votes || 0) - (a.votes || 0));
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-                
-                console.log('✅ Words merged with local data');
-                
-            } catch (error) {
-                console.error('❌ Error loading words from Firebase:', error);
-            }
-        }
+
+    
 
         function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
             let starsHtml = '';
