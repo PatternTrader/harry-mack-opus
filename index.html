@@ -714,14 +714,14 @@
         // Debug mode flag
         const DEBUG_EPISODE_2 = true;
 
-        // Debug version to see what's going wrong
+
+
+        // OPTION 2: Complete Fix - Better Firebase handling
+        // If you want Firebase saving, replace your convertWordsObjectToArray function with this:
         function convertWordsObjectToArray(wordsData) {
-            console.log('🔍 DEBUG: Converting words data:', wordsData);
-            console.log('🔍 DEBUG: wordsData type:', typeof wordsData);
-            console.log('🔍 DEBUG: wordsData is array:', Array.isArray(wordsData));
+            console.log('🔄 Converting words data:', wordsData);
             
             if (!wordsData) {
-                console.log('⚠️ No words data provided, creating default');
                 return [
                     [{word: 'word1', votes: 5, voters: []}],
                     [{word: 'word2', votes: 5, voters: []}],
@@ -729,55 +729,40 @@
                 ];
             }
         
-            // Check if it's already in the correct format (array of arrays)
-            if (Array.isArray(wordsData)) {
-                console.log('🔍 DEBUG: wordsData is array, checking first element...');
-                console.log('🔍 DEBUG: First element:', wordsData[0]);
-                console.log('🔍 DEBUG: First element is array:', Array.isArray(wordsData[0]));
-                
-                // If first element is an array, assume it's already correct format
-                if (wordsData[0] && Array.isArray(wordsData[0])) {
-                    console.log('✅ Already in correct array format - returning as-is');
-                    return wordsData;
-                }
-                
-                // If first element is an object, convert from Firebase format
-                if (wordsData[0] && typeof wordsData[0] === 'object' && !Array.isArray(wordsData[0])) {
-                    console.log('🔄 Converting from Firebase object format to arrays');
-                    const converted = wordsData.map((wordPosition, posIndex) => {
-                        console.log(`🔍 DEBUG: Converting position ${posIndex}:`, wordPosition);
-                        
-                        if (Array.isArray(wordPosition)) {
-                            console.log(`✅ Position ${posIndex} is already array`);
-                            return wordPosition;
-                        } else if (wordPosition && typeof wordPosition === 'object') {
-                            console.log(`🔄 Position ${posIndex} is object, converting...`);
-                            const candidates = Object.values(wordPosition).filter(candidate => {
-                                console.log('🔍 DEBUG: Checking candidate:', candidate);
-                                return candidate && candidate.word;
-                            });
-                            console.log(`✅ Position ${posIndex} converted to:`, candidates);
-                            return candidates.length > 0 ? candidates : [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
-                        } else {
-                            console.log(`⚠️ Position ${posIndex} is invalid, creating default`);
-                            return [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
-                        }
-                    });
-                    console.log('✅ Conversion complete:', converted);
-                    return converted;
-                }
+            // If it's already the correct format (array of arrays), return as-is
+            if (Array.isArray(wordsData) && wordsData.length > 0 && Array.isArray(wordsData[0])) {
+                console.log('✅ Already in correct format');
+                return wordsData;
             }
         
-            // If we get here, the format is unrecognized
-            console.log('⚠️ DEBUG: Unrecognized format, creating default structure');
-            console.log('🔍 DEBUG: Full wordsData object:', JSON.stringify(wordsData, null, 2));
+            // If it's an array of objects (Firebase format), convert back to arrays
+            if (Array.isArray(wordsData) && wordsData.length > 0 && 
+                typeof wordsData[0] === 'object' && !Array.isArray(wordsData[0])) {
+                console.log('🔄 Converting from Firebase object format');
+                
+                return wordsData.map((wordPosition, index) => {
+                    if (typeof wordPosition === 'object' && wordPosition !== null) {
+                        // Convert object back to array
+                        const candidates = Object.values(wordPosition).filter(candidate => 
+                            candidate && typeof candidate === 'object' && candidate.word
+                        );
+                        return candidates.length > 0 ? candidates : [{word: `word${index + 1}`, votes: 1, voters: []}];
+                    } else {
+                        return [{word: `word${index + 1}`, votes: 1, voters: []}];
+                    }
+                });
+            }
+        
+            // Fallback - create default structure
+            console.log('⚠️ Unknown format, creating defaults');
             return [
                 [{word: 'word1', votes: 5, voters: []}],
                 [{word: 'word2', votes: 5, voters: []}],
                 [{word: 'word3', votes: 5, voters: []}]
             ];
         }
- 
+        
+    
 
         
         function sanitizeSegmentData(segment, videoId, segmentIndex) {
@@ -1906,38 +1891,58 @@
                 };
                 segment.words[wordIndex].push(newWordObj);
                 console.log('✅ Word added to local data');
-        
-                // Step 6: Save to Firebase (the tricky part)
+
+                // Step 6: Save to Firebase with better error handling
                 if (db) {
-                    console.log('💾 Converting data for Firebase...');
+                    console.log('💾 Saving to Firebase...');
                     
-                    // THE KEY: Convert nested arrays to objects for Firebase
-                    const segmentsForFirebase = video.segments.map(seg => ({
-                        id: seg.id,
-                        ratings: seg.ratings,
-                        // Convert each word position's array to an object
-                        words: seg.words.map(wordCandidates => {
-                            const wordObj = {};
-                            wordCandidates.forEach((candidate, index) => {
-                                wordObj[index.toString()] = candidate;
-                            });
-                            return wordObj;
-                        })
-                    }));
-        
-                    // Try to save the converted data
                     try {
+                        // Create a safe copy for Firebase
+                        const segmentsForFirebase = video.segments.map(seg => {
+                            // Deep clone the segment to avoid modifying original data
+                            const safeSeg = {
+                                id: seg.id,
+                                ratings: { ...seg.ratings }
+                            };
+                            
+                            // Convert nested arrays to objects for Firebase
+                            if (seg.words && Array.isArray(seg.words)) {
+                                safeSeg.words = seg.words.map(wordCandidates => {
+                                    if (Array.isArray(wordCandidates)) {
+                                        const wordObj = {};
+                                        wordCandidates.forEach((candidate, index) => {
+                                            if (candidate && candidate.word) {
+                                                wordObj[index.toString()] = {
+                                                    word: candidate.word,
+                                                    votes: candidate.votes || 1,
+                                                    voters: candidate.voters || []
+                                                };
+                                            }
+                                        });
+                                        return wordObj;
+                                    }
+                                    return wordCandidates; // Already in object format
+                                });
+                            }
+                            
+                            return safeSeg;
+                        });
+                
+                        console.log('🔍 Firebase data structure:', segmentsForFirebase[0]?.words?.[0]);
+                        
                         const videoRef = db.collection('videos').doc(`episode_${videoId}`);
                         await videoRef.update({
                             segments: segmentsForFirebase
                         });
                         console.log('✅ Firebase update successful!');
+                        
                     } catch (firebaseError) {
-                        console.log('⚠️ Firebase save failed, but local data is updated:', firebaseError.message);
-                        // Don't throw error - local data is still working
+                        console.error('❌ Firebase save failed:', firebaseError);
+                        console.log('⚠️ Word added locally but not synced to Firebase');
+                        // Don't throw - local data still works
                     }
-        
-                    // Step 7: Save user vote
+                
+                    // Step 7: Save user vote (keep this part the same)
                     try {
                         const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
                         userWordVotes[voteKey] = 'up';
