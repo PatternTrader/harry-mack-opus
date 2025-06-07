@@ -1595,25 +1595,7 @@
                 console.error('Error loading user word votes:', error);
             }
         }
-            if (!currentUser || !db) return;
-
-            try {
-                const votesSnapshot = await db.collection('userWordVotes')
-                    .where('userId', '==', currentUser.uid)
-                    .get();
-                
-                userWordVotes = {};
-                
-                votesSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    const key = `${data.videoId}_${data.segmentId}_${data.wordIndex}_${data.word}`;
-                    userWordVotes[key] = data.voteType;
-                });
-                
-            } catch (error) {
-                console.error('Error loading user word votes:', error);
-            }
-        }
+         
 
         function updateUserRatingDisplay() {
             setTimeout(() => {
