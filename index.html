@@ -703,6 +703,7 @@
         let userRatings = {};
         let userWordVotes = {};
         let isAddingWord = false;
+		let isVotingOnWord = false;
         let realtimeUpdateTimeout = null; // Add this to debounce real-time updates
         
         // Default ratings structure
@@ -1785,50 +1786,59 @@
             }
         }
 
-        async function voteOnWord(videoId, segmentId, wordIndex, word, voteType) {
-            if (!currentUser) {
-                showSignInPrompt('word voting', 0);
-                return;
-            }
-            try {
-                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${word}`;
-                const currentVote = userWordVotes[voteKey];
 
-                let newVoteType = null;
-                if (currentVote === voteType) {
-                    newVoteType = null;
-                } else {
-                    newVoteType = voteType;
-                }
-                userWordVotes[voteKey] = newVoteType;
 
-                if (db) {
-                    const voteDocId = `${currentUser.uid}_${voteKey}`;
-                    if (newVoteType) {
-                        await db.collection('userWordVotes').doc(voteDocId).set({
-                            userId: currentUser.uid,
-                            videoId: videoId,
-                            segmentId: segmentId,
-                            wordIndex: wordIndex,
-                            word: word,
-                            voteType: newVoteType,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    } else {
-                        await db.collection('userWordVotes').doc(voteDocId).delete();
-                    }
+	   
+	   
+	   // FIXED: voteOnWord function - NO renderVideos() call
+		async function voteOnWord(videoId, segmentId, wordIndex, word, voteType) {
+			if (!currentUser) {
+				showSignInPrompt('word voting', 0);
+				return;
+			}
+			try {
+				const voteKey = `${videoId}_${segmentId}_${wordIndex}_${word}`;
+				const currentVote = userWordVotes[voteKey];
 
-                    await updateWordVotes(videoId, segmentId, wordIndex, word, currentVote, newVoteType);
-                }
+				let newVoteType = null;
+				if (currentVote === voteType) {
+					newVoteType = null;
+				} else {
+					newVoteType = voteType;
+				}
+				userWordVotes[voteKey] = newVoteType;
 
-                renderVideos();
-                showNotification(`${newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on'} word: ${word}`, 'success');
-                
-            } catch (error) {
-                console.error('Error voting on word:', error);
-                showNotification('Failed to save vote. Please try again.', 'error');
-            }
-        }
+				if (db) {
+					const voteDocId = `${currentUser.uid}_${voteKey}`;
+					if (newVoteType) {
+						await db.collection('userWordVotes').doc(voteDocId).set({
+							userId: currentUser.uid,
+							videoId: videoId,
+							segmentId: segmentId,
+							wordIndex: wordIndex,
+							word: word,
+							voteType: newVoteType,
+							timestamp: firebase.firestore.FieldValue.serverTimestamp()
+						});
+					} else {
+						await db.collection('userWordVotes').doc(voteDocId).delete();
+					}
+
+					await updateWordVotes(videoId, segmentId, wordIndex, word, currentVote, newVoteType);
+				}
+
+				// ONLY update the specific word - NO renderVideos()!
+				updateSingleWordInDOM(videoId, segmentId, wordIndex, word, newVoteType);
+
+				showNotification(`${newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on'} word: ${word}`, 'success');
+				
+			} catch (error) {
+				console.error('Error voting on word:', error);
+				showNotification('Failed to save vote. Please try again.', 'error');
+			}
+		}
+	   
+	   
 
         async function updateWordVotes(videoId, segmentId, wordIndex, word, oldVote, newVote) {
             if (!db) return;
@@ -2013,18 +2023,110 @@
             console.log('✅ Word list updated in DOM without collapsing!');
         }
 
-        function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
-            let starsHtml = '';
-            const ratingKey = segmentId ? (userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : (userRatings[videoId]?.video?.[category] || 0);
 
-            for (let i = 1; i <= 5; i++) {
-                const activeClass = i <= Math.round(currentRating) ? 'active' : '';
-                const userRatedClass = ratingKey > 0 && i <= ratingKey ? 'user-rated' : '';
-                const dataAttrs = segmentId ? `data-rating="${i}" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : `data-rating="${i}" data-category="${category}" data-video="${videoId}"`;
-                starsHtml += `<span class="star ${activeClass} ${userRatedClass}" ${dataAttrs}>★</span>`;
-            }
-            return starsHtml;
-        }
+
+		// NEW: Function to update just one word's vote count and buttons without re-rendering
+		function updateSingleWordInDOM(videoId, segmentId, wordIndex, word, userVote) {
+			console.log('🎯 Updating single word in DOM:', videoId, segmentId, wordIndex, word);
+			
+			// Find the specific word element
+			const segmentElement = document.querySelector(
+				`.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
+			);
+
+			if (!segmentElement) {
+				console.warn('⚠️ Segment element not found');
+				return;
+			}
+
+			const wordListElements = segmentElement.querySelectorAll('.word-list');
+			if (!wordListElements[wordIndex]) {
+				console.warn('⚠️ Word list element not found for index:', wordIndex);
+				return;
+			}
+
+			// Find the specific word item within this word list
+			const wordList = wordListElements[wordIndex];
+			const wordItems = wordList.querySelectorAll('.word-item');
+			
+			let targetWordItem = null;
+			wordItems.forEach(item => {
+				const wordSpan = item.querySelector('span:first-child');
+				if (wordSpan && wordSpan.textContent === word) {
+					targetWordItem = item;
+				}
+			});
+
+			if (!targetWordItem) {
+				console.warn('⚠️ Specific word item not found:', word);
+				return;
+			}
+
+			// Update the vote count from local data
+			const video = videos.find(v => v.episodeNumber.toString() === videoId);
+			if (video && video.segments) {
+				const segment = video.segments.find(s => s.id === segmentId);
+				if (segment && segment.words[wordIndex]) {
+					const wordCandidate = segment.words[wordIndex].find(w => w.word === word);
+					if (wordCandidate) {
+						// Update vote count display
+						const votesSpan = targetWordItem.querySelector('.word-votes');
+						if (votesSpan) {
+							votesSpan.textContent = wordCandidate.votes;
+						}
+
+						// Update vote button states
+						const upButton = targetWordItem.querySelector('.vote-btn:first-of-type');
+						const downButton = targetWordItem.querySelector('.vote-btn:last-of-type');
+						
+						if (upButton && downButton) {
+							// Reset button states
+							upButton.classList.remove('voted');
+							downButton.classList.remove('voted');
+							
+							// Set current vote state
+							if (userVote === 'up') {
+								upButton.classList.add('voted');
+							} else if (userVote === 'down') {
+								downButton.classList.add('voted');
+							}
+						}
+					}
+				}
+			}
+			
+			console.log('✅ Single word updated in DOM without collapsing!');
+		}
+
+
+
+
+
+		
+		// FIXED: createStarRating function - ensures only 5 stars
+		function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
+			let starsHtml = '';
+			const ratingKey = segmentId ? 
+				(userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : 
+				(userRatings[videoId]?.video?.[category] || 0);
+
+			// Create exactly 5 stars, no more
+			for (let i = 1; i <= 5; i++) {
+				const activeClass = i <= Math.round(currentRating) ? 'active' : '';
+				const userRatedClass = ratingKey > 0 && i <= ratingKey ? 'user-rated' : '';
+				
+				const dataAttrs = segmentId ? 
+					`data-rating="${i}" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : 
+					`data-rating="${i}" data-category="${category}" data-video="${videoId}"`;
+					
+				starsHtml += `<span class="star ${activeClass} ${userRatedClass}" ${dataAttrs}>★</span>`;
+			}
+			
+			return starsHtml;
+		}
+				
+				
+		
 
         function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
             console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
@@ -2069,100 +2171,103 @@
             }).join('');
         }
 
-        function createSegmentHtml(segment, videoId, segmentIndex) {
-            console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
-            
-            try {
-                const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
-                const segmentRatings = segment.ratings || defaultRatings;
-                
-                const avgRating = [
-                    segmentRatings.lyrics?.average || 0,
-                    segmentRatings.beats?.average || 0, 
-                    segmentRatings.reaction?.average || 0,
-                    segmentRatings.overall?.average || 0
-                ].reduce((sum, val) => sum + val, 0) / 4;
-                
-                let wordsHtml = '';
-                if (segment.words && Array.isArray(segment.words)) {
-                    wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
-                        try {
-                            return `
-                                <div style="margin-bottom: 15px;">
-                                    <div class="segment-label">Word ${wordIndex + 1}</div>
-                                    <div class="word-list">
-                                        ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
-                                    </div>
-                                    <div class="add-word-form">
-                                        <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
-                                        <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
-                                            Add
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        } catch (wordError) {
-                            console.error(`❌ Error processing word ${wordIndex}:`, wordError);
-                            return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
-                        }
-                    }).join('');
-                } else {
-                    console.log(`⚠️ No valid words array found in segment`);
-                    wordsHtml = '<div class="no-words">No words available</div>';
-                }
+        
+		// FIXED: createSegmentHtml function - fixes star duplication
+		function createSegmentHtml(segment, videoId, segmentIndex) {
+			console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
+			
+			try {
+				const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
+				const segmentRatings = segment.ratings || defaultRatings;
+				
+				const avgRating = [
+					segmentRatings.lyrics?.average || 0,
+					segmentRatings.beats?.average || 0, 
+					segmentRatings.reaction?.average || 0,
+					segmentRatings.overall?.average || 0
+				].reduce((sum, val) => sum + val, 0) / 4;
+				
+				let wordsHtml = '';
+				if (segment.words && Array.isArray(segment.words)) {
+					wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+						try {
+							return `
+								<div style="margin-bottom: 15px;">
+									<div class="segment-label">Word ${wordIndex + 1}</div>
+									<div class="word-list">
+										${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
+									</div>
+									<div class="add-word-form">
+										<input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
+										<button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
+											Add
+										</button>
+									</div>
+								</div>
+							`;
+						} catch (wordError) {
+							console.error(`❌ Error processing word ${wordIndex}:`, wordError);
+							return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
+						}
+					}).join('');
+				} else {
+					console.log(`⚠️ No valid words array found in segment`);
+					wordsHtml = '<div class="no-words">No words available</div>';
+				}
 
-                return `
-                    <div class="segment" data-segment="${segmentId}">
-                        <div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
-                            <div class="segment-info">
-                                <div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)}</div>
-                                <div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
-                            </div>
-                            <div class="segment-expand-icon">▶</div>
-                        </div>
-                        <div class="segment-content">
-                            <div class="segment-details">
-                                <div class="words-management">
-                                    <h5>Crowdsourced Words (vote on accuracy)</h5>
-                                    ${wordsHtml}
-                                </div>
-                                <div class="segment-ratings">
-                                    <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
-                                    ${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
-                                        <div class="rating-category">
-                                            <div class="rating-info">
-                                                <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                                <span class="rating-stats">${(segmentRatings[category]?.average || 0).toFixed(1)}★ (${segmentRatings[category]?.count || 0} ratings)</span>
-                                            </div>
-                                            <div class="rating-controls">
-                                                <div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">                                                   
-                                                    ${createStarRating(category, videoId, segmentRatings[category]?.average || 0, segmentRatings[category]?.count || 0, segmentId)}                                                    
-                                                </div>
-                                                ${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error(`❌ Error in createSegmentHtml for ${videoId}-${segmentIndex}:`, error);
-                return `
-                    <div class="segment segment-error">
-                        <div class="segment-header">
-                            <div class="segment-info">
-                                <div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)} (Error)</div>
-                                <div class="segment-rating-summary">Unable to load</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
+				return `
+					<div class="segment" data-segment="${segmentId}">
+						<div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
+							<div class="segment-info">
+								<div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)}</div>
+								<div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
+							</div>
+							<div class="segment-expand-icon">▶</div>
+						</div>
+						<div class="segment-content">
+							<div class="segment-details">
+								<div class="words-management">
+									<h5>Crowdsourced Words (vote on accuracy)</h5>
+									${wordsHtml}
+								</div>
+								<div class="segment-ratings">
+									<h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
+									${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
+										<div class="rating-category">
+											<div class="rating-info">
+												<span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+												<span class="rating-stats">${(segmentRatings[category]?.average || 0).toFixed(1)}★ (${segmentRatings[category]?.count || 0} ratings)</span>
+											</div>
+											<div class="rating-controls">
+												<div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
+													${createStarRating(category, videoId, segmentRatings[category]?.average || 0, segmentRatings[category]?.count || 0, segmentId)}
+												</div>
+												${userRatings[videoId]?.segments?.[segmentId]?.[category] ? `<div class="user-rating-indicator">Your rating: ${userRatings[videoId].segments[segmentId][category]}★</div>` : ''}
+											</div>
+										</div>
+									`).join('')}
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+				
+			} catch (error) {
+				console.error(`❌ Error in createSegmentHtml for ${videoId}-${segmentIndex}:`, error);
+				return `
+					<div class="segment segment-error">
+						<div class="segment-header">
+							<div class="segment-info">
+								<div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)} (Error)</div>
+								<div class="segment-rating-summary">Unable to load</div>
+							</div>
+						</div>
+					</div>
+				`;
+			}
+		}
+		
+		
         function preserveExpandedState() {
             const expandedSegments = [];
             document.querySelectorAll('.segment.expanded').forEach(segment => {
@@ -2500,61 +2605,66 @@
             renderVideos();
         }
 
-        // FIXED: Better real-time updates with debouncing
-        function setupRealtimeUpdates() {
-            if (!db) return;
-            
-            db.collection('videos').onSnapshot((snapshot) => {
-                // Clear existing timeout
-                if (realtimeUpdateTimeout) {
-                    clearTimeout(realtimeUpdateTimeout);
-                }
 
-                // Only process if not currently adding words
-                if (!isAddingWord && snapshot.docChanges().length > 0) {
-                    console.log('📡 Real-time update received, processing changes...');
-                    
-                    let hasChanges = false;
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === 'modified') {
-                            const updatedVideo = { id: change.doc.id, ...change.doc.data() };
-                            const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
-                            if (index !== -1) {
-                                // Process the segments to ensure correct format
-                                let processedSegments = [];
-                                if (updatedVideo.segments && Array.isArray(updatedVideo.segments)) {
-                                    processedSegments = updatedVideo.segments.map((segment, idx) => 
-                                        sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
-                                    );
-                                } else if (updatedVideo.segments && typeof updatedVideo.segments === 'object') {
-                                    const segmentValues = Object.values(updatedVideo.segments);
-                                    processedSegments = segmentValues.map((segment, idx) => 
-                                        sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
-                                    );
-                                }
-                                
-                                videos[index] = {
-                                    ...updatedVideo,
-                                    segments: processedSegments
-                                };
-                                hasChanges = true;
-                            }
-                        }
-                    });
-                    
-                    // Debounce the UI update
-                    if (hasChanges) {
-                        realtimeUpdateTimeout = setTimeout(() => {
-                            console.log('🔄 Applying real-time updates to UI...');
-                            applyFilters();
-                            updateStats();
-                        }, 1000); // Wait 1 second before updating UI
-                    }
-                } else if (isAddingWord) {
-                    console.log('⏸️ Skipping real-time update - word addition in progress');
-                }
-            });
-        }
+
+
+		// FIXED: setupRealtimeUpdates - prevent collapse during word voting
+		function setupRealtimeUpdates() {
+			if (!db) return;
+			
+			db.collection('videos').onSnapshot((snapshot) => {
+				// Clear existing timeout
+				if (realtimeUpdateTimeout) {
+					clearTimeout(realtimeUpdateTimeout);
+				}
+
+				// IMPROVED: Only process if not currently voting on words or adding words
+				if (!isAddingWord && !isVotingOnWord && snapshot.docChanges().length > 0) {
+					console.log('📡 Real-time update received, processing changes...');
+					
+					let hasChanges = false;
+					snapshot.docChanges().forEach((change) => {
+						if (change.type === 'modified') {
+							const updatedVideo = { id: change.doc.id, ...change.doc.data() };
+							const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
+							if (index !== -1) {
+								// Process the segments to ensure correct format
+								let processedSegments = [];
+								if (updatedVideo.segments && Array.isArray(updatedVideo.segments)) {
+									processedSegments = updatedVideo.segments.map((segment, idx) => 
+										sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
+									);
+								} else if (updatedVideo.segments && typeof updatedVideo.segments === 'object') {
+									const segmentValues = Object.values(updatedVideo.segments);
+									processedSegments = segmentValues.map((segment, idx) => 
+										sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
+									);
+								}
+								
+								videos[index] = {
+									...updatedVideo,
+									segments: processedSegments
+								};
+								hasChanges = true;
+							}
+						}
+					});
+					
+					// Debounce the UI update
+					if (hasChanges) {
+						realtimeUpdateTimeout = setTimeout(() => {
+							console.log('🔄 Applying real-time updates to UI...');
+							applyFilters();
+							updateStats();
+						}, 2000); // Increased delay to 2 seconds
+					}
+				} else if (isAddingWord || isVotingOnWord) {
+					console.log('⏸️ Skipping real-time update - word operation in progress');
+				}
+			});
+		}
+
+
 
         // Make functions globally available for onclick handlers
         window.voteOnWord = voteOnWord;
