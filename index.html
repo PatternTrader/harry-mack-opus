@@ -719,6 +719,8 @@
         // OPTION 2: Complete Fix - Better Firebase handling
         // If you want Firebase saving, replace your convertWordsObjectToArray function with this:
         function convertWordsObjectToArray(wordsData) {
+            
+            console.log('🔍 DEBUG: Input to convertWordsObjectToArray:', JSON.stringify(wordsData, null, 2));
             console.log('🔄 Converting words data:', wordsData);
             
             if (!wordsData) {
