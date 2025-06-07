@@ -807,7 +807,82 @@
             return sanitized;
         }
 
-        function generateDefaultSegments() {
+        // NEW: Calculate weighted video ratings from segment ratings
+        function calculateVideoOverallRating(video) {
+            console.log(`🧮 Calculating weighted video rating for Episode ${video.episodeNumber}`);
+            
+            if (!video.segments || video.segments.length === 0) {
+                console.log('⚠️ No segments found, using default ratings');
+                return { ...defaultRatings };
+            }
+
+            const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+            const videoRatings = {};
+
+            categories.forEach(category => {
+                let totalWeightedScore = 0;
+                let totalRatingCount = 0;
+
+                // Sum up weighted scores from all segments
+                video.segments.forEach(segment => {
+                    if (segment.ratings && segment.ratings[category]) {
+                        const segmentRating = segment.ratings[category];
+                        const average = segmentRating.average || 0;
+                        const count = segmentRating.count || 0;
+                        
+                        totalWeightedScore += (average * count);
+                        totalRatingCount += count;
+                    }
+                });
+
+                // Calculate weighted average
+                const weightedAverage = totalRatingCount > 0 ? totalWeightedScore / totalRatingCount : 0;
+                
+                videoRatings[category] = {
+                    average: Math.max(0, Math.min(5, weightedAverage)), // Clamp between 0-5
+                    count: totalRatingCount
+                };
+
+                console.log(`📊 ${category}: ${weightedAverage.toFixed(2)}★ (${totalRatingCount} total ratings)`);
+            });
+
+            return videoRatings;
+        }
+
+        // NEW: Update video rating and refresh UI
+        function updateVideoRatingDisplay(video) {
+            console.log(`🎨 Updating video rating display for Episode ${video.episodeNumber}`);
+            
+            // Find the video card in the DOM
+            const videoCards = document.querySelectorAll('.video-card');
+            let targetCard = null;
+            
+            videoCards.forEach(card => {
+                const starsElement = card.querySelector('[data-video]');
+                if (starsElement && starsElement.dataset.video === video.episodeNumber.toString()) {
+                    targetCard = card;
+                }
+            });
+
+            if (!targetCard) {
+                console.log('⚠️ Video card not found in DOM');
+                return;
+            }
+
+            // Update the overall rating display
+            const ratingStats = targetCard.querySelector('.overall-rating .rating-stats');
+            if (ratingStats) {
+                ratingStats.textContent = `${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`;
+            }
+
+            // Update the stars display
+            const starsContainer = targetCard.querySelector('.overall-rating .stars');
+            if (starsContainer) {
+                updateStarDisplay(starsContainer, video.ratings.overall.average, false);
+            }
+
+            console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
+        }
             console.log('🔧 Generating default segments...');
             const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
             const numSegments = 3; // Default to 3 segments
@@ -1144,6 +1219,12 @@
                             segments: processedSegments,
                             ratings: data.ratings || { ...defaultRatings }
                         };
+                        
+                        // 🔥 NEW: Recalculate video ratings from segments (in case stored ratings are outdated)
+                        if (processedSegments.length > 0) {
+                            console.log(`🔄 Recalculating video ratings for Episode ${data.episodeNumber}`);
+                            processedVideo.ratings = calculateVideoOverallRating(processedVideo);
+                        }
                         
                         videos.push(processedVideo);
                         console.log(`✅ Processed Episode ${data.episodeNumber} with ${processedSegments.length} segments`);
@@ -1605,8 +1686,8 @@
                     await updateVideoRating(videoId, category, rating, segmentId);
                 }
 
-                const segmentText = segmentId ? ` (${segmentId})` : '';
-                showNotification(`Rated ${category}${segmentText}: ${rating} stars! Thanks for contributing!`, 'success');
+                const segmentText = segmentId ? ` (Segment ${segmentId})` : '';
+                showNotification(`Rated ${category}${segmentText}: ${rating} stars! Video rating automatically updated.`, 'success');
                 
             } catch (error) {
                 console.error('Error submitting rating:', error);
@@ -1664,6 +1745,7 @@
                     }
                 });
                 
+                // Update local data and recalculate video ratings
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (video) {
                     if (segmentId) {
@@ -1673,15 +1755,27 @@
                             const newTotal = (currentData.average * currentData.count) + newRating;
                             const newCount = currentData.count + 1;
                             segment.ratings[category] = { average: newTotal / newCount, count: newCount };
+                            
+                            // 🔥 NEW: Recalculate video overall rating from segments
+                            console.log('🔄 Recalculating video rating after segment update...');
+                            video.ratings = calculateVideoOverallRating(video);
+                            
+                            // Update only the video rating display (no full re-render)
+                            updateVideoRatingDisplay(video);
+                            updateStats();
+                            
+                            console.log(`✅ Video rating updated: ${video.ratings.overall.average.toFixed(1)}★`);
                         }
                     } else {
                         const currentData = video.ratings[category];
                         const newTotal = (currentData.average * currentData.count) + newRating;
                         const newCount = currentData.count + 1;
                         video.ratings[category] = { average: newTotal / newCount, count: newCount };
+                        
+                        // Update display for video-level ratings (legacy)
+                        updateVideoRatingDisplay(video);
+                        updateStats();
                     }
-                    renderVideos();
-                    updateStats();
                 }
             } catch (error) {
                 console.error('Error updating rating:', error);
