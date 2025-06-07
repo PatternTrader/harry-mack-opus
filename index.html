@@ -1121,7 +1121,7 @@
                             id: doc.id,
                             episodeNumber: data.episodeNumber,
                             title: data.title || `Omegle Bars Episode #${data.episodeNumber}`,
-                            youtubeId: data.youtubeId || getYouTubeId(data.episodeNumber),
+                            youtubeId: getYouTubeId(data.episodeNumber),
                             segments: processedSegments,
                             ratings: data.ratings || { ...defaultRatings }
                         };
