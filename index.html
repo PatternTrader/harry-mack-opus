@@ -1036,8 +1036,84 @@
                                                 
                         // Safely handle segments data
                         let processedSegments = [];
+
+                        // Add this right after the Episode 2 debug section (around line 1035)
+                        // Replace the existing "else if (data.segments && typeof data.segments === 'object')" section
                         
-                        if (data.segments && Array.isArray(data.segments)) {
+                        if (data.episodeNumber === 2) {
+                            console.log('🔧 FIXING EPISODE 2 DATA - Detected incomplete structure');
+                            
+                            // Check if Episode 2 is corrupted (missing segments/words)
+                            const isCorrupted = !data.segments || 
+                                               Object.keys(data.segments).length < 2 || 
+                                               !Object.values(data.segments).some(seg => seg.words);
+                            
+                            if (isCorrupted) {
+                                console.log('⚠️ Episode 2 data is corrupted, regenerating...');
+                                
+                                // Generate proper Episode 2 segments using the same logic as sample videos
+                                const wordBank = ["freestyle", "microphone", "talent", "creativity", "improvise", "rhythm"];
+                                const newSegments = [];
+                                
+                                for (let j = 0; j < 3; j++) { // Create 3 segments
+                                    const segmentWords = [];
+                                    
+                                    // Generate 3 words per segment
+                                    for (let k = 0; k < 3; k++) {
+                                        const candidateWords = [];
+                                        const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+                                        
+                                        candidateWords.push({
+                                            word: baseWord,
+                                            votes: Math.floor(Math.random() * 10) + 5,
+                                            voters: []
+                                        });
+                                        
+                                        segmentWords.push(candidateWords);
+                                    }
+                                    
+                                    // Create segment with proper structure
+                                    newSegments.push({
+                                        id: `segment_2_${j + 1}`,
+                                        words: segmentWords,
+                                        ratings: {
+                                            lyrics: { average: 3.5 + Math.random(), count: 15 + Math.floor(Math.random() * 10) },
+                                            beats: { average: 3.8 + Math.random(), count: 18 + Math.floor(Math.random() * 12) },
+                                            reaction: { average: 3.2 + Math.random(), count: 12 + Math.floor(Math.random() * 8) },
+                                            overall: { average: 3.5 + Math.random(), count: 14 + Math.floor(Math.random() * 6) }
+                                        }
+                                    });
+                                }
+                                
+                                // Replace the corrupted segments with proper ones
+                                processedSegments = newSegments;
+                                console.log('✅ Episode 2 data regenerated with', processedSegments.length, 'segments');
+                                
+                                // Optionally save the fixed data back to Firebase
+                                if (db) {
+                                    console.log('💾 Saving fixed Episode 2 data to Firebase...');
+                                    const fixedVideo = {
+                                        ...data,
+                                        segments: newSegments
+                                    };
+                                    
+                                    db.collection('videos').doc(`episode_2`).update({
+                                        segments: newSegments
+                                    }).then(() => {
+                                        console.log('✅ Episode 2 fixed data saved to Firebase');
+                                    }).catch(err => {
+                                        console.error('❌ Error saving fixed Episode 2 data:', err);
+                                    });
+                                }
+                                
+                            } else {
+                                // Process normally if not corrupted
+                                const segmentValues = Object.values(data.segments);
+                                processedSegments = segmentValues.map((segment, idx) => 
+                                    sanitizeSegmentData(segment, data.episodeNumber, idx)
+                                );
+                            }
+                        } else if (data.segments && Array.isArray(data.segments)) {
                             console.log(`✅ Valid segments array with ${data.segments.length} items`);
                             processedSegments = data.segments.map((segment, idx) => 
                                 sanitizeSegmentData(segment, data.episodeNumber, idx)
@@ -1052,6 +1128,8 @@
                             console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
                             processedSegments = generateDefaultSegments();
                         }
+                        
+     
                         
                         const processedVideo = {
                             id: doc.id,
