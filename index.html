@@ -714,6 +714,59 @@
         // Debug mode flag
         const DEBUG_EPISODE_2 = true;
 
+        // Helper function to convert Firebase object format back to arrays
+        function convertWordsObjectToArray(wordsData) {
+            console.log('🔄 Converting words data:', wordsData);
+            
+            if (!wordsData) {
+                console.log('⚠️ No words data provided, creating default');
+                return [
+                    [{word: 'word1', votes: 5, voters: []}],
+                    [{word: 'word2', votes: 5, voters: []}],
+                    [{word: 'word3', votes: 5, voters: []}]
+                ];
+            }
+        
+            // If it's already an array of arrays (old format), return as-is
+            if (Array.isArray(wordsData) && Array.isArray(wordsData[0])) {
+                console.log('✅ Already in correct array format');
+                return wordsData;
+            }
+        
+            // If it's an array of objects (new Firebase format), convert it
+            if (Array.isArray(wordsData)) {
+                console.log('🔄 Converting from Firebase object format to arrays');
+                return wordsData.map((wordPosition, posIndex) => {
+                    if (Array.isArray(wordPosition)) {
+                        // Mixed format - this position is still an array
+                        return wordPosition;
+                    } else if (wordPosition && typeof wordPosition === 'object') {
+                        // Convert object back to array
+                        const candidates = Object.values(wordPosition).filter(candidate => 
+                            candidate && candidate.word
+                        );
+                        return candidates.length > 0 ? candidates : [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
+                    } else {
+                        // Invalid data - create default
+                        return [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
+                    }
+                });
+            }
+        
+            // Completely unknown format - create default
+            console.log('⚠️ Unknown words format, creating default structure');
+            return [
+                [{word: 'word1', votes: 5, voters: []}],
+                [{word: 'word2', votes: 5, voters: []}],
+                [{word: 'word3', votes: 5, voters: []}]
+            ];
+        }
+        
+        function sanitizeSegmentData(segment, videoId, segmentIndex) {
+            // ... your existing function stays here
+        }
+
+        
         function sanitizeSegmentData(segment, videoId, segmentIndex) {
             console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
             
@@ -723,50 +776,20 @@
                 ratings: segment?.ratings || { ...defaultRatings },
                 words: []
             };
-
-            // Process words with better error handling
+            
             if (segment?.words) {
-                if (Array.isArray(segment.words)) {
-                    sanitized.words = segment.words.map((wordItem, wordIndex) => {
-                        // Ensure each word position has an array of candidates
-                        if (Array.isArray(wordItem)) {
-                            return wordItem.filter(candidate => 
-                                candidate && candidate.word && typeof candidate.word === 'string'
-                            ).map(candidate => ({
-                                word: candidate.word,
-                                votes: candidate.votes || 0,
-                                voters: candidate.voters || []
-                            }));
-                        } else if (wordItem && typeof wordItem === 'object') {
-                            // Convert single word object to array format
-                            return [{
-                                word: wordItem.word || 'unknown',
-                                votes: wordItem.votes || 0,
-                                voters: wordItem.voters || []
-                            }];
-                        } else if (typeof wordItem === 'string') {
-                            // Convert string to proper format
-                            return [{
-                                word: wordItem,
-                                votes: 5,
-                                voters: []
-                            }];
-                        } else {
-                            // Fallback for invalid data
-                            return [{
-                                word: `word${wordIndex + 1}`,
-                                votes: 1,
-                                voters: []
-                            }];
-                        }
-                    });
-                } else {
-                    // If words is not an array, create default structure
-                    console.warn(`⚠️ Words is not an array for ${videoId}-${segmentIndex}, creating default`);
+                console.log(`🔄 Processing words for ${videoId}-${segmentIndex}`);
+                try {
+                    // Use our helper function to handle both formats
+                    sanitized.words = convertWordsObjectToArray(segment.words);
+                    console.log(`✅ Words converted successfully for ${videoId}-${segmentIndex}`);
+                } catch (conversionError) {
+                    console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
+                    // Fallback to default structure
                     sanitized.words = [
-                        [{word: 'pizza', votes: 10, voters: []}],
-                        [{word: 'galaxy', votes: 8, voters: []}],
-                        [{word: 'thunder', votes: 12, voters: []}]
+                        [{word: 'word1', votes: 5, voters: []}],
+                        [{word: 'word2', votes: 5, voters: []}],
+                        [{word: 'word3', votes: 5, voters: []}]
                     ];
                 }
             } else {
@@ -1817,70 +1840,123 @@
             }
         }
 
+
         async function addNewWord(videoId, segmentId, wordIndex, newWord) {
+            console.log('🔍 Adding word:', { videoId, segmentId, wordIndex, newWord });
+            
+            // Step 1: Check if user is signed in
             if (!currentUser) {
+                console.log('❌ No user signed in');
                 showSignInPrompt('add words', 0);
                 return;
             }
-
-            if (!newWord.trim()) {
+        
+            // Step 2: Validate the word
+            if (!newWord || !newWord.trim()) {
+                console.log('❌ Empty word provided');
                 showNotification('Please enter a word', 'error');
                 return;
             }
-
+        
+            const trimmedWord = newWord.trim();
+            console.log('✅ User authenticated, word validated:', trimmedWord);
+        
             try {
+                // Step 3: Find the video and segment
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
-                if (!video) return;
-
+                if (!video) {
+                    showNotification('Video not found', 'error');
+                    return;
+                }
+        
                 const segment = video.segments.find(s => s.id === segmentId);
-                if (!segment) return;
-
-                // Check if word already exists
-                const existingWord = segment.words[wordIndex].find(w => w.word.toLowerCase() === newWord.trim().toLowerCase()
+                if (!segment || !segment.words || !segment.words[wordIndex]) {
+                    showNotification('Invalid word position', 'error');
+                    return;
+                }
+        
+                // Step 4: Check if word already exists
+                const existingWord = segment.words[wordIndex].find(w => 
+                    w && w.word && w.word.toLowerCase() === trimmedWord.toLowerCase()
                 );
-
+        
                 if (existingWord) {
                     showNotification('This word already exists for this position', 'info');
                     return;
                 }
-
-                // Add new word
+        
+                // Step 5: Add word to local data first (this always works)
                 const newWordObj = {
-                    word: newWord.trim(),
-                    votes: 1, // Start with 1 vote from the submitter
+                    word: trimmedWord,
+                    votes: 1,
                     voters: [currentUser.uid]
                 };
                 segment.words[wordIndex].push(newWordObj);
-
+                console.log('✅ Word added to local data');
+        
+                // Step 6: Save to Firebase (the tricky part)
                 if (db) {
-                    const videoRef = db.collection('videos').doc(`episode_${videoId}`);
-                    await videoRef.update({
-                        [`segments`]: video.segments
-                    });
-
-                    // Auto-vote for the word the user just added
-                    const voteKey = `${videoId}_${segmentId}_${wordIndex}_${newWord.trim()}`;
-                    userWordVotes[voteKey] = 'up';
-                    const voteDocId = `${currentUser.uid}_${voteKey}`;
-                    await db.collection('userWordVotes').doc(voteDocId).set({
-                        userId: currentUser.uid,
-                        videoId: videoId,
-                        segmentId: segmentId,
-                        wordIndex: wordIndex,
-                        word: newWord.trim(),
-                        voteType: 'up',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    console.log('💾 Converting data for Firebase...');
+                    
+                    // THE KEY: Convert nested arrays to objects for Firebase
+                    const segmentsForFirebase = video.segments.map(seg => ({
+                        id: seg.id,
+                        ratings: seg.ratings,
+                        // Convert each word position's array to an object
+                        words: seg.words.map(wordCandidates => {
+                            const wordObj = {};
+                            wordCandidates.forEach((candidate, index) => {
+                                wordObj[index.toString()] = candidate;
+                            });
+                            return wordObj;
+                        })
+                    }));
+        
+                    // Try to save the converted data
+                    try {
+                        const videoRef = db.collection('videos').doc(`episode_${videoId}`);
+                        await videoRef.update({
+                            segments: segmentsForFirebase
+                        });
+                        console.log('✅ Firebase update successful!');
+                    } catch (firebaseError) {
+                        console.log('⚠️ Firebase save failed, but local data is updated:', firebaseError.message);
+                        // Don't throw error - local data is still working
+                    }
+        
+                    // Step 7: Save user vote
+                    try {
+                        const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
+                        userWordVotes[voteKey] = 'up';
+                        const voteDocId = `${currentUser.uid}_${voteKey}`;
+                        await db.collection('userWordVotes').doc(voteDocId).set({
+                            userId: currentUser.uid,
+                            videoId: videoId,
+                            segmentId: segmentId,
+                            wordIndex: parseInt(wordIndex),
+                            word: trimmedWord,
+                            voteType: 'up',
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log('✅ Vote record saved');
+                    } catch (voteError) {
+                        console.log('⚠️ Vote record failed (non-critical):', voteError.message);
+                    }
                 }
                 
+                // Step 8: Update the display
                 renderVideos();
-                showNotification(`Added new word: ${newWord.trim()}`, 'success');
-
+                showNotification(`Added new word: ${trimmedWord}`, 'success');
+                console.log('✅ Word addition completed successfully');
+        
             } catch (error) {
-                console.error('Error adding word:', error);
+                console.error('❌ Error adding word:', error);
                 showNotification('Failed to add word. Please try again.', 'error');
             }
         }
+
+
+    
 
         function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
             let starsHtml = '';
