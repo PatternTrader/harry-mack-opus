@@ -520,6 +520,23 @@
             color: white;
         }
 
+        .segment-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .debug-info {
+            background: #ffeb3b;
+            color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -653,6 +670,78 @@
             reaction: { average: 3.0, count: 0 },
             overall: { average: 3.0, count: 0 }
         };
+
+        // Debug mode flag
+        const DEBUG_EPISODE_2 = true;
+
+        function sanitizeSegmentData(segment, videoId, segmentIndex) {
+            console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
+            
+            // Create a clean segment structure
+            const sanitized = {
+                id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
+                ratings: segment?.ratings || { ...defaultRatings },
+                words: []
+            };
+
+            // Process words with better error handling
+            if (segment?.words) {
+                if (Array.isArray(segment.words)) {
+                    sanitized.words = segment.words.map((wordItem, wordIndex) => {
+                        // Ensure each word position has an array of candidates
+                        if (Array.isArray(wordItem)) {
+                            return wordItem.filter(candidate => 
+                                candidate && candidate.word && typeof candidate.word === 'string'
+                            ).map(candidate => ({
+                                word: candidate.word,
+                                votes: candidate.votes || 0,
+                                voters: candidate.voters || []
+                            }));
+                        } else if (wordItem && typeof wordItem === 'object') {
+                            // Convert single word object to array format
+                            return [{
+                                word: wordItem.word || 'unknown',
+                                votes: wordItem.votes || 0,
+                                voters: wordItem.voters || []
+                            }];
+                        } else if (typeof wordItem === 'string') {
+                            // Convert string to proper format
+                            return [{
+                                word: wordItem,
+                                votes: 5,
+                                voters: []
+                            }];
+                        } else {
+                            // Fallback for invalid data
+                            return [{
+                                word: `word${wordIndex + 1}`,
+                                votes: 1,
+                                voters: []
+                            }];
+                        }
+                    });
+                } else {
+                    // If words is not an array, create default structure
+                    console.warn(`⚠️ Words is not an array for ${videoId}-${segmentIndex}, creating default`);
+                    sanitized.words = [
+                        [{word: 'pizza', votes: 10, voters: []}],
+                        [{word: 'galaxy', votes: 8, voters: []}],
+                        [{word: 'thunder', votes: 12, voters: []}]
+                    ];
+                }
+            } else {
+                // No words at all - create default
+                console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default`);
+                sanitized.words = [
+                    [{word: 'word1', votes: 5, voters: []}],
+                    [{word: 'word2', votes: 5, voters: []}],
+                    [{word: 'word3', votes: 5, voters: []}]
+                ];
+            }
+
+            console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex}:`, sanitized);
+            return sanitized;
+        }
 
         function generateDefaultSegments() {
             console.log('🔧 Generating default segments...');
@@ -909,27 +998,29 @@
                     videosSnapshot.docs.forEach(doc => {
                         const data = doc.data();
                         console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
-                        console.log(`📊 Segments data:`, data.segments);
-                        console.log(`📊 Segments type:`, typeof data.segments);
-                        console.log(`📊 Is array:`, Array.isArray(data.segments));
+                        
+                        // Special handling for Episode 2
+                        if (data.episodeNumber === 2 && DEBUG_EPISODE_2) {
+                            console.log('🔍 EPISODE 2 DEBUG - Raw data:', JSON.stringify(data, null, 2));
+                            console.log('🔍 EPISODE 2 DEBUG - Segments type:', typeof data.segments);
+                            console.log('🔍 EPISODE 2 DEBUG - Segments is array:', Array.isArray(data.segments));
+                            console.log('🔍 EPISODE 2 DEBUG - Segments content:', data.segments);
+                        }
                         
                         // Safely handle segments data
                         let processedSegments = [];
                         
                         if (data.segments && Array.isArray(data.segments)) {
                             console.log(`✅ Valid segments array with ${data.segments.length} items`);
-                            processedSegments = data.segments.map(segment => ({
-                                ...segment,
-                                ratings: segment.ratings || { ...defaultRatings }
-                            }));
+                            processedSegments = data.segments.map((segment, idx) => 
+                                sanitizeSegmentData(segment, data.episodeNumber, idx)
+                            );
                         } else if (data.segments && typeof data.segments === 'object') {
                             console.log(`🔄 Converting segments object to array`);
                             const segmentValues = Object.values(data.segments);
-                            processedSegments = segmentValues.map(segment => ({
-                                ...segment,
-                                ratings: segment.ratings || { ...defaultRatings }
-                            }));
-                            console.log(`🔄 Converted to array with ${processedSegments.length} items`);
+                            processedSegments = segmentValues.map((segment, idx) => 
+                                sanitizeSegmentData(segment, data.episodeNumber, idx)
+                            );
                         } else {
                             console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
                             processedSegments = generateDefaultSegments();
@@ -1558,7 +1649,6 @@
 
         function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
             console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
-            console.log(`📊 Type:`, typeof wordCandidates, `Is Array:`, Array.isArray(wordCandidates));
             
             // Ensure we have a valid array of candidates
             let validCandidates = [];
@@ -1571,26 +1661,6 @@
                     typeof candidate.word === 'string' && 
                     candidate.word.trim() !== ''
                 );
-                console.log(`✅ Filtered ${validCandidates.length} valid candidates from ${wordCandidates.length} total`);
-            } else if (wordCandidates && typeof wordCandidates === 'object') {
-                // It's an object - convert to array
-                console.log(`🔄 Converting object to array of candidates`);
-                const candidateValues = Object.values(wordCandidates);
-                validCandidates = candidateValues.filter(candidate => 
-                    candidate && 
-                    candidate.word && 
-                    typeof candidate.word === 'string' && 
-                    candidate.word.trim() !== ''
-                );
-                console.log(`🔄 Converted object with ${candidateValues.length} values to ${validCandidates.length} valid candidates`);
-            } else if (typeof wordCandidates === 'string') {
-                // It's just a string - create a simple candidate object
-                console.log(`🔧 Converting string "${wordCandidates}" to candidate object`);
-                validCandidates = [{
-                    word: wordCandidates,
-                    votes: 5, // Default vote count
-                    voters: []
-                }];
             } else {
                 // Fallback - create a default word
                 console.log(`⚠️ Unknown word candidates format, creating fallback`);
@@ -1629,91 +1699,59 @@
             
             try {
                 const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
-                console.log(`📋 Segment ID: ${segmentId}`);
+                
+                // Debug Episode 2 specifically
+                if (videoId === '2' && DEBUG_EPISODE_2) {
+                    console.log('🔍 EPISODE 2 SEGMENT DEBUG:');
+                    console.log('Segment ID:', segmentId);
+                    console.log('Segment ratings:', segment.ratings);
+                    console.log('Segment words:', segment.words);
+                    console.log('Words is array:', Array.isArray(segment.words));
+                }
                 
                 // Ensure segment has ratings - if not, use defaults
                 const segmentRatings = segment.ratings || defaultRatings;
-                console.log(`⭐ Segment ratings:`, segmentRatings);
                 
                 const avgRating = (segmentRatings.lyrics.average + segmentRatings.beats.average + segmentRatings.reaction.average + segmentRatings.overall.average) / 4;
-                console.log(`📊 Average rating: ${avgRating}`);
 
                 // Process words with extensive debugging
-                console.log(`🔤 Processing words for segment:`, segment.words);
-                console.log(`🔤 Words type:`, typeof segment.words, `Is Array:`, Array.isArray(segment.words));
-                
                 let wordsHtml = '';
-                if (segment.words) {
-                    if (Array.isArray(segment.words)) {
-                        console.log(`✅ Words is array with ${segment.words.length} items`);
-                        wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
-                            console.log(`🔤 Processing word ${wordIndex}:`, wordCandidates);
-                            try {
-                                return `
-                                    <div style="margin-bottom: 15px;">
-                                        <div class="segment-label">Word ${wordIndex + 1}</div>
-                                        <div class="word-list">
-                                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
-                                        </div>
-                                        <div class="add-word-form">
-                                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
-                                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
-                                                Add
-                                            </button>
-                                        </div>
+                if (segment.words && Array.isArray(segment.words)) {
+                    wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+                        try {
+                            return `
+                                <div style="margin-bottom: 15px;">
+                                    <div class="segment-label">Word ${wordIndex + 1}</div>
+                                    <div class="word-list">
+                                        ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
                                     </div>
-                                `;
-                            } catch (wordError) {
-                                console.error(`❌ Error processing word ${wordIndex}:`, wordError);
-                                return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
-                            }
-                        }).join('');
-                    } else if (typeof segment.words === 'object') {
-                        console.log(`🔄 Converting words object to array`);
-                        const wordEntries = Object.entries(segment.words);
-                        console.log(`🔤 Word entries:`, wordEntries);
-                        wordsHtml = wordEntries.map(([wordKey, wordValue], wordIndex) => {
-                            console.log(`🔤 Processing word entry ${wordIndex} (${wordKey}):`, wordValue);
-                            try {
-                                // Convert single word to candidate format
-                                let wordCandidates = [];
-                                if (typeof wordValue === 'string') {
-                                    wordCandidates = [{word: wordValue, votes: 5, voters: []}];
-                                } else if (wordValue && wordValue.word) {
-                                    wordCandidates = [wordValue];
-                                } else {
-                                    wordCandidates = [{word: 'unknown', votes: 1, voters: []}];
-                                }
-                                
-                                return `
-                                    <div style="margin-bottom: 15px;">
-                                        <div class="segment-label">Word ${wordIndex + 1}</div>
-                                        <div class="word-list">
-                                            ${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
-                                        </div>
-                                        <div class="add-word-form">
-                                            <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
-                                            <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
-                                                Add
-                                            </button>
-                                        </div>
+                                    <div class="add-word-form">
+                                        <input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
+                                        <button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
+                                            Add
+                                        </button>
                                     </div>
-                                `;
-                            } catch (wordError) {
-                                console.error(`❌ Error processing word entry ${wordIndex}:`, wordError);
-                                return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
-                            }
-                        }).join('');
-                    } else {
-                        console.log(`⚠️ Words is neither array nor object:`, segment.words);
-                        wordsHtml = '<div class="no-words">No words available</div>';
-                    }
+                                </div>
+                            `;
+                        } catch (wordError) {
+                            console.error(`❌ Error processing word ${wordIndex}:`, wordError);
+                            return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
+                        }
+                    }).join('');
                 } else {
-                    console.log(`⚠️ No words found in segment`);
+                    console.log(`⚠️ No valid words array found in segment`);
                     wordsHtml = '<div class="no-words">No words available</div>';
                 }
 
-                console.log(`✅ Successfully created segment HTML for ${segmentId}`);
+                // Add debug info for Episode 2
+                const debugHtml = (videoId === '2' && DEBUG_EPISODE_2) ? `
+                    <div class="debug-info">
+                        DEBUG: Episode 2, Segment ${segmentIndex + 1}<br>
+                        ID: ${segmentId}<br>
+                        Words count: ${segment.words ? segment.words.length : 0}<br>
+                        Ratings: ${JSON.stringify(segmentRatings, null, 2)}
+                    </div>
+                ` : '';
 
                 return `
                     <div class="segment" data-segment="${segmentId}">
@@ -1726,6 +1764,7 @@
                         </div>
                         <div class="segment-content">
                             <div class="segment-details">
+                                ${debugHtml}
                                 <div class="words-management">
                                     <h5>Crowdsourced Words (vote on accuracy)</h5>
                                     ${wordsHtml}
@@ -1754,6 +1793,7 @@
                 
             } catch (error) {
                 console.error(`❌ Error in createSegmentHtml for ${videoId}-${segmentIndex}:`, error);
+                console.error(`❌ Error stack:`, error.stack);
                 console.error(`❌ Segment data:`, segment);
                 return `
                     <div class="segment segment-error">
@@ -1763,6 +1803,12 @@
                                 <div class="segment-rating-summary">Unable to load</div>
                             </div>
                         </div>
+                        ${(videoId === '2' && DEBUG_EPISODE_2) ? `
+                            <div class="debug-info">
+                                ERROR DEBUG: ${error.message}<br>
+                                Segment data: ${JSON.stringify(segment, null, 2)}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }
@@ -1835,6 +1881,13 @@
             filteredVideos.forEach((video, index) => {
                 try {
                     console.log(`🎬 Rendering video ${index + 1}/${filteredVideos.length}: Episode ${video.episodeNumber}`);
+                    
+                    if (video.episodeNumber === 2 && DEBUG_EPISODE_2) {
+                        console.log('🔍 EPISODE 2 RENDER DEBUG:');
+                        console.log('Video object:', video);
+                        console.log('Segments:', video.segments);
+                        console.log('Segments count:', video.segments ? video.segments.length : 'No segments');
+                    }
                     
                     const videoCard = document.createElement('div');
                     videoCard.className = 'video-card';
