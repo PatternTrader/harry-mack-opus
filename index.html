@@ -714,9 +714,11 @@
         // Debug mode flag
         const DEBUG_EPISODE_2 = true;
 
-        // Helper function to convert Firebase object format back to arrays
+        // Debug version to see what's going wrong
         function convertWordsObjectToArray(wordsData) {
-            console.log('🔄 Converting words data:', wordsData);
+            console.log('🔍 DEBUG: Converting words data:', wordsData);
+            console.log('🔍 DEBUG: wordsData type:', typeof wordsData);
+            console.log('🔍 DEBUG: wordsData is array:', Array.isArray(wordsData));
             
             if (!wordsData) {
                 console.log('⚠️ No words data provided, creating default');
@@ -727,31 +729,56 @@
                 ];
             }
         
-            // If it's already an array of arrays (old format), return as-is
-            if (Array.isArray(wordsData) && Array.isArray(wordsData[0])) {
-                console.log('✅ Already in correct array format');
-                return wordsData;
+            // Check if it's already in the correct format (array of arrays)
+            if (Array.isArray(wordsData)) {
+                console.log('🔍 DEBUG: wordsData is array, checking first element...');
+                console.log('🔍 DEBUG: First element:', wordsData[0]);
+                console.log('🔍 DEBUG: First element is array:', Array.isArray(wordsData[0]));
+                
+                // If first element is an array, assume it's already correct format
+                if (wordsData[0] && Array.isArray(wordsData[0])) {
+                    console.log('✅ Already in correct array format - returning as-is');
+                    return wordsData;
+                }
+                
+                // If first element is an object, convert from Firebase format
+                if (wordsData[0] && typeof wordsData[0] === 'object' && !Array.isArray(wordsData[0])) {
+                    console.log('🔄 Converting from Firebase object format to arrays');
+                    const converted = wordsData.map((wordPosition, posIndex) => {
+                        console.log(`🔍 DEBUG: Converting position ${posIndex}:`, wordPosition);
+                        
+                        if (Array.isArray(wordPosition)) {
+                            console.log(`✅ Position ${posIndex} is already array`);
+                            return wordPosition;
+                        } else if (wordPosition && typeof wordPosition === 'object') {
+                            console.log(`🔄 Position ${posIndex} is object, converting...`);
+                            const candidates = Object.values(wordPosition).filter(candidate => {
+                                console.log('🔍 DEBUG: Checking candidate:', candidate);
+                                return candidate && candidate.word;
+                            });
+                            console.log(`✅ Position ${posIndex} converted to:`, candidates);
+                            return candidates.length > 0 ? candidates : [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
+                        } else {
+                            console.log(`⚠️ Position ${posIndex} is invalid, creating default`);
+                            return [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
+                        }
+                    });
+                    console.log('✅ Conversion complete:', converted);
+                    return converted;
+                }
             }
         
-            // If it's an array of objects (new Firebase format), convert it
-            if (Array.isArray(wordsData)) {
-                console.log('🔄 Converting from Firebase object format to arrays');
-                return wordsData.map((wordPosition, posIndex) => {
-                    if (Array.isArray(wordPosition)) {
-                        // Mixed format - this position is still an array
-                        return wordPosition;
-                    } else if (wordPosition && typeof wordPosition === 'object') {
-                        // Convert object back to array
-                        const candidates = Object.values(wordPosition).filter(candidate => 
-                            candidate && candidate.word
-                        );
-                        return candidates.length > 0 ? candidates : [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
-                    } else {
-                        // Invalid data - create default
-                        return [{word: `word${posIndex + 1}`, votes: 1, voters: []}];
-                    }
-                });
-            }
+            // If we get here, the format is unrecognized
+            console.log('⚠️ DEBUG: Unrecognized format, creating default structure');
+            console.log('🔍 DEBUG: Full wordsData object:', JSON.stringify(wordsData, null, 2));
+            return [
+                [{word: 'word1', votes: 5, voters: []}],
+                [{word: 'word2', votes: 5, voters: []}],
+                [{word: 'word3', votes: 5, voters: []}]
+            ];
+        }
+
+        
         
             // Completely unknown format - create default
             console.log('⚠️ Unknown words format, creating default structure');
