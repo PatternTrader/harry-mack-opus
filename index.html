@@ -2018,7 +2018,7 @@
                     <div class="segment" data-segment="${segmentId}">
                         <div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
                             <div class="segment-info">
-                                <div class="segment-title">Segment ${segmentIndex + 1}</div>
+                                <div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)}</div>
                                 <div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
                             </div>
                             <div class="segment-expand-icon">▶</div>
@@ -2057,7 +2057,7 @@
                     <div class="segment segment-error">
                         <div class="segment-header">
                             <div class="segment-info">
-                                <div class="segment-title">Segment ${segmentIndex + 1} (Error)</div>
+                                <div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)} (Error)</div>
                                 <div class="segment-rating-summary">Unable to load</div>
                             </div>
                         </div>
@@ -2168,7 +2168,7 @@
                                     return createSegmentHtml(segment, video.episodeNumber, segIndex);
                                 } catch (segmentError) {
                                     console.error(`❌ Error rendering segment ${segIndex} for Episode ${video.episodeNumber}:`, segmentError);
-                                    return `<div class="segment-error">Error loading segment ${segIndex + 1}</div>`;
+                                    return `<div class="segment-error">Error loading segment ${String.fromCharCode(65 + segIndex)}</div>`;
                                 }
                             }).join('');
                         } catch (segmentsError) {
