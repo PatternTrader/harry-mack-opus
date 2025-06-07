@@ -1088,23 +1088,9 @@
                                 // Replace the corrupted segments with proper ones
                                 processedSegments = newSegments;
                                 console.log('✅ Episode 2 data regenerated with', processedSegments.length, 'segments');
-                                
-                                // Optionally save the fixed data back to Firebase
-                                if (db) {
-                                    console.log('💾 Saving fixed Episode 2 data to Firebase...');
-                                    const fixedVideo = {
-                                        ...data,
-                                        segments: newSegments
-                                    };
-                                    
-                                    db.collection('videos').doc(`episode_2`).update({
-                                        segments: newSegments
-                                    }).then(() => {
-                                        console.log('✅ Episode 2 fixed data saved to Firebase');
-                                    }).catch(err => {
-                                        console.error('❌ Error saving fixed Episode 2 data:', err);
-                                    });
-                                }
+                    
+                                // Skip Firebase save due to nested array limitations
+                                console.log('ℹ️ Episode 2 fixed locally only - skipping Firebase save');
                                 
                             } else {
                                 // Process normally if not corrupted
