@@ -146,63 +146,22 @@
             background: #f39c12;
             color: white;
         }
+ 
 
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .video-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
+		/*do i need this*/
         .video-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
-
-        .video-embed {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .video-content {
-            padding: 20px;
-        }
-
-        .video-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
-        .overall-rating {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3498db;
-        }
-
+ 
+		/*do i need this*/
         .overall-rating h4 {
             color: #2c3e50;
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
+
+
 
         .segments-section {
             margin-bottom: 20px;
@@ -310,86 +269,8 @@
             margin-bottom: 10px;
             font-size: 0.85rem;
         }
-
-        .word-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .word-item {
-            display: flex;
-            align-items: center;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            gap: 5px;
-        }
-
-        .word-votes {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-        }
-
-        .vote-buttons {
-            display: flex;
-            gap: 2px;
-        }
-
-        .vote-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 0.7rem;
-            transition: background 0.2s ease;
-        }
-
-        .vote-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .vote-btn.voted {
-            background: rgba(255, 255, 255, 0.8);
-            color: #333;
-        }
-
-        .add-word-form {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .add-word-input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-
-        .add-word-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s ease;
-        }
-
-        .add-word-btn:hover {
-            background: #229954;
-        }
-
+   
+  
         .segment-ratings {
             border-top: 1px solid #eee;
             padding-top: 15px;
@@ -770,45 +651,21 @@
 		/* ===== END NOTES CSS ===== */
 		
 		
-        
-        /* ===== SEGMENT SUMMARY CSS ===== */
-        .segments-summary {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 4px solid #9b59b6;
-        }
-
+  
+		/* do i need this? */
         .segments-summary h4 {
             color: #2c3e50;
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
+		
 
-        .segments-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .segment-preview {
-            display: flex;
-            align-items: center;
-            background: linear-gradient(45deg, #9b59b6, #8e44ad);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            gap: 8px;
-            min-width: 120px;
-            justify-content: space-between;
-        }
-
+		/* do i need this? */
         .segment-preview-label {
             font-weight: 600;
         }
 
+		/* do i need this? */
         .segment-preview-rating {
             background: rgba(255, 255, 255, 0.3);
             padding: 2px 8px;
@@ -817,6 +674,7 @@
             font-weight: bold;
         }
 
+		/* do i need this? */
         .no-segments-preview {
             color: #7f8c8d;
             font-style: italic;
@@ -993,6 +851,452 @@
 		}
 		/* ===== END DISCLAIMER BANNER ===== */
 
+
+		/* ===== HORIZONTAL WORDS DISPLAY ===== */
+		.words-horizontal-container {
+			background: #f8f9fa;
+			border-radius: 10px;
+			padding: 15px;
+			border-left: 4px solid #3498db;
+		}
+
+		.words-horizontal {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.word-display {
+			display: inline-flex;
+			align-items: center;
+			background: linear-gradient(45deg, #3498db, #2980b9);
+			color: white;
+			padding: 8px 16px;
+			border-radius: 25px;
+			font-size: 0.9rem;
+			font-weight: 600;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			transition: all 0.2s ease;
+			min-width: 80px;
+			justify-content: center;
+		}
+
+		.word-display:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+		}
+
+		.word-text {
+			font-weight: 700;
+			letter-spacing: 0.3px;
+		}
+
+		/* ===== FILL-IN LINK STYLES ===== */
+		.word-missing {
+			display: inline-flex;
+			align-items: center;
+			min-width: 80px;
+			justify-content: center;
+		}
+
+		.fill-in-link {
+			display: inline-flex;
+			align-items: center;
+			background: linear-gradient(45deg, #e74c3c, #c0392b);
+			color: white;
+			padding: 8px 16px;
+			border-radius: 25px;
+			font-size: 0.85rem;
+			font-weight: 600;
+			text-decoration: none;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			transition: all 0.2s ease;
+			cursor: pointer;
+			border: 2px dashed rgba(255,255,255,0.3);
+		}
+
+		.fill-in-link:hover {
+			background: linear-gradient(45deg, #c0392b, #a93226);
+			transform: translateY(-1px);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+			text-decoration: none;
+			color: white;
+			border: 2px dashed rgba(255,255,255,0.6);
+		}
+
+		.fill-in-link:active {
+			transform: translateY(0);
+		}
+
+		/* ===== WORDS MANAGEMENT STYLES ===== */
+		.words-management h5 {
+			color: #2c3e50;
+			margin-bottom: 10px;
+			font-size: 0.85rem;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.words-management h5::before {
+			content: '🎵';
+			font-size: 1rem;
+		}
+
+		.words-help-text {
+			font-size: 0.75rem;
+			color: #7f8c8d;
+			margin-top: 8px;
+			font-style: italic;
+		}
+
+		/* ===== GENERAL STYLES ===== */
+		.segment-label {
+			font-size: 0.8rem;
+			color: #666;
+			margin-bottom: 5px;
+			font-weight: 600;
+		}
+
+		.no-words {
+			color: #7f8c8d;
+			font-style: italic;
+			font-size: 0.9rem;
+			padding: 8px;
+			text-align: center;
+		}
+
+		/* ===== RESPONSIVE DESIGN ===== */
+		@media (max-width: 768px) {
+			.words-horizontal {
+				flex-direction: column;
+				gap: 8px;
+				align-items: stretch;
+			}
+			
+			.word-display,
+			.word-missing {
+				min-width: auto;
+				width: 100%;
+			}
+			
+			.fill-in-link {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+		/* ===== END HORIZONTAL WORDS CSS ===== */
+
+
+		/* ===== INLINE SEGMENT HEADER WORDS ===== */
+		.segment-info-with-words {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			flex: 1;
+		}
+
+		.segment-title-and-rating {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+
+		.segment-words-inline {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.segment-words-inline .word-display {
+			padding: 4px 12px;
+			font-size: 0.8rem;
+			min-width: 60px;
+			border-radius: 15px;
+		}
+
+		.word-missing-inline {
+			display: inline-flex;
+			align-items: center;
+		}
+
+		.fill-in-link-small {
+			display: inline-flex;
+			align-items: center;
+			background: linear-gradient(45deg, #e74c3c, #c0392b);
+			color: white;
+			padding: 4px 12px;
+			border-radius: 15px;
+			font-size: 0.75rem;
+			font-weight: 600;
+			text-decoration: none;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+			transition: all 0.2s ease;
+			cursor: pointer;
+			border: 1px dashed rgba(255,255,255,0.3);
+			min-width: 60px;
+			justify-content: center;
+		}
+
+		.fill-in-link-small:hover {
+			background: linear-gradient(45deg, #c0392b, #a93226);
+			transform: translateY(-1px);
+			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+			text-decoration: none;
+			color: white;
+			border: 1px dashed rgba(255,255,255,0.6);
+		}
+
+		/* ===== RESPONSIVE FOR INLINE WORDS ===== */
+		@media (max-width: 768px) {
+			.segment-words-inline {
+				flex-direction: column;
+				gap: 4px;
+				align-items: stretch;
+			}
+			
+			.segment-words-inline .word-display,
+			.fill-in-link-small {
+				width: 100%;
+				min-width: auto;
+			}
+		}
+
+
+
+		/* ===== COMPACT VIDEO CARD UPDATES ===== */
+
+		/* Update video grid to fit 3 cards per row */
+		.video-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Reduced from 450px */
+			gap: 15px; /* Reduced from 25px */
+			margin-bottom: 40px;
+		}
+
+		/* More compact video cards */
+		.video-card {
+			background: white;
+			border-radius: 12px; /* Slightly reduced */
+			overflow: hidden;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Reduced shadow */
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+
+		.video-card:hover {
+			transform: translateY(-3px); /* Reduced from -5px */
+			box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Reduced from stronger shadow */
+		}
+
+		/* Significantly reduce video embed height */
+		.video-embed {
+			position: relative;
+			width: 100%;
+			height: 140px; /* Reduced from 200px */
+			background: #f0f0f0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			font-size: 14px;
+		}
+
+		/* Compact video content padding */
+		.video-content {
+			padding: 12px; /* Reduced from 20px */
+		}
+
+		/* Smaller video title */
+		.video-title {
+			font-size: 1rem; /* Reduced from 1.1rem */
+			font-weight: bold;
+			margin-bottom: 8px; /* Reduced from 15px */
+			color: #2c3e50;
+			line-height: 1.2;
+		}
+
+		/* Compact overall rating section */
+		.overall-rating {
+			background: #f8f9fa;
+			border-radius: 8px; /* Reduced from 10px */
+			padding: 8px 10px; /* Reduced from 15px */
+			margin-bottom: 10px; /* Reduced from 20px */
+			border-left: 3px solid #3498db; /* Reduced from 4px */
+		}
+
+		.overall-rating h4 {
+			color: #2c3e50;
+			margin-bottom: 6px; /* Reduced from 10px */
+			font-size: 0.8rem; /* Reduced from 0.9rem */
+			font-weight: 600;
+		}
+
+		/* More compact rating display */
+		.rating-category {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 0; /* Removed margin */
+		}
+
+		.rating-info {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.rating-label {
+			font-weight: 600;
+			color: #34495e;
+			font-size: 0.75rem; /* Reduced from 0.85rem */
+			margin-bottom: 2px;
+		}
+
+		.rating-stats {
+			font-size: 0.65rem; /* Reduced from 0.7rem */
+			color: #7f8c8d;
+		}
+
+		/* Compact segments summary */
+		.segments-summary {
+			background: #f8f9fa;
+			border-radius: 8px; /* Reduced from 10px */
+			padding: 8px 10px; /* Reduced from 15px */
+			margin-bottom: 10px; /* Reduced from 20px */
+			border-left: 3px solid #9b59b6; /* Reduced from 4px */
+		}
+
+		.segments-summary h4 {
+			color: #2c3e50;
+			margin-bottom: 6px; /* Reduced from 10px */
+			font-size: 0.8rem; /* Reduced from 0.9rem */
+			font-weight: 600;
+		}
+
+		/* Even more compact segment previews */
+		.segments-preview {
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 4px; /* Reduced from 8px */
+			overflow-x: auto;
+		}
+
+		.segment-preview {
+			display: flex;
+			align-items: center;
+			background: linear-gradient(45deg, #9b59b6, #8e44ad);
+			color: white;
+			padding: 4px 8px; /* Reduced from 6px 10px */
+			border-radius: 15px; /* Reduced from 20px */
+			font-size: 0.7rem; /* Reduced from 0.8rem */
+			gap: 4px; /* Reduced from 6px */
+			min-width: 85px; /* Reduced from 100px */
+			justify-content: space-between;
+			flex-shrink: 0;
+		}
+
+		.segment-preview-rating {
+			background: rgba(255, 255, 255, 0.3);
+			padding: 1px 6px; /* Reduced from 2px 8px */
+			border-radius: 10px; /* Reduced from 12px */
+			font-size: 0.7rem; /* Reduced from 0.8rem */
+			font-weight: bold;
+		}
+
+		/* Compact segments section */
+		.segments-section {
+			margin-bottom: 8px; /* Reduced from 20px */
+		}
+
+		.segments-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 8px; /* Reduced from 15px */
+		}
+
+		.segments-header h4 {
+			color: #8e44ad;
+			font-size: 0.8rem; /* Reduced from 0.9rem */
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			font-weight: 600;
+		}
+
+		.expand-toggle {
+			background: #8e44ad;
+			color: white;
+			border: none;
+			padding: 4px 10px; /* Reduced from 5px 12px */
+			border-radius: 12px; /* Reduced from 15px */
+			font-size: 0.7rem; /* Reduced from 0.8rem */
+			cursor: pointer;
+			transition: background 0.3s ease;
+			font-weight: 600;
+		}
+
+
+
+		/* Responsive updates for mobile */
+		@media (max-width: 768px) {
+			.video-grid {
+				grid-template-columns: 1fr; /* Single column on mobile */
+				gap: 12px;
+			}
+			
+			.video-embed {
+				height: 120px; /* Even smaller on mobile */
+			}
+			
+			.video-content {
+				padding: 10px;
+			}
+			
+			.video-title {
+				font-size: 0.95rem;
+			}
+		}
+
+		@media (min-width: 1200px) {
+			.video-grid {
+				grid-template-columns: repeat(3, 1fr); /* Force exactly 3 columns on larger screens */
+			}
+		}
+
+		/* Remove any duplicate information styling */
+		.user-rating-indicator {
+			font-size: 0.6rem; /* Reduced from 0.65rem */
+			color: #e74c3c;
+			font-weight: bold;
+			margin-top: 2px;
+		}
+
+		/* Inline segment title and rating */
+		.segment-title-inline {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+		}
+
+		.segment-name {
+			font-weight: 600;
+			color: #2c3e50;
+			font-size: 0.9rem;
+		}
+
+		.segment-rating-inline {
+			font-size: 0.75rem;
+			color: #7f8c8d;
+			font-weight: 600;
+			background: rgba(52, 152, 219, 0.1);
+			padding: 2px 6px;
+			border-radius: 8px;
+			flex-shrink: 0;
+		}
+
     </style>
 </head>
 
@@ -1012,11 +1316,21 @@
                     Sign in with Google
                 </button>
             </div>
-            
+         
+			
+			<!-- Admin-only button (only shows for mathewmit@gmail.com) -->
+			<button id="adminUpdateButton" onclick="bulkUpdateWords()" 
+					style="display: none; position: fixed; top: 100px; right: 20px; background: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1001; font-weight: bold;">
+				🔧 Admin: Update Words
+			</button>
+			
+			
+			
+			
             <h1>🎤 Harry Mack Ratings Central</h1>
-            <p>Rate Omegle Bars episodes and crowdsource words with the global Harry Mack fan community!</p>
+            <p>Rate Omegle Bars episodes with the global Harry Mack fan community!</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
-                ✨ Rate individual segments of Omegle Bars • Add the missing words • Vote on word accuracy ✨
+                ✨ Rate individual segments of Omegle Bars • View episode words • Add personal notes ✨
             </p>
         </div>
 
@@ -1045,7 +1359,7 @@
 					</div>
 					<div class="feature-item">
 						<div class="feature-icon">🏗️</div>
-						<span>Build a comprehensive database together</span>
+						<span>Help fill out the words database</span>
 					</div>
 				</div>
 			</div>
@@ -1129,9 +1443,8 @@
         let isSigningIn = false;
         let videos = [];
         let userRatings = {};
-        let userWordVotes = {};
-        let isAddingWord = false;
-		let isVotingOnWord = false;
+
+
         let realtimeUpdateTimeout = null; // Add this to debounce real-time updates
 		let userNotes = {};
 		let isSavingNote = false;
@@ -1152,96 +1465,144 @@
         // Debug mode flag
         const DEBUG_EPISODE_2 = true;
 
-        // FIXED: Better Firebase format conversion
-        function convertWordsObjectToArray(wordsData) {
-            console.log('🔍 Converting words data:', JSON.stringify(wordsData, null, 2));
-            
-            if (!wordsData) {
-                return [
-                    [{word: 'word1', votes: 5, voters: []}],
-                    [{word: 'word2', votes: 5, voters: []}],
-                    [{word: 'word3', votes: 5, voters: []}]
-                ];
-            }
-        
-            // If it's already the correct format (array of arrays), return as-is
-            if (Array.isArray(wordsData) && wordsData.length > 0 && Array.isArray(wordsData[0])) {
-                console.log('✅ Already in correct array format');
-                return wordsData;
-            }
-        
-            // Convert Firebase object format to array format
-            if (Array.isArray(wordsData)) {
-                console.log('🔄 Converting from Firebase array-of-objects format');
-                
-                return wordsData.map((wordPosition, positionIndex) => {
-                    if (typeof wordPosition === 'object' && wordPosition !== null && !Array.isArray(wordPosition)) {
-                        // Convert object with numeric keys back to array
-                        const candidates = [];
-                        Object.keys(wordPosition).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
-                            const candidate = wordPosition[key];
-                            if (candidate && candidate.word) {
-                                candidates.push({
-                                    word: candidate.word,
-                                    votes: candidate.votes || 1,
-                                    voters: candidate.voters || []
-                                });
-                            }
-                        });
-                        return candidates.length > 0 ? candidates : [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
-                    } else if (Array.isArray(wordPosition)) {
-                        // Already in correct format
-                        return wordPosition;
-                    } else {
-                        // Fallback
-                        return [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
-                    }
-                });
-            }
-        
-            // Fallback - create default structure
-            console.log('⚠️ Unknown format, creating defaults');
-            return [
-                [{word: 'word1', votes: 5, voters: []}],
-                [{word: 'word2', votes: 5, voters: []}],
-                [{word: 'word3', votes: 5, voters: []}]
-            ];
-        }
 
-        function sanitizeSegmentData(segment, videoId, segmentIndex) {
-            console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
-            
-            const sanitized = {
-                id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
-                ratings: segment?.ratings || { ...defaultRatings },
-                words: []
-            };
-        
-            if (segment?.words) {
-                console.log(`🔄 Processing words for ${videoId}-${segmentIndex}`);
-                try {
-                    sanitized.words = convertWordsObjectToArray(segment.words);
-                    console.log(`✅ Words converted successfully for ${videoId}-${segmentIndex}`);
-                } catch (conversionError) {
-                    console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
-                    sanitized.words = [
-                        [{word: 'word1', votes: 5, voters: []}],
-                        [{word: 'word2', votes: 5, voters: []}],
-                        [{word: 'word3', votes: 5, voters: []}]
-                    ];
-                }
-            } else {
-                console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default`);
-                sanitized.words = [
-                    [{word: 'word1', votes: 5, voters: []}],
-                    [{word: 'word2', votes: 5, voters: []}],
-                    [{word: 'word3', votes: 5, voters: []}]
-                ];
-            }
-        
-            console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex}:`, sanitized);
-            return sanitized;
-        }
+		function convertWordsObjectToArray(wordsData) {
+			console.log('🔍 Converting words data:', JSON.stringify(wordsData, null, 2));
+			
+			if (!wordsData) {
+				return [
+					[{word: 'word1', votes: 5, voters: []}],
+					[{word: 'word2', votes: 5, voters: []}],
+					[{word: 'word3', votes: 5, voters: []}]
+				];
+			}
+
+			// If it's already the correct format (array of arrays), return as-is
+			if (Array.isArray(wordsData) && wordsData.length > 0 && Array.isArray(wordsData[0])) {
+				console.log('✅ Already in correct array format');
+				return wordsData;
+			}
+
+			// NEW: Handle the Firebase object format from bulkUpdateWords
+			if (typeof wordsData === 'object' && !Array.isArray(wordsData)) {
+				console.log('🔄 Converting from Firebase object format (bulkUpdateWords)');
+				const result = [];
+				
+				// Convert object keys back to array positions
+				Object.keys(wordsData).sort((a, b) => parseInt(a) - parseInt(b)).forEach(positionKey => {
+					const wordPosition = wordsData[positionKey];
+					const candidates = [];
+					
+					if (wordPosition && typeof wordPosition === 'object') {
+						// Get the first candidate (index 0)
+						if (wordPosition[0] && wordPosition[0].word) {
+							candidates.push({
+								word: wordPosition[0].word,
+								votes: wordPosition[0].votes || 1,
+								voters: wordPosition[0].voters || []
+							});
+						}
+					}
+					
+					if (candidates.length === 0) {
+						candidates.push({word: `word${result.length + 1}`, votes: 1, voters: []});
+					}
+					
+					result.push(candidates);
+				});
+				
+				// Ensure exactly 3 word positions
+				while (result.length < 3) {
+					result.push([{word: `word${result.length + 1}`, votes: 1, voters: []}]);
+				}
+				
+				console.log('✅ Converted to array format:', result);
+				return result;
+			}
+
+			// Convert Firebase array format (existing logic)
+			if (Array.isArray(wordsData)) {
+				console.log('🔄 Converting from Firebase array-of-objects format');
+				
+				return wordsData.map((wordPosition, positionIndex) => {
+					if (typeof wordPosition === 'object' && wordPosition !== null && !Array.isArray(wordPosition)) {
+						const candidates = [];
+						Object.keys(wordPosition).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
+							const candidate = wordPosition[key];
+							if (candidate && candidate.word) {
+								candidates.push({
+									word: candidate.word,
+									votes: candidate.votes || 1,
+									voters: candidate.voters || []
+								});
+							}
+						});
+						return candidates.length > 0 ? candidates : [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
+					} else if (Array.isArray(wordPosition)) {
+						return wordPosition;
+					} else {
+						return [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
+					}
+				});
+			}
+
+			// Fallback
+			console.log('⚠️ Unknown format, creating defaults');
+			return [
+				[{word: 'word1', votes: 5, voters: []}],
+				[{word: 'word2', votes: 5, voters: []}],
+				[{word: 'word3', votes: 5, voters: []}]
+			];
+		}
+
+
+
+		function sanitizeSegmentData(segment, videoId, segmentIndex) {
+			console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
+			
+			const sanitized = {
+				id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
+				ratings: segment?.ratings || { ...defaultRatings },
+				words: []
+			};
+
+			if (segment?.words) {
+				console.log(`🔄 Processing words for ${videoId}-${segmentIndex}`);
+				try {
+					sanitized.words = convertWordsObjectToArray(segment.words);
+					
+					// ENSURE EXACTLY 3 WORDS PER SEGMENT
+					while (sanitized.words.length < 3) {
+						sanitized.words.push([{word: `word${sanitized.words.length + 1}`, votes: 5, voters: []}]);
+					}
+					if (sanitized.words.length > 3) {
+						sanitized.words = sanitized.words.slice(0, 3);
+					}
+					
+					console.log(`✅ Words processed for ${videoId}-${segmentIndex}, exactly ${sanitized.words.length} words`);
+				} catch (conversionError) {
+					console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
+					sanitized.words = [
+						[{word: 'word1', votes: 5, voters: []}],
+						[{word: 'word2', votes: 5, voters: []}],
+						[{word: 'word3', votes: 5, voters: []}]
+					];
+				}
+			} else {
+				console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default`);
+				sanitized.words = [
+					[{word: 'word1', votes: 5, voters: []}],
+					[{word: 'word2', votes: 5, voters: []}],
+					[{word: 'word3', votes: 5, voters: []}]
+				];
+			}
+
+			console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex}:`, sanitized);
+			return sanitized;
+		}
+
+
+      
 
         // NEW: Calculate weighted video ratings from segment ratings
         function calculateVideoOverallRating(video) {
@@ -1320,39 +1681,73 @@
             console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
         }
 
-        function generateDefaultSegments() {
-            console.log('🔧 Generating default segments...');
-            const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
-            const numSegments = 3; // Default to 3 segments
-            const segments = [];
-            
-            for (let j = 0; j < numSegments; j++) {
-                const segmentWords = [];
-                
-                // Generate 3 words per segment
-                for (let k = 0; k < 3; k++) {
-                    const candidateWords = [];
-                    const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
-                    
-                    candidateWords.push({
-                        word: baseWord,
-                        votes: Math.floor(Math.random() * 10) + 5,
-                        voters: []
-                    });
-                    
-                    segmentWords.push(candidateWords);
-                }
-                
-                segments.push({
-                    id: `default_segment_${j + 1}`,
-                    words: segmentWords,
-                    ratings: { ...defaultRatings }
-                });
-            }
-            
-            console.log(`✅ Generated ${segments.length} default segments`);
-            return segments;
-        }
+
+		function generateDefaultSegments() {
+			console.log('🔧 Generating exactly 3 default segments...');
+			const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
+			const segments = [];
+			
+			// Always create exactly 3 segments
+			for (let j = 0; j < 3; j++) {
+				const segmentWords = [];
+				
+				// Always generate exactly 3 words per segment
+				for (let k = 0; k < 3; k++) {
+					const candidateWords = [];
+					const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+					
+					candidateWords.push({
+						word: baseWord,
+						votes: Math.floor(Math.random() * 10) + 5,
+						voters: []
+					});
+					
+					segmentWords.push(candidateWords);
+				}
+				
+				segments.push({
+					id: `default_segment_${j + 1}`,
+					words: segmentWords,
+					ratings: { ...defaultRatings }
+				});
+			}
+			
+			console.log(`✅ Generated exactly ${segments.length} segments`);
+			return segments;
+		}
+
+
+		function ensureExactly3Segments(segments, episodeNumber) {
+			console.log(`🔧 Ensuring exactly 3 segments for Episode ${episodeNumber}, currently has ${segments.length}`);
+			
+			const result = [];
+			
+			// Take up to 3 existing segments
+			for (let i = 0; i < 3; i++) {
+				if (i < segments.length) {
+					// Use existing segment
+					result.push(segments[i]);
+				} else {
+					// Create missing segment
+					const newSegment = {
+						id: `segment_${episodeNumber}_${i + 1}`,
+						words: [
+							[{word: 'word1', votes: 5, voters: []}],
+							[{word: 'word2', votes: 5, voters: []}],
+							[{word: 'word3', votes: 5, voters: []}]
+						],
+						ratings: { ...defaultRatings }
+					};
+					result.push(newSegment);
+					console.log(`✅ Created missing segment ${i + 1} for Episode ${episodeNumber}`);
+				}
+			}
+			
+			console.log(`✅ Episode ${episodeNumber} now has exactly ${result.length} segments`);
+			return result;
+		}
+
+
 
         async function initializeFirebase() {
             try {
@@ -1463,8 +1858,8 @@
             }
         }
 
+ 
 
-		// UPDATED: handleAuthStateChange to load notes
 		function handleAuthStateChange(user) {
 			currentUser = user;
 			
@@ -1479,23 +1874,25 @@
 				authButton.onclick = signOut;
 				
 				loadUserRatings();
-				loadUserWordVotes();
-				loadUserNotes(); // NEW: Load user notes
+				loadUserNotes(); 
 				
-				// ADD THIS LINE:
 				if (db) updateConnectionStatus('connected');
+				
+				// ADD THIS LINE - Check admin access
+				checkAdminAccess();
 				
 			} else {
 				userInfo.style.display = 'none';
 				authButton.innerHTML = '<img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">Sign in with Google';
 				authButton.onclick = signIn;
 				userRatings = {};
-				userWordVotes = {};
-				userNotes = {}; // NEW: Clear notes on sign out
-				editingNotes = {}; // NEW: Clear editing state
+				userNotes = {};
+				editingNotes = {};
+				
+				// ADD THIS LINE - Hide admin features when signed out
+				checkAdminAccess();
 			}
 		}
-
 
 
 
@@ -1644,22 +2041,38 @@
                                     sanitizeSegmentData(segment, data.episodeNumber, idx)
                                 );
                             }
-                        } else if (data.segments && Array.isArray(data.segments)) {
-                            console.log(`✅ Valid segments array with ${data.segments.length} items`);
-                            processedSegments = data.segments.map((segment, idx) => 
-                                sanitizeSegmentData(segment, data.episodeNumber, idx)
-                            );
-                        } else if (data.segments && typeof data.segments === 'object') {
-                            console.log(`🔄 Converting segments object to array`);
-                            const segmentValues = Object.values(data.segments);
-                            processedSegments = segmentValues.map((segment, idx) => 
-                                sanitizeSegmentData(segment, data.episodeNumber, idx)
-                            );
-                        } else {
-                            console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
-                            processedSegments = generateDefaultSegments();
-                        }
+							
                         
+						//added this on June 8, 2025
+						} else if (data.segments && Array.isArray(data.segments)) {
+					console.log(`✅ Valid segments array with ${data.segments.length} items`);
+					let tempSegments = data.segments.map((segment, idx) => 
+						sanitizeSegmentData(segment, data.episodeNumber, idx)
+					);
+					
+					// FORCE EXACTLY 3 SEGMENTS
+					processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
+					
+				} else if (data.segments && typeof data.segments === 'object') {
+					console.log(`🔄 Converting segments object to array`);
+					const segmentValues = Object.values(data.segments);
+					let tempSegments = segmentValues.map((segment, idx) => 
+						sanitizeSegmentData(segment, data.episodeNumber, idx)
+					);
+					
+					// FORCE EXACTLY 3 SEGMENTS
+					processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
+					
+				} else {
+					console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
+					processedSegments = generateDefaultSegments();
+				}
+
+
+				
+						
+						
+						
                         const processedVideo = {
                             id: doc.id,
                             episodeNumber: data.episodeNumber,
@@ -1862,133 +2275,118 @@
             
             return youtubeIds[index % youtubeIds.length];
         }
+
+
+		function generateSampleVideos() {
+			const wordBank = [
+				"pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
+				"telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
+				"bicycle", "ocean", "chocolate", "butterfly", "mountain", "music",
+				"spaceship", "burger", "lightning", "guitar", "forest", "diamond",
+				"robot", "sunset", "library", "airplane", "wizard", "sandwich",
+				"telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream"
+			];
+
+			const sampleVideos = [];
+			
+			for (let i = 1; i <= 100; i++) {
+				const segments = [];
+				
+				// Always create exactly 3 segments per video
+				for (let j = 0; j < 3; j++) {
+					const segmentWords = [];
+					
+					// Always create exactly 3 words per segment
+					for (let k = 0; k < 3; k++) {
+						const candidateWords = [];
+						
+						const baseWordIndex = Math.floor(Math.random() * wordBank.length);
+						const baseWord = wordBank[baseWordIndex];
+						
+						// Just create one word per position (no alternatives)
+						candidateWords.push({
+							word: baseWord,
+							votes: Math.floor(Math.random() * 15) + 10,
+							voters: []
+						});
+						
+						segmentWords.push(candidateWords);
+					}
+					
+					const lyrics = Math.random() * 2 + 3;
+					const beats = Math.random() * 2 + 3;
+					const reaction = Math.random() * 2 + 3;
+					const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
+					
+					const baseRatingCount = Math.floor(Math.random() * 50) + 5;
+					
+					segments.push({
+						id: `segment_${i}_${j + 1}`,
+						words: segmentWords,
+						ratings: {
+							lyrics: { 
+								average: Math.max(1, Math.min(5, lyrics)),
+								count: baseRatingCount + Math.floor(Math.random() * 10) 
+							},
+							beats: { 
+								average: Math.max(1, Math.min(5, beats)), 
+								count: baseRatingCount + Math.floor(Math.random() * 12) 
+							},
+							reaction: { 
+								average: Math.max(1, Math.min(5, reaction)), 
+								count: baseRatingCount + Math.floor(Math.random() * 15) 
+							},
+							overall: { 
+								average: Math.max(1, Math.min(5, overall)), 
+								count: baseRatingCount + Math.floor(Math.random() * 8) 
+							}
+						}
+					});
+				}
+
+				// Calculate video ratings from the 3 segments
+				const videoLyrics = segments.reduce((sum, seg) => sum + seg.ratings.lyrics.average, 0) / 3;
+				const videoBeats = segments.reduce((sum, seg) => sum + seg.ratings.beats.average, 0) / 3;
+				const videoReaction = segments.reduce((sum, seg) => sum + seg.ratings.reaction.average, 0) / 3;
+				const videoOverall = segments.reduce((sum, seg) => sum + seg.ratings.overall.average, 0) / 3;
+				
+				const totalSegmentRatings = segments.reduce((sum, seg) => 
+					sum + seg.ratings.lyrics.count + seg.ratings.beats.count + seg.ratings.reaction.count + seg.ratings.overall.count, 0);
+
+				const video = {
+					episodeNumber: i,
+					title: `Omegle Bars Episode #${i}`,
+					youtubeId: getYouTubeId(i),
+					segments: segments, // Always exactly 3 segments
+					ratings: {
+						lyrics: { 
+							average: videoLyrics,
+							count: Math.floor(totalSegmentRatings * 0.25) 
+						},
+						beats: { 
+							average: videoBeats, 
+							count: Math.floor(totalSegmentRatings * 0.25) 
+						},
+						reaction: { 
+							average: videoReaction, 
+							count: Math.floor(totalSegmentRatings * 0.25) 
+						},
+						overall: { 
+							average: videoOverall, 
+							count: Math.floor(totalSegmentRatings * 0.25) 
+						}
+					}
+				};
+
+				sampleVideos.push(video);
+			}
+			
+			videos = sampleVideos;
+			console.log(`✅ Generated ${sampleVideos.length} videos with exactly 3 segments each`);
+			return sampleVideos;
+		}
+
         
-        function generateSampleVideos() {
-            const wordBank = [
-                "pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
-                "telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
-                "bicycle", "ocean", "chocolate", "butterfly", "mountain", "music",
-                "spaceship", "burger", "lightning", "guitar", "forest", "diamond",
-                "robot", "sunset", "library", "airplane", "wizard", "sandwich",
-                "telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream"
-            ];
-
-            const sampleVideos = [];
-            
-            for (let i = 1; i <= 100; i++) {
-                const segments = [];
-                const numSegments = Math.random() < 0.8 ? 3 : (Math.random() < 0.5 ? 2 : 4);
-                
-                for (let j = 0; j < numSegments; j++) {
-                    const numWords = Math.random() < 0.7 ? 3 : (Math.random() < 0.5 ? 2 : 4);
-                    const segmentWords = [];
-                    
-                    for (let k = 0; k < numWords; k++) {
-                        const candidateWords = [];
-                        
-                        const baseWordIndex = Math.floor(Math.random() * wordBank.length);
-                        const baseWord = wordBank[baseWordIndex];
-                        
-                        candidateWords.push({
-                            word: baseWord,
-                            votes: Math.floor(Math.random() * 15) + 10,
-                            voters: []
-                        });
-                        
-                        const numAlternatives = Math.random() < 0.4 ? 1 : (Math.random() < 0.2 ? 2 : 0);
-                        
-                        for (let alt = 0; alt < numAlternatives; alt++) {
-                            let altWordIndex;
-                            let altWord;
-                            
-                            do {
-                                altWordIndex = Math.floor(Math.random() * wordBank.length);
-                                altWord = wordBank[altWordIndex];
-                            } while (altWord === baseWord);
-                            
-                            const wordExists = candidateWords.some(candidate => candidate.word === altWord);
-                            if (!wordExists) {
-                                candidateWords.push({
-                                    word: altWord,
-                                    votes: Math.floor(Math.random() * 5) + 1,
-                                    voters: []
-                                });
-                            }
-                        }
-                        
-                        segmentWords.push(candidateWords);
-                    }
-                    
-                    const lyrics = Math.random() * 2 + 3;
-                    const beats = Math.random() * 2 + 3;
-                    const reaction = Math.random() * 2 + 3;
-                    const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
-                    
-                    const baseRatingCount = Math.floor(Math.random() * 50) + 5;
-                    
-                    segments.push({
-                        id: `segment_${i}_${j + 1}`,
-                        words: segmentWords,
-                        ratings: {
-                            lyrics: { 
-                                average: Math.max(1, Math.min(5, lyrics)),
-                                count: baseRatingCount + Math.floor(Math.random() * 10) 
-                            },
-                            beats: { 
-                                average: Math.max(1, Math.min(5, beats)), 
-                                count: baseRatingCount + Math.floor(Math.random() * 12) 
-                            },
-                            reaction: { 
-                                average: Math.max(1, Math.min(5, reaction)), 
-                                count: baseRatingCount + Math.floor(Math.random() * 15) 
-                            },
-                            overall: { 
-                                average: Math.max(1, Math.min(5, overall)), 
-                                count: baseRatingCount + Math.floor(Math.random() * 8) 
-                            }
-                        }
-                    });
-                }
-
-                const videoLyrics = segments.reduce((sum, seg) => sum + seg.ratings.lyrics.average, 0) / segments.length;
-                const videoBeats = segments.reduce((sum, seg) => sum + seg.ratings.beats.average, 0) / segments.length;
-                const videoReaction = segments.reduce((sum, seg) => sum + seg.ratings.reaction.average, 0) / segments.length;
-                const videoOverall = segments.reduce((sum, seg) => sum + seg.ratings.overall.average, 0) / segments.length;
-                
-                const totalSegmentRatings = segments.reduce((sum, seg) => 
-                    sum + seg.ratings.lyrics.count + seg.ratings.beats.count + seg.ratings.reaction.count + seg.ratings.overall.count, 0);
-
-                const video = {
-                    episodeNumber: i,
-                    title: `Omegle Bars Episode #${i}`,
-                    youtubeId: getYouTubeId(i),
-                    segments: segments,
-                    ratings: {
-                        lyrics: { 
-                            average: videoLyrics,
-                            count: Math.floor(totalSegmentRatings * 0.25) 
-                        },
-                        beats: { 
-                            average: videoBeats, 
-                            count: Math.floor(totalSegmentRatings * 0.25) 
-                        },
-                        reaction: { 
-                            average: videoReaction, 
-                            count: Math.floor(totalSegmentRatings * 0.25) 
-                        },
-                        overall: { 
-                            average: videoOverall, 
-                            count: Math.floor(totalSegmentRatings * 0.25) 
-                        }
-                    }
-                };
-
-                sampleVideos.push(video);
-            }
-            
-            videos = sampleVideos;
-            return sampleVideos;
-        }
 
         async function loadUserRatings() {
             if (!currentUser || !db) return;
@@ -2021,27 +2419,7 @@
                 console.error('Error loading user ratings:', error);
             }
         }
-
-        async function loadUserWordVotes() {
-            if (!currentUser || !db) return;
-
-            try {
-                const votesSnapshot = await db.collection('userWordVotes')
-                    .where('userId', '==', currentUser.uid)
-                    .get();
-                
-                userWordVotes = {};
-                
-                votesSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    const key = `${data.videoId}_${data.segmentId}_${data.wordIndex}_${data.word}`;
-                    userWordVotes[key] = data.voteType;
-                });
-                
-            } catch (error) {
-                console.error('Error loading user word votes:', error);
-            }
-        }
+ 
          
 		 
 		 function updateUserRatingDisplay() {
@@ -2342,318 +2720,9 @@
                 console.error('Error updating rating:', error);
             }
         }
+ 
 
 
-
-	   
-	   
-	   // FIXED: voteOnWord function - NO renderVideos() call
-		async function voteOnWord(videoId, segmentId, wordIndex, word, voteType) {
-			if (!currentUser) {
-				showSignInPrompt('word voting', 0);
-				return;
-			}
-			try {
-				const voteKey = `${videoId}_${segmentId}_${wordIndex}_${word}`;
-				const currentVote = userWordVotes[voteKey];
-
-				let newVoteType = null;
-				if (currentVote === voteType) {
-					newVoteType = null;
-				} else {
-					newVoteType = voteType;
-				}
-				userWordVotes[voteKey] = newVoteType;
-
-				if (db) {
-					const voteDocId = `${currentUser.uid}_${voteKey}`;
-					if (newVoteType) {
-						await db.collection('userWordVotes').doc(voteDocId).set({
-							userId: currentUser.uid,
-							videoId: videoId,
-							segmentId: segmentId,
-							wordIndex: wordIndex,
-							word: word,
-							voteType: newVoteType,
-							timestamp: firebase.firestore.FieldValue.serverTimestamp()
-						});
-					} else {
-						await db.collection('userWordVotes').doc(voteDocId).delete();
-					}
-
-					await updateWordVotes(videoId, segmentId, wordIndex, word, currentVote, newVoteType);
-				}
-
-				// ONLY update the specific word - NO renderVideos()!
-				updateSingleWordInDOM(videoId, segmentId, wordIndex, word, newVoteType);
-
-				showNotification(`${newVoteType ? (newVoteType === 'up' ? 'Upvoted' : 'Downvoted') : 'Removed vote on'} word: ${word}`, 'success');
-				
-			} catch (error) {
-				console.error('Error voting on word:', error);
-				showNotification('Failed to save vote. Please try again.', 'error');
-			}
-		}
-	   
-	   
-
-        async function updateWordVotes(videoId, segmentId, wordIndex, word, oldVote, newVote) {
-            if (!db) return;
-
-            try {
-                const video = videos.find(v => v.episodeNumber.toString() === videoId);
-                if (!video) return;
-
-                const segment = video.segments.find(s => s.id === segmentId);
-                if (!segment || !segment.words[wordIndex]) return;
-
-                const wordCandidate = segment.words[wordIndex].find(w => w.word === word);
-                if (!wordCandidate) return;
-
-                if (oldVote === 'up') wordCandidate.votes--;
-                if (oldVote === 'down') wordCandidate.votes++;
-                if (newVote === 'up') wordCandidate.votes++;
-                if (newVote === 'down') wordCandidate.votes--;
-
-                wordCandidate.votes = Math.max(0, wordCandidate.votes);
-
-                const videoRef = db.collection('videos').doc(`episode_${videoId}`);
-                await videoRef.update({
-                    [`segments`]: video.segments
-                });
-
-            } catch (error) {
-                console.error('Error updating word votes:', error);
-            }
-        }
-
-        // FIXED: Improved addNewWord function - no more collapsing!
-        async function addNewWord(videoId, segmentId, wordIndex, newWord) {
-            console.log('🔍 Adding word:', { videoId, segmentId, wordIndex, newWord });
-            
-            // Check if already adding a word
-            if (isAddingWord) {
-                console.log('❌ Already adding a word, please wait');
-                showNotification('Please wait, another word is being added...', 'info');
-                return;
-            }
-
-            // Set flag to prevent issues
-            isAddingWord = true;
-            
-            try {
-                // Validate user and input
-                if (!currentUser) {
-                    showSignInPrompt('add words', 0);
-                    return;
-                }
-
-                if (!newWord || !newWord.trim()) {
-                    showNotification('Please enter a word', 'error');
-                    return;
-                }
-
-                const trimmedWord = newWord.trim();
-                console.log('✅ User authenticated, word validated:', trimmedWord);
-
-                // Find video and segment
-                const video = videos.find(v => v.episodeNumber.toString() === videoId);
-                if (!video) {
-                    showNotification('Video not found', 'error');
-                    return;
-                }
-
-                const segment = video.segments.find(s => s.id === segmentId);
-                if (!segment || !segment.words || !segment.words[wordIndex]) {
-                    showNotification('Invalid word position', 'error');
-                    return;
-                }
-
-                // Check if word already exists
-                const existingWord = segment.words[wordIndex].find(w => 
-                    w && w.word && w.word.toLowerCase() === trimmedWord.toLowerCase()
-                );
-
-                if (existingWord) {
-                    showNotification('This word already exists for this position', 'info');
-                    return;
-                }
-
-                // Add word locally FIRST
-                const newWordObj = {
-                    word: trimmedWord,
-                    votes: 1,
-                    voters: [currentUser.uid]
-                };
-                
-                // Add to the actual segment data
-                segment.words[wordIndex].push(newWordObj);
-                console.log('✅ Word added to local data');
-
-                // Save user vote locally
-                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${trimmedWord}`;
-                userWordVotes[voteKey] = 'up';
-
-                // Update ONLY the specific word list in the DOM - no re-rendering!
-                updateWordListInDOM(videoId, segmentId, wordIndex, segment.words[wordIndex]);
-
-                // Save to Firebase in background
-                if (db) {
-                    console.log('💾 Saving to Firebase...');
-                    
-                    // Convert to Firebase format
-                    const segmentsForFirebase = video.segments.map(seg => ({
-                        id: seg.id,
-                        ratings: { ...seg.ratings },
-                        words: seg.words.map(wordCandidates => {
-                            const wordObj = {};
-                            wordCandidates.forEach((candidate, index) => {
-                                if (candidate && candidate.word) {
-                                    wordObj[index.toString()] = {
-                                        word: candidate.word,
-                                        votes: candidate.votes || 1,
-                                        voters: candidate.voters || []
-                                    };
-                                }
-                            });
-                            return wordObj;
-                        })
-                    }));
-
-                    const videoRef = db.collection('videos').doc(`episode_${videoId}`);
-                    await videoRef.update({ segments: segmentsForFirebase });
-                    console.log('✅ Firebase update successful!');
-
-                    // Save user vote to Firebase
-                    const voteDocId = `${currentUser.uid}_${voteKey}`;
-                    await db.collection('userWordVotes').doc(voteDocId).set({
-                        userId: currentUser.uid,
-                        videoId: videoId,
-                        segmentId: segmentId,
-                        wordIndex: parseInt(wordIndex),
-                        word: trimmedWord,
-                        voteType: 'up',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    console.log('✅ Vote record saved');
-                }
-
-                showNotification(`Added new word: ${trimmedWord}`, 'success');
-                console.log('✅ Word addition completed successfully - no re-render needed!');
-
-            } catch (error) {
-                console.error('❌ Error adding word:', error);
-                showNotification('Failed to add word. Please try again.', 'error');
-            } finally {
-                // Reset flag after a delay to prevent rapid re-triggering
-                setTimeout(() => {
-                    isAddingWord = false;
-                    console.log('🔄 Word addition flag reset');
-                }, 1000); // Reduced timeout since no re-render
-            }
-        }
-
-        // NEW: Function to update just one word list without re-rendering everything
-        function updateWordListInDOM(videoId, segmentId, wordIndex, wordCandidates) {
-            console.log('🎯 Updating word list in DOM for:', videoId, segmentId, wordIndex);
-            
-            // Find the specific word list element
-            const segmentElement = document.querySelector(
-                `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
-            );
-
-            if (!segmentElement) {
-                console.warn('⚠️ Segment element not found');
-                return;
-            }
-
-            const wordListElements = segmentElement.querySelectorAll('.word-list');
-            if (!wordListElements[wordIndex]) {
-                console.warn('⚠️ Word list element not found for index:', wordIndex);
-                return;
-            }
-
-            // Update just this word list
-            const targetWordList = wordListElements[wordIndex];
-            targetWordList.innerHTML = createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex);
-            
-            console.log('✅ Word list updated in DOM without collapsing!');
-        }
-
-
-
-		// NEW: Function to update just one word's vote count and buttons without re-rendering
-		function updateSingleWordInDOM(videoId, segmentId, wordIndex, word, userVote) {
-			console.log('🎯 Updating single word in DOM:', videoId, segmentId, wordIndex, word);
-			
-			// Find the specific word element
-			const segmentElement = document.querySelector(
-				`.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
-			);
-
-			if (!segmentElement) {
-				console.warn('⚠️ Segment element not found');
-				return;
-			}
-
-			const wordListElements = segmentElement.querySelectorAll('.word-list');
-			if (!wordListElements[wordIndex]) {
-				console.warn('⚠️ Word list element not found for index:', wordIndex);
-				return;
-			}
-
-			// Find the specific word item within this word list
-			const wordList = wordListElements[wordIndex];
-			const wordItems = wordList.querySelectorAll('.word-item');
-			
-			let targetWordItem = null;
-			wordItems.forEach(item => {
-				const wordSpan = item.querySelector('span:first-child');
-				if (wordSpan && wordSpan.textContent === word) {
-					targetWordItem = item;
-				}
-			});
-
-			if (!targetWordItem) {
-				console.warn('⚠️ Specific word item not found:', word);
-				return;
-			}
-
-			// Update the vote count from local data
-			const video = videos.find(v => v.episodeNumber.toString() === videoId);
-			if (video && video.segments) {
-				const segment = video.segments.find(s => s.id === segmentId);
-				if (segment && segment.words[wordIndex]) {
-					const wordCandidate = segment.words[wordIndex].find(w => w.word === word);
-					if (wordCandidate) {
-						// Update vote count display
-						const votesSpan = targetWordItem.querySelector('.word-votes');
-						if (votesSpan) {
-							votesSpan.textContent = wordCandidate.votes;
-						}
-
-						// Update vote button states
-						const upButton = targetWordItem.querySelector('.vote-btn:first-of-type');
-						const downButton = targetWordItem.querySelector('.vote-btn:last-of-type');
-						
-						if (upButton && downButton) {
-							// Reset button states
-							upButton.classList.remove('voted');
-							downButton.classList.remove('voted');
-							
-							// Set current vote state
-							if (userVote === 'up') {
-								upButton.classList.add('voted');
-							} else if (userVote === 'down') {
-								downButton.classList.add('voted');
-							}
-						}
-					}
-				}
-			}
-			
-			console.log('✅ Single word updated in DOM without collapsing!');
-		}
 
 
 
@@ -2690,53 +2759,73 @@
 			return starsHtml;
 		}
 		
-		 
-				
-				
-		
 
-        function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
-            console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
-            
-            let validCandidates = [];
-            
-            if (Array.isArray(wordCandidates)) {
-                validCandidates = wordCandidates.filter(candidate => 
-                    candidate && 
-                    candidate.word && 
-                    typeof candidate.word === 'string' && 
-                    candidate.word.trim() !== ''
-                );
-            } else {
-                console.log(`⚠️ Unknown word candidates format, creating fallback`);
-                validCandidates = [{
-                    word: 'unknown',
-                    votes: 1,
-                    voters: []
-                }];
-            }
-            
-            const sortedCandidates = validCandidates.sort((a, b) => (b.votes || 0) - (a.votes || 0));
-            
-            return sortedCandidates.map(candidate => {
-                const voteKey = `${videoId}_${segmentId}_${wordIndex}_${candidate.word}`;
-                const userVote = userWordVotes[voteKey];
-                return `
-                    <div class="word-item">
-                        <span>${candidate.word}</span>
-                        <span class="word-votes">${candidate.votes || 0}</span>
-                        <div class="vote-buttons">
-                            <button class="vote-btn ${userVote === 'up' ? 'voted' : ''}" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${candidate.word}', 'up')">
-                                ↑
-                            </button>
-                            <button class="vote-btn ${userVote === 'down' ? 'voted' : ''}" onclick="voteOnWord('${videoId}', '${segmentId}', ${wordIndex}, '${candidate.word}', 'down')">
-                                ↓
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+		function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
+			console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
+			
+			let validCandidates = [];
+			
+			if (Array.isArray(wordCandidates)) {
+				validCandidates = wordCandidates.filter(candidate => 
+					candidate && 
+					candidate.word && 
+					typeof candidate.word === 'string' && 
+					candidate.word.trim() !== '' &&
+					!candidate.word.toLowerCase().includes('word') // Filter out placeholder words like "word1", "word2"
+				);
+			}
+			
+			// Check if we have a real word or just placeholder
+			const topWord = validCandidates.length > 0 ? validCandidates[0] : null;
+			
+			if (topWord && topWord.word) {
+				// Display the actual word
+				return `
+					<div class="word-display">
+						<span class="word-text">${topWord.word}</span>
+					</div>
+				`;
+			} else {
+				// Show fill-in link for missing words
+				return `
+					<div class="word-missing">
+						<a href="#" class="fill-in-link" onclick="openGoogleSheet('${videoId}', '${segmentId}', ${wordIndex})" title="Help us fill in this word">
+							📝 fill-in
+						</a>
+					</div>
+				`;
+			}
+		}
+
+
+
+		// NEW FUNCTION: Opens Google Sheet for word crowdsourcing
+		function openGoogleSheet(videoId, segmentId, wordIndex) {
+			// Replace this URL with your actual Google Sheet URL
+			const googleSheetURL = 'https://docs.google.com/spreadsheets/d/1bfHSHaBiX4pFljrVclEtwWMTXRJMoIKbpdHo1-x_ulw/edit?usp=sharing';
+			
+			// You can customize this URL to include episode and segment info
+			const customURL = `${googleSheetURL}&entry.episode=${videoId}&entry.segment=${getSegmentLetter(segmentId)}&entry.word=${wordIndex + 1}`;
+			
+			// Open in new tab
+			window.open(customURL, '_blank');
+			
+			// Show notification
+			showNotification(`Opening Google Sheet to fill in Episode ${videoId}, Segment ${getSegmentLetter(segmentId)}, Word ${wordIndex + 1}`, 'info');
+		}
+
+		// HELPER FUNCTION: Convert segment ID to letter (A, B, C)
+		function getSegmentLetter(segmentId) {
+			// Extract segment number from ID like "segment_1_1" -> 1 -> A
+			const match = segmentId.match(/segment_\d+_(\d+)/);
+			if (match) {
+				const segmentNum = parseInt(match[1]) - 1; // Convert to 0-based index
+				return String.fromCharCode(65 + segmentNum); // 0=A, 1=B, 2=C
+			}
+			return 'A'; // Fallback
+		}
+
+	
 
 
         // NOTES: Create the display HTML, must be placed before createSegmentHtml
@@ -2752,12 +2841,11 @@
             `;
         }
 		
-		
-		
+
+
 		function createSegmentHtml(segment, videoId, segmentIndex) {
 			console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
-			console.log('🧪 TESTING NOTES SECTION - userNotes:', userNotes); // ADD THIS LINE
-			
+			console.log('🧪 TESTING NOTES SECTION - userNotes:', userNotes);
 			
 			try {
 				const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
@@ -2770,58 +2858,57 @@
 					segmentRatings.overall?.average || 0
 				].reduce((sum, val) => sum + val, 0) / 4;
 				
-				let wordsHtml = '';
+				// CREATE INLINE WORDS FOR HEADER
+				let headerWordsHtml = '';
 				if (segment.words && Array.isArray(segment.words)) {
-					wordsHtml = segment.words.map((wordCandidates, wordIndex) => {
+					const wordDisplays = segment.words.map((wordCandidates, wordIndex) => {
 						try {
-							return `
-								<div style="margin-bottom: 15px;">
-									<div class="segment-label">Word ${wordIndex + 1}</div>
-									<div class="word-list">
-										${createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex)}
-									</div>
-									<div class="add-word-form">
-										<input type="text" class="add-word-input" placeholder="Add alternative word..." id="newWord_${videoId}_${segmentId}_${wordIndex}">
-										<button class="add-word-btn" onclick="addWordFromInput('${videoId}', '${segmentId}', ${wordIndex})">
-											Add
-										</button>
-									</div>
-								</div>
-							`;
+							return createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex);
 						} catch (wordError) {
 							console.error(`❌ Error processing word ${wordIndex}:`, wordError);
-							return `<div class="word-error">Error loading word ${wordIndex + 1}</div>`;
+							return `<div class="word-missing-inline"><a href="#" class="fill-in-link-small" onclick="openGoogleSheet('${videoId}', '${segmentId}', ${wordIndex})">📝 fill-in</a></div>`;
 						}
-					}).join('');
+					});
+					
+					headerWordsHtml = wordDisplays.join('');
 				} else {
 					console.log(`⚠️ No valid words array found in segment`);
-					wordsHtml = '<div class="no-words">No words available</div>';
+					headerWordsHtml = `
+						<div class="word-missing-inline"><a href="#" class="fill-in-link-small" onclick="openGoogleSheet('${videoId}', '${segmentId}', 0)">📝 fill-in</a></div>
+						<div class="word-missing-inline"><a href="#" class="fill-in-link-small" onclick="openGoogleSheet('${videoId}', '${segmentId}', 1)">📝 fill-in</a></div>
+						<div class="word-missing-inline"><a href="#" class="fill-in-link-small" onclick="openGoogleSheet('${videoId}', '${segmentId}', 2)">📝 fill-in</a></div>
+					`;
 				}
 
 				// Get user's note for this segment
 				const userNote = userNotes[videoId]?.[segmentId] || '';
 				const hasNote = userNote && userNote.trim();
 
-				console.log('🧪 NOTES DEBUG:', { videoId, segmentId, userNote, hasNote }); // ADD THIS LINE HERE
-				console.log('🧪 TESTING createNoteDisplayHTML:', createNoteDisplayHTML(videoId, segmentId, userNote));				
-				console.log('🧪 ABOUT TO RETURN HTML - includes notes section'); // ADD THIS LINE HERE
+				console.log('🧪 NOTES DEBUG:', { videoId, segmentId, userNote, hasNote });
 				
 				return `
-				
 					<div class="segment" data-segment="${segmentId}">
 						<div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
-							<div class="segment-info">
-								<div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)}</div>
-								<div class="segment-rating-summary">${avgRating.toFixed(1)}★ average</div>
+							<div class="segment-info-with-words">
+								<div class="segment-title-and-rating">
+									
+									<div class="segment-title-and-rating">
+										<div class="segment-title-inline">
+											<span class="segment-name">Segment ${videoId}-${String.fromCharCode(65 + segmentIndex)}</span>
+											<span class="segment-rating-inline">${avgRating.toFixed(1)}★</span>
+										</div>
+									</div>
+
+
+								</div>
+								<div class="segment-words-inline">
+									${headerWordsHtml}
+								</div>
 							</div>
 							<div class="segment-expand-icon">▶</div>
 						</div>
 						<div class="segment-content">
 							<div class="segment-details">
-								<div class="words-management">
-									<h5>Crowdsourced Words (vote on accuracy)</h5>
-									${wordsHtml}
-								</div>
 								<div class="segment-ratings">
 									<h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 0.85rem;">Rate This Segment</h5>
 									${['lyrics', 'beats', 'reaction', 'overall'].map(category => `
@@ -2863,7 +2950,7 @@
 					<div class="segment segment-error">
 						<div class="segment-header">
 							<div class="segment-info">
-								<div class="segment-title">Segment ${String.fromCharCode(65 + segmentIndex)} (Error)</div>
+								<div class="segment-title">Segment ${videoId}-${String.fromCharCode(65 + segmentIndex)} (Error)</div>								
 								<div class="segment-rating-summary">Unable to load</div>
 							</div>
 						</div>
@@ -2872,7 +2959,7 @@
 			}
 		}
 
-		
+
 		
 		
 		
@@ -3006,48 +3093,13 @@
                         </div>
                         <div class="video-content">
                             <h3 class="video-title">${video.title}</h3>
-                            <div class="overall-rating">
-                                <h4>Overall Video Rating</h4>
-                                <div class="rating-category">
-                                    <div class="rating-info">
-                                        <span class="rating-label">Overall</span>
-                                        <span class="rating-stats">${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)</span>
-                                    </div>
-                                    <div class="rating-controls">
-                                        <div class="stars" data-category="overall" data-video="${video.episodeNumber}">
-                                            ${createStarRating('overall', video.episodeNumber, video.ratings.overall.average, video.ratings.overall.count)}
-                                        </div>
-                                        ${userRatings[video.episodeNumber]?.video?.overall ? `<div class="user-rating-indicator">Your rating: ${userRatings[video.episodeNumber].video.overall}★</div>` : ''}
-                                    </div>
-                                </div>
-                            </div>
+                           
  
-							<div class="segments-summary">
-								<h4>Segment Ratings</h4>
-								<div class="segments-preview">
-									${video.segments ? video.segments.map((segment, index) => {
-										const segmentRatings = segment.ratings || defaultRatings;
-										const avgRating = [
-											segmentRatings.lyrics?.average || 0,
-											segmentRatings.beats?.average || 0, 
-											segmentRatings.reaction?.average || 0,
-											segmentRatings.overall?.average || 0
-										].reduce((sum, val) => sum + val, 0) / 4;
-										
-										return `
-											<div class="segment-preview">
-												<span class="segment-preview-label">Segment ${String.fromCharCode(65 + index)}</span>
-												<span class="segment-preview-rating">${avgRating.toFixed(1)}★</span>
-											</div>
-										`;
-									}).join('') : '<div class="no-segments-preview">No segments available</div>'}
-								</div>
-							</div>		
 							<div class="segments-section">
 								<div class="segments-header">
 									<h4>Detailed Segments (${video.segments ? video.segments.length : 0})</h4>
 		
-                                    <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Expand All</button>
+                                    <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Show Ratings</button>
                                 </div>
                                 <div class="segments-container" data-video="${video.episodeNumber}">
                                     ${segmentsHtml}
@@ -3164,53 +3216,11 @@
                 
                 const button = container.closest('.video-card').querySelector('.expand-toggle');
                 if (button) {
-                    button.textContent = allExpanded ? 'Expand All' : 'Collapse All';
+                    button.textContent = allExpanded ? 'Show Ratings' : 'Hide Ratings';
                 }
             }
         }
 
-        function addWordFromInput(videoId, segmentId, wordIndex) {
-            const inputId = `newWord_${videoId}_${segmentId}_${wordIndex}`;
-            const inputElement = document.getElementById(inputId);
-            const newWord = inputElement.value;
-            addNewWord(videoId, segmentId, wordIndex, newWord);
-            inputElement.value = '';
-        }
-
-        function updateStats() {
-            let totalRatings = 0;
-            let totalOverallRating = 0;
-            let overallRatingCount = 0;
-            let maxOverallRating = 0;
-            let topEpisode = '#--';
-
-            videos.forEach(video => {
-                if (video.ratings.overall.count > 0) {
-                    totalOverallRating += video.ratings.overall.average * video.ratings.overall.count;
-                    overallRatingCount += video.ratings.overall.count;
-                }
-
-                if (video.segments) {
-                    video.segments.forEach(segment => {
-                        if (segment.ratings) {
-                            Object.values(segment.ratings).forEach(rating => {
-                                totalRatings += rating.count;
-                            });
-                        }
-                    });
-                }
-                
-                if (video.ratings.overall.average > maxOverallRating) {
-                    maxOverallRating = video.ratings.overall.average;
-                    topEpisode = `#${video.episodeNumber}`;
-                }
-            });
-
-            document.getElementById('totalRatings').textContent = totalRatings;
-            document.getElementById('avgOverall').textContent = overallRatingCount > 0 ? (totalOverallRating / overallRatingCount).toFixed(1) : '0.0';
-            document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
-            document.getElementById('topEpisode').textContent = topEpisode;
-        }
         
         function showNotification(message, type) {
             const notification = document.createElement('div');
@@ -3222,6 +3232,48 @@
                 notification.remove();
             }, 3000);
         }
+
+
+
+
+		function updateStats() {
+			let totalRatings = 0;
+			let totalOverallRating = 0;
+			let overallRatingCount = 0;
+			let maxOverallRating = 0;
+			let topEpisode = '#--';
+
+			videos.forEach(video => {
+				if (video.ratings.overall.count > 0) {
+					totalOverallRating += video.ratings.overall.average * video.ratings.overall.count;
+					overallRatingCount += video.ratings.overall.count;
+				}
+
+				if (video.segments) {
+					video.segments.forEach(segment => {
+						if (segment.ratings) {
+							Object.values(segment.ratings).forEach(rating => {
+								totalRatings += rating.count;
+							});
+						}
+					});
+				}
+				
+				if (video.ratings.overall.average > maxOverallRating) {
+					maxOverallRating = video.ratings.overall.average;
+					topEpisode = `#${video.episodeNumber}`;
+				}
+			});
+
+			document.getElementById('totalRatings').textContent = totalRatings;
+			document.getElementById('avgOverall').textContent = overallRatingCount > 0 ? (totalOverallRating / overallRatingCount).toFixed(1) : '0.0';
+			document.getElementById('activeUsers').textContent = Object.keys(userRatings).length;
+			document.getElementById('topEpisode').textContent = topEpisode;
+		}
+
+
+
+
 
         function showSignInPrompt(action, delay = 0) {
             setTimeout(() => {
@@ -3258,22 +3310,18 @@
         }
 
 
-
-		// UPDATED: setupRealtimeUpdates to prevent collapse during user actions
 		function setupRealtimeUpdates() {
 			if (!db) return;
 			
 			db.collection('videos').onSnapshot((snapshot) => {
-				// Clear existing timeout
 				if (realtimeUpdateTimeout) {
 					clearTimeout(realtimeUpdateTimeout);
 				}
 
-				// IMPROVED: Skip real-time updates during any user interaction
-				if (!isAddingWord && !isVotingOnWord && !isSavingNote && !isSubmittingRating && snapshot.docChanges().length > 0) {
+				// UPDATED: Remove isVotingOnWord and isAddingWord checks
+				if (!isSavingNote && !isSubmittingRating && snapshot.docChanges().length > 0) {
 					console.log('📡 Real-time update received, processing changes...');
 					
-					// PRESERVE expanded state before any updates
 					const expandedSegments = preserveExpandedState();
 					
 					let hasChanges = false;
@@ -3282,7 +3330,6 @@
 							const updatedVideo = { id: change.doc.id, ...change.doc.data() };
 							const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
 							if (index !== -1) {
-								// Process the segments to ensure correct format
 								let processedSegments = [];
 								if (updatedVideo.segments && Array.isArray(updatedVideo.segments)) {
 									processedSegments = updatedVideo.segments.map((segment, idx) => 
@@ -3304,26 +3351,28 @@
 						}
 					});
 					
-					// SMART UPDATE: Only update if there are real changes and after a delay
 					if (hasChanges) {
 						realtimeUpdateTimeout = setTimeout(() => {
 							console.log('🔄 Applying real-time updates to UI...');
 							applyFilters();
 							updateStats();
 							
-							// RESTORE expanded state after real-time update
 							setTimeout(() => {
 								console.log('🔓 Restoring expanded state after real-time update');
 								restoreExpandedState(expandedSegments);
 							}, 100);
 							
-						}, 3000); // Increased delay to 3 seconds to avoid conflicts
+						}, 3000);
 					}
-				} else if (isAddingWord || isVotingOnWord || isSavingNote || isSubmittingRating) {
+				} else if (isSavingNote || isSubmittingRating) {
 					console.log('⏸️ Skipping real-time update - user operation in progress');
 				}
 			});
 		}
+
+
+
+
 
 
 
@@ -3581,12 +3630,101 @@
         // ===== END NOTES FUNCTIONS =====
 		
 		
-		
+		async function bulkUpdateWords() {
+			if (!currentUser || !db) {
+				alert('Please sign in first');
+				return;
+			}
+			
+			// Define your word updates here
+			const wordUpdates = {
+				// Episode 11 - Replace these with the actual words from Harry Mack's video
+				11: {
+					segment_11_1: ['sandwich', 'flags', 'table'],
+					segment_11_2: ['penguin', 'Philadelphia', 'Steve'], 
+					segment_11_3: ['phone', 'crush', 'car']
+				},
+				// Episode 14 - Add more episodes as needed
+				14: {
+					segment_14_1: ['California', 'language', 'enemy'],
+					segment_14_2: ['chocolate', 'cake', 'dinosaur'],
+					segment_14_3: ['TBD', 'TBD', 'TBD'],
+				},
+				// Add more episodes here...
+			};
+			
+			try {
+				console.log('Starting bulk word update...');
+				const batch = db.batch();
+				
+				Object.keys(wordUpdates).forEach(episodeNum => {
+					const docRef = db.collection('videos').doc(`episode_${episodeNum}`);
+					const segments = {};
+					
+					Object.keys(wordUpdates[episodeNum]).forEach(segmentId => {
+						const words = wordUpdates[episodeNum][segmentId];
+						
+						// Convert words array to Firebase-compatible format (objects, not nested arrays)
+						const wordsObject = {};
+						words.forEach((word, index) => {
+							wordsObject[index] = {
+								0: {  // First candidate for this word position
+									word: word,
+									votes: Math.floor(Math.random() * 20) + 5,
+									voters: []
+								}
+							};
+						});
+						
+						segments[segmentId] = {
+							id: segmentId,
+							words: wordsObject,  // Now it's an object, not nested arrays
+							ratings: {
+								lyrics: { average: 3.5 + Math.random(), count: 15 },
+								beats: { average: 3.8 + Math.random(), count: 18 },
+								reaction: { average: 3.2 + Math.random(), count: 12 },
+								overall: { average: 3.5 + Math.random(), count: 14 }
+							}
+						};
+					});
+					
+					batch.update(docRef, { segments });
+				});
+				
+				await batch.commit();
+				alert('Words updated successfully!');
+				console.log('Bulk update complete!');
+				location.reload(); // Refresh to see changes
+				
+			} catch (error) {
+				console.error('Error updating words:', error);
+				alert('Error updating words: ' + error.message);
+			}
+		}
+
+
+		// Check if current user is admin and show/hide admin features
+		function checkAdminAccess() {
+			const adminButton = document.getElementById('adminUpdateButton');
+			
+			if (currentUser && currentUser.email === 'mathewmit@gmail.com') {
+				// Show admin button
+				if (adminButton) {
+					adminButton.style.display = 'block';
+				}
+				console.log('🔐 Admin access granted');
+			} else {
+				// Hide admin button
+				if (adminButton) {
+					adminButton.style.display = 'none';
+				}
+			}
+		}
+
 
 
         // Make functions globally available for onclick handlers
-        window.voteOnWord = voteOnWord;
-        window.addWordFromInput = addWordFromInput;
+
         window.toggleSegment = toggleSegment;
         window.toggleAllSegments = toggleAllSegments;
 		
@@ -3597,6 +3735,11 @@
 		window.cancelEditingNote = cancelEditingNote;
 		window.updateCharCount = updateCharCount;
 
+		// Make it globally available
+		window.bulkUpdateWords = bulkUpdateWords;
+		window.checkAdminAccess = checkAdminAccess;
+
+		
  
         document.addEventListener('DOMContentLoaded', init);
     </script>
