@@ -1136,6 +1136,7 @@
 		let userNotes = {};
 		let isSavingNote = false;
 		let editingNotes = {};
+		let isSubmittingRating = false; // ADD THIS LINE
 		
 		// Note configuration
 		const MAX_NOTE_LENGTH = 1000;
@@ -1426,7 +1427,7 @@
 
         function handleFirebaseError() {
             updateConnectionStatus('demo');
-            showNotification('Running in demo mode - all features work except saving ratings!', 'info');
+            showNotification('Running in demo mode.  Log in to rate videos!', 'info');
             initializeDemoMode();
         }
 
@@ -1457,7 +1458,7 @@
                     statusText.textContent = '🟡 Demo Mode';
                     break;
                 case 'connecting':
-                    statusText.textContent = '🟡 Connecting...';
+                    statusText.textContent = '🟡 Loading...';
                     break;
             }
         }
@@ -1480,6 +1481,9 @@
 				loadUserRatings();
 				loadUserWordVotes();
 				loadUserNotes(); // NEW: Load user notes
+				
+				// ADD THIS LINE:
+				if (db) updateConnectionStatus('connected');
 				
 			} else {
 				userInfo.style.display = 'none';
@@ -2039,107 +2043,218 @@
             }
         }
          
+		 
+		 function updateUserRatingDisplay() {
+			setTimeout(() => {
+				Object.keys(userRatings).forEach(videoId => {
+					if (userRatings[videoId].segments) {
+						Object.keys(userRatings[videoId].segments).forEach(segmentId => {
+							const segmentRatings = userRatings[videoId].segments[segmentId];
+							const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+							
+							categories.forEach(category => {
+								const rating = segmentRatings[category];
+								const starsContainer = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars');
+								if (starsContainer) {
+									// Pass true for userRated only if they actually rated it
+									updateStarDisplay(starsContainer, rating, rating > 0);
+									
+									const controls = starsContainer.closest('.rating-controls');
+									if (controls) {
+										// Remove existing indicator
+										const existingIndicator = controls.querySelector('.user-rating-indicator');
+										if (existingIndicator) {
+											existingIndicator.remove();
+										}
+										
+										// Add new indicator only if user has rated
+										if (rating > 0) {
+											const indicator = document.createElement('div');
+											indicator.className = 'user-rating-indicator';
+											indicator.textContent = `Your rating: ${rating}★`;
+											controls.appendChild(indicator);
+										}
+									}
+								}
+							});
+						});
+					}
+					
+					if (userRatings[videoId].video) {
+						const videoRatings = userRatings[videoId].video;
+						const categories = ['lyrics', 'beats', 'reaction', 'overall'];
+						
+						categories.forEach(category => {
+							const rating = videoRatings[category];
+							const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
+							if (starsContainer) {
+								// Pass true for userRated only if they actually rated it
+								updateStarDisplay(starsContainer, rating, rating > 0);
+								
+								const controls = starsContainer.closest('.rating-controls');
+								if (controls) {
+									// Remove existing indicator
+									const existingIndicator = controls.querySelector('.user-rating-indicator');
+									if (existingIndicator) {
+										existingIndicator.remove();
+									}
+									
+									// Add new indicator only if user has rated
+									if (rating > 0) {
+										const indicator = document.createElement('div');
+										indicator.className = 'user-rating-indicator';
+										indicator.textContent = `Your rating: ${rating}★`;
+										controls.appendChild(indicator);
+									}
+								}
+							}
+						});
+					}
+				});
+			}, 100);
+		}
 
-        function updateUserRatingDisplay() {
-            setTimeout(() => {
-                Object.keys(userRatings).forEach(videoId => {
-                    if (userRatings[videoId].segments) {
-                        Object.keys(userRatings[videoId].segments).forEach(segmentId => {
-                            const segmentRatings = userRatings[videoId].segments[segmentId];
-                            const categories = ['lyrics', 'beats', 'reaction', 'overall'];
-                            
-                            categories.forEach(category => {
-                                const rating = segmentRatings[category];
-                                if (rating > 0) {
-                                    const starsContainer = document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars');
-                                    if (starsContainer) {
-                                        updateStarDisplay(starsContainer, rating, true);
-                                        
-                                        const controls = starsContainer.closest('.rating-controls');
-                                        if (controls && !controls.querySelector('.user-rating-indicator')) {
-                                            const indicator = document.createElement('div');
-                                            indicator.className = 'user-rating-indicator';
-                                            indicator.textContent = `Your rating: ${rating}★`;
-                                            controls.appendChild(indicator);
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                    }
-                    
-                    if (userRatings[videoId].video) {
-                        const videoRatings = userRatings[videoId].video;
-                        const categories = ['lyrics', 'beats', 'reaction', 'overall'];
-                        
-                        categories.forEach(category => {
-                            const rating = videoRatings[category];
-                            if (rating > 0) {
-                                const starsContainer = document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
-                                if (starsContainer) {
-                                    updateStarDisplay(starsContainer, rating, true);
-                                    
-                                    const controls = starsContainer.closest('.rating-controls');
-                                    if (controls && !controls.querySelector('.user-rating-indicator')) {
-                                        const indicator = document.createElement('div');
-                                        indicator.className = 'user-rating-indicator';
-                                        indicator.textContent = `Your rating: ${rating}★`;
-                                        controls.appendChild(indicator);
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-            }, 100);
-        }
 
-        async function submitRating(videoId, category, rating, segmentId = null) {
-            try {
-                if (!userRatings[videoId]) {
-                    userRatings[videoId] = { segments: {} };
-                }
-                
-                if (segmentId) {
-                    if (!userRatings[videoId].segments[segmentId]) {
-                        userRatings[videoId].segments[segmentId] = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
-                    }
-                    userRatings[videoId].segments[segmentId][category] = rating;
-                } else {
-                    if (!userRatings[videoId].video) {
-                        userRatings[videoId].video = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
-                    }
-                    userRatings[videoId].video[category] = rating;
-                }
+		async function submitRating(videoId, category, rating, segmentId = null) {
+			console.log(`🎯 Starting to submit rating: ${videoId}-${segmentId}-${category}-${rating}`);
+ 
+			// Prevent multiple simultaneous rating submissions
+			if (isSubmittingRating) {
+				console.log('Already submitting a rating, please wait...');
+				return;
+			}
+			
+			isSubmittingRating = true; // SET FLAG TO PREVENT CONFLICTS
+			
+			
 
-                if (db) {
-                    const docId = segmentId ? 
-                        `${currentUser.uid}_${videoId}_${segmentId}` : 
-                        `${currentUser.uid}_${videoId}`;
-                    
-                    const ratingsData = {
-                        userId: currentUser.uid,
-                        videoId: videoId,
-                        ratings: segmentId ? userRatings[videoId].segments[segmentId] : userRatings[videoId].video,
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    
-                    if (segmentId) {
-                        ratingsData.segmentId = segmentId;
-                    }
+			// PRESERVE THE CURRENT EXPANDED STATE
+			const currentSegment = segmentId ? document.querySelector(`.segment[data-segment="${segmentId}"]`) : null;
+			const wasExpanded = currentSegment ? currentSegment.classList.contains('expanded') : false;
 
-                    await db.collection('userRatings').doc(docId).set(ratingsData);
-                    await updateVideoRating(videoId, category, rating, segmentId);
-                }
 
-                const segmentText = segmentId ? ` (Segment ${segmentId})` : '';
-                showNotification(`Rated ${category}${segmentText}: ${rating} stars! Video rating automatically updated.`, 'success');
-                
-            } catch (error) {
-                console.error('Error submitting rating:', error);
-                showNotification('Failed to save rating. Please try again.', 'error');
-            }
-        }
+
+			try {
+				// IMMEDIATE UI UPDATE - Update display first, before saving
+				if (!userRatings[videoId]) {
+					userRatings[videoId] = { segments: {} };
+				}
+				
+				if (segmentId) {
+					if (!userRatings[videoId].segments[segmentId]) {
+						userRatings[videoId].segments[segmentId] = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+					}
+					userRatings[videoId].segments[segmentId][category] = rating;
+				} else {
+					if (!userRatings[videoId].video) {
+						userRatings[videoId].video = { lyrics: 0, beats: 0, reaction: 0, overall: 0 };
+					}
+					userRatings[videoId].video[category] = rating;
+				}
+
+				// IMMEDIATELY update the star display
+				const starsContainer = segmentId ? 
+					document.querySelector(`[data-video="${videoId}"][data-segment="${segmentId}"][data-category="${category}"]`)?.closest('.stars') :
+					document.querySelector(`[data-video="${videoId}"][data-category="${category}"]:not([data-segment])`)?.closest('.stars');
+				
+				if (starsContainer) {
+					updateStarDisplay(starsContainer, rating, true);
+					
+					// Update or add the "Your rating" indicator
+					const controls = starsContainer.closest('.rating-controls');
+					if (controls) {
+						const existingIndicator = controls.querySelector('.user-rating-indicator');
+						if (existingIndicator) {
+							existingIndicator.textContent = `Your rating: ${rating}★`;
+						} else {
+							const indicator = document.createElement('div');
+							indicator.className = 'user-rating-indicator';
+							indicator.textContent = `Your rating: ${rating}★`;
+							controls.appendChild(indicator);
+						}
+					}
+				}
+
+				// NOW save to Firebase (UI already updated)
+				if (db) {
+					const docId = segmentId ? 
+						`${currentUser.uid}_${videoId}_${segmentId}` : 
+						`${currentUser.uid}_${videoId}`;
+					
+					const ratingsData = {
+						userId: currentUser.uid,
+						videoId: videoId,
+						ratings: segmentId ? userRatings[videoId].segments[segmentId] : userRatings[videoId].video,
+						lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+					};
+					
+					if (segmentId) {
+						ratingsData.segmentId = segmentId;
+					}
+
+					await db.collection('userRatings').doc(docId).set(ratingsData);
+					//await updateVideoRating(videoId, category, rating, segmentId);
+				}
+				
+
+
+				// Convert segment ID to display format with episode + segment letter
+				let segmentText = '';
+				if (segmentId) {
+					// Find the video and segment to get the index
+					const video = videos.find(v => v.episodeNumber.toString() === videoId);
+					if (video && video.segments) {
+						const segmentIndex = video.segments.findIndex(s => s.id === segmentId);
+						if (segmentIndex !== -1) {
+							const segmentLetter = String.fromCharCode(65 + segmentIndex); // 0→A, 1→B, 2→C
+							segmentText = ` (Episode ${videoId}, Segment ${segmentLetter})`;
+						} else {
+							segmentText = ` (Episode ${videoId}, Segment ${segmentId})`; // Fallback to ID if not found
+						}
+					}
+				} else {
+					// For video-level ratings, just show episode
+					segmentText = ` (Episode ${videoId})`;
+				}
+
+				showNotification(`Rated ${category}${segmentText}: ${rating} stars!`, 'success');
+
+
+
+
+
+				
+			} catch (error) {
+				console.error('❌ RATING ERROR CAUGHT:', error);
+				console.error('❌ ERROR DETAILS:', error.message);
+				console.error('❌ ERROR STACK:', error.stack);
+				console.error('Error submitting rating:', error);
+				showNotification('Failed to save rating. Please try again.', 'error');
+				
+				// If save failed, revert the UI
+				if (segmentId) {
+					userRatings[videoId].segments[segmentId][category] = 0;
+				} else {
+					userRatings[videoId].video[category] = 0;
+				}
+				updateUserRatingDisplay();
+				
+			} finally {
+				isSubmittingRating = false; // ALWAYS CLEAR FLAG WHEN DONE
+
+				// RESTORE EXPANDED STATE IF IT WAS EXPANDED
+				if (wasExpanded && currentSegment) {
+					setTimeout(() => {
+						currentSegment.classList.add('expanded');
+						console.log('🔓 Restored expanded state for current segment');
+					}, 100);
+				}
+					
+			}
+		}
+
+
+
 
         async function updateVideoRating(videoId, category, newRating, segmentId = null) {
             if (!db) return;
@@ -2543,18 +2658,26 @@
 
 
 
-
-		
-		// FIXED: createStarRating function - ensures only 5 stars
+		// FIXED: createStarRating function - shows empty stars for unrated items when logged in
 		function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
 			let starsHtml = '';
 			const ratingKey = segmentId ? 
 				(userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : 
 				(userRatings[videoId]?.video?.[category] || 0);
 
-			// Create exactly 5 stars, no more
+			// Determine what rating to display
+			let displayRating = 0;
+			if (currentUser) {
+				// User is logged in - show their rating if they've voted, otherwise show empty
+				displayRating = ratingKey > 0 ? ratingKey : 0;
+			} else {
+				// User not logged in - show average community rating
+				displayRating = currentRating;
+			}
+
+			// Create exactly 5 stars
 			for (let i = 1; i <= 5; i++) {
-				const activeClass = i <= Math.round(currentRating) ? 'active' : '';
+				const activeClass = i <= Math.round(displayRating) ? 'active' : '';
 				const userRatedClass = ratingKey > 0 && i <= ratingKey ? 'user-rated' : '';
 				
 				const dataAttrs = segmentId ? 
@@ -2566,6 +2689,8 @@
 			
 			return starsHtml;
 		}
+		
+		 
 				
 				
 		
@@ -2776,6 +2901,10 @@
         }
         
         function renderVideos() {
+			console.log('🎨 RENDERVIDEOS CALLED!');
+			console.log('🎨 Call stack:');
+			console.trace(); // This shows exactly what called renderVideos
+	
             console.log('🎨 Starting renderVideos function...');
 
             const expandedSegments = preserveExpandedState();
@@ -2977,18 +3106,32 @@
             restoreExpandedState(expandedSegments);
         }
 
-        function updateStarDisplay(starsContainer, rating, userRated = false) {
-            const stars = starsContainer.querySelectorAll('.star');
-            stars.forEach((star, index) => {
-                star.classList.remove('active', 'user-rated');
-                if (index < rating) {
-                    star.classList.add('active');
-                }
-                if (userRated && index < rating) {
-                    star.classList.add('user-rated');
-                }
-            });
-        }
+
+		function updateStarDisplay(starsContainer, rating, userRated = false) {
+			const stars = starsContainer.querySelectorAll('.star');
+			
+			// Determine what to show based on login status and user rating
+			let displayRating = 0;
+			if (currentUser) {
+				// User is logged in - show their rating if they've rated, otherwise show empty
+				displayRating = userRated ? rating : 0;
+			} else {
+				// User not logged in - show community average
+				displayRating = rating;
+			}
+			
+			stars.forEach((star, index) => {
+				star.classList.remove('active', 'user-rated');
+				if (index < displayRating) {
+					star.classList.add('active');
+				}
+				if (userRated && index < rating) {
+					star.classList.add('user-rated');
+				}
+			});
+		}
+
+
 
         function toggleSegment(videoId, segmentId) {
             const videoContainer = document.querySelector(`.segments-container[data-video="${videoId}"]`);
@@ -3107,14 +3250,16 @@
         }
 
         function applyFilters() {
+			console.log('🔄 APPLYFILTERS CALLED!');
+			console.log('🔄 Call stack:');
+			console.trace(); // This shows exactly what called applyFilters
+	
             renderVideos();
         }
 
 
 
-
-
-		// UPDATED: setupRealtimeUpdates to prevent collapse during note saving
+		// UPDATED: setupRealtimeUpdates to prevent collapse during user actions
 		function setupRealtimeUpdates() {
 			if (!db) return;
 			
@@ -3124,9 +3269,12 @@
 					clearTimeout(realtimeUpdateTimeout);
 				}
 
-				// IMPROVED: Only process if not currently voting on words, adding words, or saving notes
-				if (!isAddingWord && !isVotingOnWord && !isSavingNote && snapshot.docChanges().length > 0) {
+				// IMPROVED: Skip real-time updates during any user interaction
+				if (!isAddingWord && !isVotingOnWord && !isSavingNote && !isSubmittingRating && snapshot.docChanges().length > 0) {
 					console.log('📡 Real-time update received, processing changes...');
+					
+					// PRESERVE expanded state before any updates
+					const expandedSegments = preserveExpandedState();
 					
 					let hasChanges = false;
 					snapshot.docChanges().forEach((change) => {
@@ -3156,19 +3304,27 @@
 						}
 					});
 					
-					// Debounce the UI update
+					// SMART UPDATE: Only update if there are real changes and after a delay
 					if (hasChanges) {
 						realtimeUpdateTimeout = setTimeout(() => {
 							console.log('🔄 Applying real-time updates to UI...');
 							applyFilters();
 							updateStats();
-						}, 2000); // Wait 2 seconds before updating UI
+							
+							// RESTORE expanded state after real-time update
+							setTimeout(() => {
+								console.log('🔓 Restoring expanded state after real-time update');
+								restoreExpandedState(expandedSegments);
+							}, 100);
+							
+						}, 3000); // Increased delay to 3 seconds to avoid conflicts
 					}
-				} else if (isAddingWord || isVotingOnWord || isSavingNote) {
+				} else if (isAddingWord || isVotingOnWord || isSavingNote || isSubmittingRating) {
 					console.log('⏸️ Skipping real-time update - user operation in progress');
 				}
 			});
 		}
+
 
 
 
