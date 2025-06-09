@@ -142,13 +142,7 @@
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
- 
-		/* Overall Rating Header */
-        .overall-rating h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
+  
 
         /* Segments Section */
         .segments-section {
@@ -882,12 +876,12 @@
 			min-width: 80px;
 			justify-content: center;
 		}
-
+		/* Enhanced fill-in button styling */
 		.fill-in-link {
 			display: inline-flex;
 			align-items: center;
-			background: linear-gradient(45deg, #e74c3c, #c0392b);
-			color: white;
+			background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+			color: white !important;
 			padding: 8px 16px;
 			border-radius: 25px;
 			font-size: 0.85rem;
@@ -897,20 +891,37 @@
 			transition: all 0.2s ease;
 			cursor: pointer;
 			border: 2px dashed rgba(255,255,255,0.3);
+			min-width: 80px;
+			justify-content: center;
 		}
 
 		.fill-in-link:hover {
-			background: linear-gradient(45deg, #c0392b, #a93226);
+			background: linear-gradient(45deg, #c0392b, #a93226) !important;
 			transform: translateY(-1px);
 			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 			text-decoration: none;
-			color: white;
+			color: white !important;
 			border: 2px dashed rgba(255,255,255,0.6);
 		}
 
-		.fill-in-link:active {
-			transform: translateY(0);
+		.fill-in-link-small {
+			display: inline-flex;
+			align-items: center;
+			background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+			color: white !important;
+			padding: 4px 12px;
+			border-radius: 15px;
+			font-size: 0.75rem;
+			font-weight: 600;
+			text-decoration: none;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+			transition: all 0.2s ease;
+			cursor: pointer;
+			border: 1px dashed rgba(255,255,255,0.3);
+			min-width: 60px;
+			justify-content: center;
 		}
+		
 
 		/* ===== WORDS MANAGEMENT STYLES ===== */
 		.words-management h5 {
@@ -1049,35 +1060,46 @@
 
 
 
-		/* ===== COMPACT VIDEO CARD UPDATES ===== */
+		/* ===== ADAPTIVE HEIGHT VIDEO CARDS (OPTION 5) ===== */
 
-		/* Update video grid to fit 3 cards per row */
+		/* Adaptive video grid - natural heights */
 		.video-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Reduced from 450px */
-			gap: 15px; /* Reduced from 25px */
+			grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+			gap: 20px;
 			margin-bottom: 40px;
+			align-items: start; /* Align cards to top, allow natural heights */
 		}
 
-		/* More compact video cards */
+		/* OPTION 2A: All Cards Same Height */
 		.video-card {
+			height: 800px; /* Fixed height for ALL cards */
+			display: flex;
+			flex-direction: column;
 			background: white;
-			border-radius: 12px; /* Slightly reduced */
+			border-radius: 15px;
 			overflow: hidden;
-			box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Reduced shadow */
+			box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 			transition: transform 0.3s ease, box-shadow 0.3s ease;
 		}
 
 		.video-card:hover {
-			transform: translateY(-3px); /* Reduced from -5px */
-			box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Reduced from stronger shadow */
+			transform: translateY(-5px);
+			box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 		}
 
-		/* Significantly reduce video embed height */
+
+		.video-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+		}
+
+		/* Fixed video embed height */
 		.video-embed {
+			height: 180px;
+			flex-shrink: 0;
 			position: relative;
 			width: 100%;
-			height: 140px; /* Reduced from 200px */
 			background: #f0f0f0;
 			display: flex;
 			align-items: center;
@@ -1086,167 +1108,185 @@
 			font-size: 14px;
 		}
 
-		/* Compact video content padding */
+		/* Video content area */
 		.video-content {
-			padding: 12px; /* Reduced from 20px */
-		}
-
-		/* Smaller video title */
-		.video-title {
-			font-size: 1rem; /* Reduced from 1.1rem */
-			font-weight: bold;
-			margin-bottom: 8px; /* Reduced from 15px */
-			color: #2c3e50;
-			line-height: 1.2;
-		}
-
-		/* Compact overall rating section */
-		.overall-rating {
-			background: #f8f9fa;
-			border-radius: 8px; /* Reduced from 10px */
-			padding: 8px 10px; /* Reduced from 15px */
-			margin-bottom: 10px; /* Reduced from 20px */
-			border-left: 3px solid #3498db; /* Reduced from 4px */
-		}
-
-		.overall-rating h4 {
-			color: #2c3e50;
-			margin-bottom: 6px; /* Reduced from 10px */
-			font-size: 0.8rem; /* Reduced from 0.9rem */
-			font-weight: 600;
-		}
-
-		/* More compact rating display */
-		.rating-category {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 0; /* Removed margin */
-		}
-
-		.rating-info {
+			padding: 20px;
+			flex: 1;
 			display: flex;
 			flex-direction: column;
-			align-items: flex-start;
+			overflow: hidden;
 		}
 
-		.rating-label {
-			font-weight: 600;
-			color: #34495e;
-			font-size: 0.75rem; /* Reduced from 0.85rem */
-			margin-bottom: 2px;
-		}
-
-		.rating-stats {
-			font-size: 0.65rem; /* Reduced from 0.7rem */
-			color: #7f8c8d;
-		}
-
-		/* Compact segments summary */
-		.segments-summary {
-			background: #f8f9fa;
-			border-radius: 8px; /* Reduced from 10px */
-			padding: 8px 10px; /* Reduced from 15px */
-			margin-bottom: 10px; /* Reduced from 20px */
-			border-left: 3px solid #9b59b6; /* Reduced from 4px */
-		}
-
-		.segments-summary h4 {
+		/* Fixed height video title */
+		.video-title {
+			flex-shrink: 0;
+			height: 60px; /* Fixed title area */
+			overflow: hidden;
+			font-size: 1.1rem;
+			font-weight: bold;
+			margin-bottom: 15px;
 			color: #2c3e50;
-			margin-bottom: 6px; /* Reduced from 10px */
-			font-size: 0.8rem; /* Reduced from 0.9rem */
-			font-weight: 600;
-		}
-
-		/* Even more compact segment previews */
-		.segments-preview {
-			display: flex;
-			flex-wrap: nowrap;
-			gap: 4px; /* Reduced from 8px */
-			overflow-x: auto;
-		}
-
-		.segment-preview {
+			line-height: 1.3;
 			display: flex;
 			align-items: center;
-			background: linear-gradient(45deg, #9b59b6, #8e44ad);
-			color: white;
-			padding: 4px 8px; /* Reduced from 6px 10px */
-			border-radius: 15px; /* Reduced from 20px */
-			font-size: 0.7rem; /* Reduced from 0.8rem */
-			gap: 4px; /* Reduced from 6px */
-			min-width: 85px; /* Reduced from 100px */
-			justify-content: space-between;
-			flex-shrink: 0;
 		}
-
-		.segment-preview-rating {
-			background: rgba(255, 255, 255, 0.3);
-			padding: 1px 6px; /* Reduced from 2px 8px */
-			border-radius: 10px; /* Reduced from 12px */
-			font-size: 0.7rem; /* Reduced from 0.8rem */
-			font-weight: bold;
-		}
-
-		/* Compact segments section */
+		 
+			 
+		/* Always scrollable segments section */
 		.segments-section {
-			margin-bottom: 8px; /* Reduced from 20px */
+			flex: 1;
+			margin-bottom: 0;
+			overflow-y: auto; /* ALL cards are scrollable */
+			overflow-x: hidden;
+			padding-right: 8px; /* Space for scrollbar */
 		}
+			 
+		/* Universal custom scrollbar for all cards */
+		.segments-section::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.segments-section::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			border-radius: 3px;
+		}
+
+		.segments-section::-webkit-scrollbar-thumb {
+			background: #c1c1c1;
+			border-radius: 3px;
+		}
+
+		.segments-section::-webkit-scrollbar-thumb:hover {
+			background: #a1a1a1;
+		}
+
+		/* Subtle scroll hint for all cards */
+		.segments-section::before {
+			content: "📋 Scroll to see all segments and ratings";
+			display: block;
+			text-align: center;
+			font-size: 0.7rem;
+			color: #888;
+			background: #f8f9fa;
+			padding: 5px 10px;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			border: 1px solid #e9ecef;
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+
+		/* Mobile responsive for Option 2A */
+		@media (max-width: 768px) {
+			.video-card {
+				height: 600px; /* Shorter on mobile */
+			}
+			
+			.video-embed {
+				height: 150px;
+			}
+			
+			.video-content {
+				padding: 15px;
+			}
+			
+			.video-title {
+				height: 50px;
+				font-size: 1rem;
+			}
+			
+			.segments-section::before {
+				font-size: 0.65rem;
+				padding: 4px 8px;
+			}
+		}
+
+		@media (min-width: 1200px) {
+			.video-card {
+				height: 900px; /* Taller on large screens */
+			}
+		}
+
+
+
+
 
 		.segments-header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom: 8px; /* Reduced from 15px */
+			margin-bottom: 15px;
 		}
 
 		.segments-header h4 {
 			color: #8e44ad;
-			font-size: 0.8rem; /* Reduced from 0.9rem */
+			font-size: 0.9rem;
 			text-transform: uppercase;
 			letter-spacing: 1px;
 			font-weight: 600;
 		}
 
+		/* Hide expand toggle since everything is always visible */
 		.expand-toggle {
-			background: #8e44ad;
-			color: white;
-			border: none;
-			padding: 4px 10px; /* Reduced from 5px 12px */
-			border-radius: 12px; /* Reduced from 15px */
-			font-size: 0.7rem; /* Reduced from 0.8rem */
-			cursor: pointer;
-			transition: background 0.3s ease;
-			font-weight: 600;
+			display: none;
 		}
 
+		/* Always show segment content */
+		.segment {
+			background: #f8f9fa;
+			border-radius: 10px;
+			margin-bottom: 15px;
+			border-left: 4px solid #e74c3c;
+			overflow: visible; /* Always show content */
+		}
 
+		.segment-header {
+			padding: 15px;
+			background: #fff;
+			border-bottom: 1px solid #eee;
+			cursor: default; /* Remove pointer cursor since no clicking needed */
+		}
+
+		.segment-content {
+			max-height: none; /* Remove height restriction */
+			overflow: visible; /* Always show content */
+			display: block; /* Always visible */
+		}
+
+		/* Remove expand/collapse visual indicators */
+		.segment-expand-icon {
+			display: none; /* Hide expand arrows since everything is always open */
+		}
 
 		/* Responsive updates for mobile */
 		@media (max-width: 768px) {
 			.video-grid {
 				grid-template-columns: 1fr; /* Single column on mobile */
-				gap: 12px;
+				gap: 15px;
 			}
 			
 			.video-embed {
-				height: 120px; /* Even smaller on mobile */
+				height: 150px;
 			}
 			
 			.video-content {
-				padding: 10px;
+				padding: 15px;
 			}
 			
 			.video-title {
-				font-size: 0.95rem;
+				font-size: 1rem;
 			}
 		}
 
 		@media (min-width: 1200px) {
 			.video-grid {
-				grid-template-columns: repeat(3, 1fr); /* Force exactly 3 columns on larger screens */
+				grid-template-columns: repeat(3, 1fr); /* 3 columns on larger screens */
 			}
 		}
+
+
+
 
 		/* Remove any duplicate information styling */
 		.user-rating-indicator {
@@ -1620,6 +1660,38 @@
 			}
 		}
 
+		/* Dynamic segment and word handling */
+		.segment-words-inline {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			align-items: center;
+			max-width: 100%;
+		}
+
+		.segments-container {
+			/* Allow natural number of segments */
+		}
+
+		/* Handle 4+ word displays */
+		.words-horizontal {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		/* Responsive handling for many words */
+		@media (max-width: 768px) {
+			.segment-words-inline {
+				flex-direction: column;
+				gap: 4px;
+				align-items: stretch;
+			}
+		}
+
+
 	</style>
 </head>
 
@@ -1682,12 +1754,19 @@
 
 
 				<form id="adminWordsForm" onsubmit="submitAdminWords(event)">
+				
+				
+				 
 					<div class="admin-form-group" style="margin-bottom: 30px;">
 						<label for="adminEpisode" style="font-size: 1.1rem; font-weight: 700;">Episode Number</label>
 						<select class="admin-form-control" id="adminEpisode" required onchange="loadExistingWords()">
 							<option value="">Select Episode...</option>
 						</select>
+						<div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">
+							💡 Selecting an episode will pre-fill existing words from the database
+						</div>
 					</div>
+
 
 					<!-- Dynamic Segment Blocks will be inserted here by JavaScript -->
 					<div id="adminSegmentsContainer">
@@ -1860,7 +1939,7 @@
 
         // Global array to hold the mutable segment data for the admin form
         let currentEpisodeSegmentsForAdmin = [];
-
+		
 
 		function convertWordsObjectToArray(wordsData) {
 			console.log('🔍 Converting words data for display:', JSON.stringify(wordsData, null, 2));
@@ -1884,8 +1963,10 @@
 				console.log('🔄 Converting from Firebase object format for display');
 				const result = [];
 				
-				// Convert object keys back to array positions
-				Object.keys(wordsData).sort((a, b) => parseInt(a) - parseInt(b)).forEach(positionKey => {
+				// ✅ FIXED: Sort object keys numerically to maintain word order
+				const sortedKeys = Object.keys(wordsData).sort((a, b) => parseInt(a) - parseInt(b));
+				
+				sortedKeys.forEach(positionKey => {
 					const wordPosition = wordsData[positionKey];
 					const candidates = [];
 					
@@ -1900,13 +1981,13 @@
 							}
 						});
 					} else if (wordPosition && typeof wordPosition === 'object' && wordPosition.word) {
-                         // Fallback for single candidate object (less common but good to handle)
-                        candidates.push({
-                            word: wordPosition.word,
-                            votes: wordPosition.votes || 1,
-                            voters: []
-                        });
-                    }
+						// Fallback for single candidate object (less common but good to handle)
+						candidates.push({
+							word: wordPosition.word,
+							votes: wordPosition.votes || 1,
+							voters: []
+						});
+					}
 					
 					// Ensure at least one candidate for the word position if none were found
 					if (candidates.length === 0) {
@@ -1916,15 +1997,7 @@
 					result.push(candidates);
 				});
 				
-				// Ensure exactly 3 word positions for DISPLAY
-				while (result.length < 3) {
-					result.push([{word: `word${result.length + 1}`, votes: 1, voters: []}]);
-				}
-				if (result.length > 3) {
-					result.length = 3; // Truncate for display
-				}
-
-				console.log('✅ Converted to array format for display:', result);
+				console.log(`✅ Converted to array format showing ${result.length} words in correct order`);
 				return result;
 			}
 
@@ -1952,15 +2025,11 @@
 				try {
 					sanitized.words = convertWordsObjectToArray(segment.words);
 					
-					// ENSURE EXACTLY 3 WORDS PER SEGMENT FOR DISPLAY
-					while (sanitized.words.length < 3) {
-						sanitized.words.push([{word: `word${sanitized.words.length + 1}`, votes: 5, voters: []}]);
-					}
-					if (sanitized.words.length > 3) {
-						sanitized.words = sanitized.words.slice(0, 3);
-					}
+
+					// Show all words (no artificial limit)
+					console.log(`✅ Words processed for ${videoId}-${segmentIndex}, showing ${sanitized.words.length} words`);
 					
-					console.log(`✅ Words processed for ${videoId}-${segmentIndex}, exactly ${sanitized.words.length} words for display`);
+					
 				} catch (conversionError) {
 					console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex} (for display):`, conversionError);
 					sanitized.words = [
@@ -2104,36 +2173,13 @@
 			return segments;
 		}
 
-
-		function ensureExactly3Segments(segments, episodeNumber) {
-			console.log(`🔧 Ensuring exactly 3 segments for Episode ${episodeNumber}, currently has ${segments.length}`);
+		function ensureProperSegments(segments, episodeNumber) {
+			console.log(`🔧 Processing ${segments.length} segments for Episode ${episodeNumber} (showing all)`);
 			
-			const result = [];
-			
-			// Take up to 3 existing segments
-			for (let i = 0; i < 3; i++) {
-				if (i < segments.length) {
-					// Use existing segment
-					result.push(segments[i]);
-				} else {
-					// Create missing segment with default words (for display)
-					const newSegment = {
-						id: `segment_${episodeNumber}_${i + 1}`,
-						words: [
-							[{word: 'word1', votes: 5, voters: []}],
-							[{word: 'word2', votes: 5, voters: []}],
-							[{word: 'word3', votes: 5, voters: []}]
-						],
-						ratings: { ...defaultRatings }
-					};
-					result.push(newSegment);
-					console.log(`✅ Created missing segment ${i + 1} for Episode ${episodeNumber} (for display)`);
-				}
-			}
-			
-			console.log(`✅ Episode ${episodeNumber} now has exactly ${result.length} segments for display`);
-			return result;
+			// Don't truncate - return all segments as-is
+			return segments;
 		}
+
 
 
 		// NEW FUNCTION: Generates empty segments for display, if an episode has no segments in DB
@@ -2417,29 +2463,38 @@
 						}
 
 						let processedSegments = [];
-
+ 
 						// Handle all episodes the same way regardless of user auth
 						if (data.segments && Array.isArray(data.segments)) {
 							console.log(`✅ Valid segments array with ${data.segments.length} items`);
 							let tempSegments = data.segments.map((segment, idx) => 
 								sanitizeSegmentData(segment, data.episodeNumber, idx)
 							);
-							// For display, always ensure 3 segments and 3 words per segment
-							processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
-							
+
+							processedSegments = ensureProperSegments(tempSegments, data.episodeNumber);
 						} else if (data.segments && typeof data.segments === 'object') {
 							console.log(`🔄 Converting segments object to array`);
-							const segmentValues = Object.values(data.segments); // Get values from object
-							let tempSegments = segmentValues.map((segment, idx) => 
+							
+							// ✅ FIXED: Sort segments by their ID to maintain proper order
+							const sortedSegmentEntries = Object.entries(data.segments).sort((a, b) => {
+								// Extract segment numbers from IDs like "segment_1_1", "segment_1_2", etc.
+								const aNum = parseInt(a[0].split('_').pop());
+								const bNum = parseInt(b[0].split('_').pop());
+								return aNum - bNum;
+							});
+							
+							// Now map the sorted segments
+							let tempSegments = sortedSegmentEntries.map(([segmentId, segment], idx) => 
 								sanitizeSegmentData(segment, data.episodeNumber, idx)
 							);
-							processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
+
+							processedSegments = ensureProperSegments(tempSegments, data.episodeNumber);
 							
 						} else {
 							console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
 							// Always create empty segments (no demo words for anyone) for display
 							processedSegments = generateEmptySegments(data.episodeNumber);
-						}
+						}		
 
 						const processedVideo = {
 							id: doc.id,
@@ -2673,6 +2728,8 @@
 			for (let i = 1; i <= 100; i++) {
 				const segments = [];
 				
+				
+				
 				// Always create exactly 3 segments per video for sample data
 				for (let j = 0; j < 3; j++) {
 					const segmentWords = [];
@@ -2885,14 +2942,7 @@
 			
 			isSubmittingRating = true; // SET FLAG TO PREVENT CONFLICTS
 			
-			
-
-			// PRESERVE THE CURRENT EXPANDED STATE
-			const currentSegment = segmentId ? document.querySelector(`.segment[data-segment="${segmentId}"]`) : null;
-			const wasExpanded = currentSegment ? currentSegment.classList.contains('expanded') : false;
-
-
-
+		
 			try {
 				// IMMEDIATE UI UPDATE - Update display first, before saving
 				if (!userRatings[videoId]) {
@@ -2996,13 +3046,6 @@
 			} finally {
 				isSubmittingRating = false; // ALWAYS CLEAR FLAG WHEN DONE
 
-				// RESTORE EXPANDED STATE IF IT WAS EXPANDED
-				if (wasExpanded && currentSegment) {
-					setTimeout(() => {
-						currentSegment.classList.add('expanded');
-						console.log('🔓 Restored expanded state for current segment');
-					}, 100);
-				}
 					
 			}
 		}
@@ -3113,56 +3156,40 @@
 		}
 
 
-		// Helper function to detect if a word is from demo/sample data
-		function isDemoWord(word) {
-			const demoWords = [
-				// Sample words from generateSampleVideos
-				"pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
-				"telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
-				"bicycle", "ocean", "chocolate", "butterfly", "mountain", "music",
-				"spaceship", "burger", "lightning", "guitar", "forest", "diamond",
-				"robot", "sunset", "library", "airplane", "wizard", "sandwich",
-				"telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream",
-				
-				// Generic placeholders that should be hidden
-				"word1", "word2", "word3", "word", "TBD", "tbd", "error_word"
-			];
-			
-			return demoWords.includes(word.toLowerCase());
-		}
-
-		 function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
-			console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex} for display:`, wordCandidates);
+		function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
+			console.log(`🔍 Creating word display for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
 			
 			let validCandidates = [];
 			
-			if (Array.isArray(wordCandidates)) {
+			// Check if we have valid word candidates
+			if (Array.isArray(wordCandidates) && wordCandidates.length > 0) {
 				validCandidates = wordCandidates.filter(candidate => 
 					candidate && 
 					candidate.word && 
 					typeof candidate.word === 'string' && 
 					candidate.word.trim() !== '' &&
-					!isDemoWord(candidate.word) // Filter out ALL demo words
+					candidate.word.trim().toLowerCase() !== 'word1' &&
+					candidate.word.trim().toLowerCase() !== 'word2' &&
+					candidate.word.trim().toLowerCase() !== 'word3'
 				);
 			}
 			
-			// Sort by votes in descending order (highest vote first)
-			validCandidates.sort((a, b) => b.votes - a.votes);
-
+			// Sort by votes and get the top word
+			validCandidates.sort((a, b) => (b.votes || 0) - (a.votes || 0));
 			const topWord = validCandidates.length > 0 ? validCandidates[0] : null;
 			
-			if (topWord && topWord.word) {
-				// Display real word from database in BLUE (for all users)
+			if (topWord && topWord.word && topWord.word.trim() !== '') {
+				console.log(`✅ Showing real word: "${topWord.word}"`);
 				return `
 					<div class="word-display word-real">
 						<span class="word-text">${topWord.word}</span>
 					</div>
 				`;
 			} else {
-				// No real word available - show fill-in in ORANGE (for all users)
+				console.log(`🔴 Showing fill-in button for missing word`);
 				return `
 					<div class="word-missing">
-						<a href="#" class="fill-in-link" onclick="openGoogleSheet('${videoId}', '${segmentId}', ${wordIndex})" title="Help us fill in this word">
+						<a href="#" class="fill-in-link" onclick="openGoogleSheet('${videoId}', '${segmentId}', ${wordIndex}); return false;">
 							📝 fill-in
 						</a>
 					</div>
@@ -3170,22 +3197,36 @@
 			}
 		}
 
-
-
-		// NEW FUNCTION: Opens Google Sheet for word crowdsourcing
 		function openGoogleSheet(videoId, segmentId, wordIndex) {
-			// Replace this URL with your actual Google Sheet URL
+			console.log(`🔗 Opening Google Sheet for Episode ${videoId}, Segment ${getSegmentLetter(segmentId)}, Word ${wordIndex + 1}`);
+			
+			// Your Google Sheet URL - replace with your actual form URL
 			const googleSheetURL = 'https://docs.google.com/spreadsheets/d/1bfHSHaBiX4pFljrVclEtwWMTXRJMoIKbpdHo1-x_ulw/edit?usp=sharing';
 			
-			// You can customize this URL to include episode and segment info
-			const customURL = `${googleSheetURL}&entry.episode=${videoId}&entry.segment=${getSegmentLetter(segmentId)}&entry.word=${wordIndex + 1}`;
+			// For better UX, you might want to create a Google Form instead of directly editing the sheet
+			// const googleFormURL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.EPISODE_FIELD_ID=' + videoId + '&entry.SEGMENT_FIELD_ID=' + getSegmentLetter(segmentId) + '&entry.WORD_FIELD_ID=' + (wordIndex + 1);
 			
-			// Open in new tab
-			window.open(customURL, '_blank');
-			
-			// Show notification
-			showNotification(`Opening Google Sheet to fill in Episode ${videoId}, Segment ${getSegmentLetter(segmentId)}, Word ${wordIndex + 1}`, 'info');
-		}
+			try {
+				// Open in new tab
+				window.open(googleSheetURL, '_blank');
+				
+				// Show detailed notification
+				showNotification(
+					`📝 Opening Google Sheet for Episode ${videoId}, Segment ${getSegmentLetter(segmentId)}, Word ${wordIndex + 1}. Please add the missing word!`, 
+					'info'
+				);
+				
+				// Optional: Track analytics or log usage
+				console.log(`📊 Fill-in requested: Episode ${videoId}, Segment ${getSegmentLetter(segmentId)}, Word ${wordIndex + 1}`);
+				
+			} catch (error) {
+				console.error('❌ Error opening Google Sheet:', error);
+				showNotification('Error opening Google Sheet. Please try again.', 'error');
+			}
+		}		  
+
+ 
+		
 
 		// HELPER FUNCTION: Convert segment ID to letter (A, B, C)
 		function getSegmentLetter(segmentId) {
@@ -3257,6 +3298,7 @@
 				
 				return `
 					<div class="segment" data-segment="${segmentId}">
+
 						<div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
 							<div class="segment-info-with-words">
 								<div class="segment-title-and-rating">
@@ -3274,6 +3316,10 @@
 							</div>
 							<div class="segment-expand-icon">▶</div>
 						</div>
+
+						
+						
+						
 						<div class="segment-content">
 							<div class="segment-details">
 								<div class="segment-ratings">
@@ -3326,33 +3372,7 @@
 			}
 		}
 
-
-		
-		
-		
-        function preserveExpandedState() {
-            const expandedSegments = [];
-            document.querySelectorAll('.segment.expanded').forEach(segment => {
-                const videoId = segment.closest('.segments-container').dataset.video;
-                const segmentId = segment.dataset.segment;
-                expandedSegments.push(`${videoId}_${segmentId}`);
-            });
-            return expandedSegments;
-        }
-        
-        function restoreExpandedState(expandedSegments) {
-            setTimeout(() => {
-                expandedSegments.forEach(segmentKey => {
-                    const [videoId, segmentId] = segmentKey.split('_', 2);
-                    const segmentElement = document.querySelector(
-                        `.segments-container[data-video="${videoId}"] .segment[data-segment="${segmentId}"]`
-                    );
-                    if (segmentElement) {
-                        segmentElement.classList.add('expanded');
-                    }
-                });
-            }, 100);
-        }
+ 
         
         function renderVideos() {
 			console.log('🎨 RENDERVIDEOS CALLED!');
@@ -3360,8 +3380,7 @@
 	
             console.log('🎨 Starting renderVideos function...');
 
-            const expandedSegments = preserveExpandedState();
-            
+           
             console.log(`📊 Videos to render: ${videos.length}`);
             
             const videoGrid = document.getElementById('videoGrid');
@@ -3463,36 +3482,14 @@
                             <h3 class="video-title">${video.title}</h3>
                            
  
-							<div class="overall-rating">
-								<h4>Overall Episode Rating</h4>
-								${['lyrics', 'beats', 'reaction', 'overall'].map(category => {
-                                    const videoRating = video.ratings[category]?.average || 0;
-                                    const videoCount = video.ratings[category]?.count || 0;
-                                    const userVideoRating = userRatings[video.episodeNumber]?.video?.[category] || 0; // Check if user has rated this video category
-                                    return `
-                                    <div class="rating-category">
-                                        <div class="rating-info">
-                                            <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                            <span class="rating-stats">${videoRating.toFixed(1)}★ (${videoCount} ratings)</span>
-                                        </div>
-                                        <div class="rating-controls">
-                                            <div class="stars" data-category="${category}" data-video="${video.episodeNumber}">
-                                                ${createStarRating(category, video.episodeNumber, videoRating, videoCount)}
-                                            </div>
-                                            ${userVideoRating > 0 ? `<div class="user-rating-indicator">Your rating: ${userVideoRating}★</div>` : ''}
-                                        </div>
-                                    </div>
-                                `;
-                                }).join('')}
-                            </div>
-
 
 							<div class="segments-section">
+								
+
 								<div class="segments-header">
 									<h4>Detailed Segments (${video.segments ? video.segments.length : 0})</h4>
-		
-                                    <button class="expand-toggle" onclick="toggleAllSegments('${video.episodeNumber}')">Show Ratings</button>
-                                </div>
+								</div>
+								
                                 <div class="segments-container" data-video="${video.episodeNumber}">
                                     ${segmentsHtml}
                                 </div>
@@ -3540,8 +3537,8 @@
             } catch (displayError) {
                 console.error('❌ Error updating user rating display:', displayError);
             }
-             
-            restoreExpandedState(expandedSegments);
+  
+
         }
 
 
@@ -3578,45 +3575,7 @@
 		}
 
 
-
-        function toggleSegment(videoId, segmentId) {
-            const videoContainer = document.querySelector(`.segments-container[data-video="${videoId}"]`);
-            if (videoContainer) {
-                const segmentElement = videoContainer.querySelector(`.segment[data-segment="${segmentId}"]`);
-                if (segmentElement) {
-                    segmentElement.classList.toggle('expanded');
-                }
-            }
-        }
-
-        function toggleAllSegments(videoId) {
-            const container = document.querySelector(`.segments-container[data-video="${videoId}"]`);
-            if (container) {
-                const segments = container.querySelectorAll('.segment');
-                const button = container.closest('.video-card').querySelector('.expand-toggle');
-                
-                let anyExpanded = false;
-                segments.forEach(segment => {
-                    if (segment.classList.contains('expanded')) {
-                        anyExpanded = true;
-                    }
-                });
-
-                segments.forEach(segment => {
-                    if (anyExpanded) { // If any are expanded, collapse all
-                        segment.classList.remove('expanded');
-                    } else { // If none are expanded, expand all
-                        segment.classList.add('expanded');
-                    }
-                });
-                
-                // Update button text
-                if (button) {
-                    button.textContent = anyExpanded ? 'Show Ratings' : 'Hide Ratings';
-                }
-            }
-        }
-
+ 
         
         function showNotification(message, type) {
             // Remove any existing notifications first
@@ -3713,12 +3672,13 @@
             }
         }
 
-        function applyFilters() {
+		function applyFilters() {
 			console.log('🔄 APPLYFILTERS CALLED!');
 			console.trace(); 
-	
-            renderVideos();
-        }
+
+			renderVideos();
+
+		}
 
 
 		function setupRealtimeUpdates() {
@@ -3733,7 +3693,7 @@
 				if (!isSavingNote && !isSubmittingRating && snapshot.docChanges().length > 0) {
 					console.log('📡 Real-time update received, processing changes...');
 					
-					const expandedSegments = preserveExpandedState();
+
 					
 					let hasChanges = false;
 					snapshot.docChanges().forEach((change) => {
@@ -3750,7 +3710,8 @@
 								} else {
 									processedSegments = generateEmptySegments(updatedVideo.episodeNumber);
 								}
-								updatedVideo.segments = ensureExactly3Segments(processedSegments, updatedVideo.episodeNumber);
+
+								updatedVideo.segments = ensureProperSegments(processedSegments, updatedVideo.episodeNumber);
 								updatedVideo.ratings = calculateVideoOverallRating(updatedVideo); // Recalculate ratings
 								videos.push(updatedVideo);
 								hasChanges = true;
@@ -3783,10 +3744,7 @@
 							applyFilters();
 							updateStats();
 							
-							setTimeout(() => {
-								console.log('🔓 Restoring expanded state after real-time update');
-								restoreExpandedState(expandedSegments);
-							}, 100);
+						
 							
 						}, 1000); // Reduced debounce time for faster updates
 					}
@@ -3795,14 +3753,6 @@
 				}
 			});
 		}
-
-
-
-
-
-
-
-
 
        // ===== ADD ALL THE NOTES FUNCTIONS HERE ===== 
         
@@ -4161,6 +4111,90 @@
 			}
 		}
 
+		
+		function loadExistingWords() {
+			console.log('🐛 DEBUG: loadExistingWords() called!');
+			const episodeNum = document.getElementById('adminEpisode').value;
+			console.log('🐛 DEBUG: Selected episode:', episodeNum);
+
+			if (!episodeNum) {
+				// Reset to default 3 empty segments when no episode selected
+				currentEpisodeSegmentsForAdmin = generateInitialEmptySegmentsForAdmin('TBD');
+				renderAdminForm();
+				return;
+			}
+
+			console.log(`📖 Loading existing words for Episode ${episodeNum}...`);
+
+			// Find the episode in our videos array
+			const episode = videos.find(v => v.episodeNumber.toString() === episodeNum);
+			
+			// ✅ ALWAYS start with 3 empty segments, then populate with existing data if available
+			currentEpisodeSegmentsForAdmin = [];
+			
+			// Create exactly 3 segments for the admin form
+			for (let segIndex = 0; segIndex < 3; segIndex++) {
+				const adminSegment = {
+					id: `segment_${episodeNum}_${segIndex + 1}`,
+					words: []
+				};
+
+				// If episode exists and has this segment, try to load its words
+				let existingSegment = null;
+				if (episode && episode.segments && episode.segments[segIndex]) {
+					existingSegment = episode.segments[segIndex];
+					console.log(`🔍 Found existing segment ${segIndex}:`, existingSegment);
+				}
+
+				// Process words for this segment (3 words minimum)
+				for (let wordIndex = 0; wordIndex < 3; wordIndex++) {
+					let bestWord = '';
+					
+					// Try to get existing word from this position
+					if (existingSegment && existingSegment.words && Array.isArray(existingSegment.words)) {
+						const wordCandidates = existingSegment.words[wordIndex];
+						if (Array.isArray(wordCandidates) && wordCandidates.length > 0) {
+							// Sort by votes and take the top one
+							const sortedCandidates = [...wordCandidates].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+							bestWord = sortedCandidates[0].word || '';
+						}
+					}
+					
+					// Add the word (or empty slot) to admin segment
+					if (bestWord && bestWord.trim() !== '') {
+						adminSegment.words.push([{ word: bestWord, votes: 1, voters: [] }]);
+						console.log(`✅ Loaded word ${wordIndex + 1} for segment ${segIndex + 1}: "${bestWord}"`);
+					} else {
+						adminSegment.words.push([]);
+						console.log(`📝 Empty word slot ${wordIndex + 1} for segment ${segIndex + 1}`);
+					}
+				}
+
+				currentEpisodeSegmentsForAdmin.push(adminSegment);
+			}
+
+			console.log(`✅ Created admin form with exactly ${currentEpisodeSegmentsForAdmin.length} segments`);
+
+			// Show appropriate message
+			const hasExistingWords = currentEpisodeSegmentsForAdmin.some(segment => 
+				segment.words.some(wordArray => wordArray.length > 0 && wordArray[0].word)
+			);
+
+			if (hasExistingWords) {
+				showInfoMessage(`Loaded Episode ${episodeNum} with existing words. You can edit or add more words.`);
+			} else {
+				showInfoMessage(`Episode ${episodeNum} has no words yet. Starting with 3 empty segments - add words below.`);
+			}
+
+			// Re-render the form with the loaded/created data
+			renderAdminForm();
+			
+			console.log('🐛 DEBUG: Final currentEpisodeSegmentsForAdmin:', currentEpisodeSegmentsForAdmin);
+		}
+		
+		
+		
+
 
 
 		// Enhanced Admin Modal Functions (new dynamic logic)
@@ -4170,7 +4204,7 @@
 			const segments = [];
 			for (let i = 0; i < 3; i++) { // Start with 3 segments
 				segments.push({
-					id: `segment_${episodeNum}_${i + 1}`,
+					id: episodeNum === 'TBD' ? `segment_TBD_${i + 1}` : `segment_${episodeNum}_${i + 1}`,
 					words: generateInitialEmptyWordsForAdmin() // Each with 3 empty word slots
 				});
 			}
@@ -4187,7 +4221,6 @@
 		}
 
 
-		// Renders the dynamic segment and word input fields in the admin modal
 		function renderAdminForm() {
 			const segmentsContainer = document.getElementById('adminSegmentsContainer');
 			if (!segmentsContainer) {
@@ -4198,9 +4231,26 @@
 
 			const episodeNum = document.getElementById('adminEpisode').value;
 
+			if (!episodeNum) {
+				// Show helpful message when no episode is selected
+				segmentsContainer.innerHTML = `
+					<div style="text-align: center; padding: 40px; color: #6c757d; background: #f8f9fa; border-radius: 10px; border: 2px dashed #dee2e6;">
+						<h3 style="color: #495057; margin-bottom: 15px;">📋 Select an Episode</h3>
+						<p style="margin-bottom: 0;">Choose an episode from the dropdown above to load existing words or start adding new ones.</p>
+					</div>
+				`;
+				return;
+			}
+
 			if (currentEpisodeSegmentsForAdmin.length === 0) {
-				// If no segments loaded, initialize with 3 default segments
-				currentEpisodeSegmentsForAdmin = generateInitialEmptySegmentsForAdmin(episodeNum);
+				// Show loading state
+				segmentsContainer.innerHTML = `
+					<div style="text-align: center; padding: 40px; color: #6c757d;">
+						<h3 style="color: #495057; margin-bottom: 15px;">🔄 Loading...</h3>
+						<p>Loading existing words for Episode ${episodeNum}...</p>
+					</div>
+				`;
+				return;
 			}
 
 			currentEpisodeSegmentsForAdmin.forEach((segment, segIndex) => {
@@ -4220,15 +4270,22 @@
 				// Ensure segment.words is an array for iteration
 				const segmentWordsArray = Array.isArray(segment.words) ? segment.words : Object.values(segment.words || {});
 
+								   
+								   
 				segmentWordsArray.forEach((wordCandidates, wordIndex) => {
 					const currentWord = wordCandidates[0]?.word || ''; // Get the first candidate's word
+					const placeholder = currentWord ? currentWord : `Word ${wordIndex + 1}...`;
+					const inputStyle = currentWord ? 'background: #e8f5e8; border-color: #27ae60;' : ''; // Highlight pre-filled words
+					
 					wordsHtml += `
 						<div class="admin-form-group admin-word-input">
-							<label>Word ${wordIndex + 1}</label>
+							<label>Word ${wordIndex + 1} ${currentWord ? '✓' : ''}</label>
 							<div class="admin-word-number">${wordIndex + 1}</div>
 							<input type="text" class="admin-form-control admin-segment-word-input" 
 								   data-segment-index="${segIndex}" data-word-index="${wordIndex}"
-								   placeholder="Word ${wordIndex + 1}..." value="${currentWord}">
+								   placeholder="${placeholder}" value="${currentWord}" style="${inputStyle}">
+
+				   
 							<button type="button" class="admin-btn admin-btn-remove-word" onclick="removeWord(${segIndex}, ${wordIndex})" 
 									style="position: absolute; right: 0px; top: 30px; background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer;">
 								&times;
@@ -4275,12 +4332,20 @@
 					}
 					// Always set the first candidate for simplicity in admin form
 					currentEpisodeSegmentsForAdmin[segIndex].words[wordIndex][0] = { word: value, votes: 1, voters: [] };
+					
+					// Update input styling based on content
+					if (value) {
+						e.target.style.background = '#e8f5e8';
+						e.target.style.borderColor = '#27ae60';
+					} else {
+						e.target.style.background = '';
+						e.target.style.borderColor = '';
+					}
+
 				});
 			});
 		}
 
-
-		// Dynamically add a new segment
 		function openAdminModal() {
 			const modal = document.getElementById('adminWordsModal');
 			modal.style.display = 'block';
@@ -4295,8 +4360,17 @@
 					episodeSelect.appendChild(option);
 				}
 			}
+			
+			// ✅ NEW: Initialize with 3 empty segments by default
+			if (currentEpisodeSegmentsForAdmin.length === 0) {
+				currentEpisodeSegmentsForAdmin = generateInitialEmptySegmentsForAdmin('TBD'); // TBD = To Be Determined
+			}
+			
 			hideMessages(); // Clear any previous messages
+			renderAdminForm(); // ✅ NEW: Render the form with default segments
 		}
+
+
 
 		// Close the admin modal
 		function closeAdminModal() {
@@ -4307,12 +4381,13 @@
 		}
 
 		// Clear the form and reset currentEpisodeSegmentsForAdmin
+
 		function clearForm() {
 			document.getElementById('adminEpisode').value = '';
 			currentEpisodeSegmentsForAdmin = []; // Reset the internal data
-			renderAdminForm(); // Rerender to show empty state (will generate 3 empty ones)
+			renderAdminForm(); // Rerender to show empty state
 			hideMessages(); // Clear messages
-			showInfoMessage('Form cleared. Select an episode to load words or add new segments.');
+			showInfoMessage('Form cleared. Select an episode to load existing words or start fresh.');
 		}
 
 
@@ -4328,7 +4403,10 @@
 				words: generateInitialEmptyWordsForAdmin() // 3 empty words
 			});
 			renderAdminForm();
+			showInfoMessage(`Added Segment ${String.fromCharCode(65 + newSegmentIndex)} to Episode ${episodeNum}`);
 		}
+
+ 
 
 		// Dynamically remove the last segment
 		function removeLastSegment() {
@@ -4342,13 +4420,52 @@
 			}
 		}
 
-		// Dynamically add a new word to a specific segment
-		function addWord(segmentIndex) {
-			if (currentEpisodeSegmentsForAdmin[segmentIndex]) {
-				currentEpisodeSegmentsForAdmin[segmentIndex].words.push([]); // Add an empty word slot
+
+		// ADD THIS MISSING FUNCTION
+		function removeSegment(segmentIndex) {
+			if (!currentEpisodeSegmentsForAdmin[segmentIndex]) {
+				showErrorMessage('Segment not found');
+				return;
+			}
+
+			const segmentLetter = String.fromCharCode(65 + segmentIndex);
+			const episodeNum = document.getElementById('adminEpisode').value;
+			
+			if (currentEpisodeSegmentsForAdmin.length <= 1) {
+				showErrorMessage('Cannot remove the last segment. At least one segment is required.');
+				return;
+			}
+			
+			if (confirm(`Are you sure you want to remove Segment ${segmentLetter} from Episode ${episodeNum}? This cannot be undone.`)) {
+				console.log(`🗑️ Removing segment ${segmentIndex} (${segmentLetter})`);
+				
+				// Remove the segment from the array
+				currentEpisodeSegmentsForAdmin.splice(segmentIndex, 1);
+				
+				// Update IDs for remaining segments to maintain proper numbering
+				currentEpisodeSegmentsForAdmin.forEach((segment, newIndex) => {
+					segment.id = `segment_${episodeNum}_${newIndex + 1}`;
+				});
+				
+				// Re-render the form
 				renderAdminForm();
+				
+				showInfoMessage(`Removed Segment ${segmentLetter} from Episode ${episodeNum}`);
 			}
 		}
+
+		// Dynamically add a new word to a specific segment
+
+		function addWord(segmentIndex) {
+			if (currentEpisodeSegmentsForAdmin[segmentIndex]) {
+				const segmentLetter = String.fromCharCode(65 + segmentIndex);
+				const wordNumber = currentEpisodeSegmentsForAdmin[segmentIndex].words.length + 1;
+				currentEpisodeSegmentsForAdmin[segmentIndex].words.push([]); // Add an empty word slot
+				renderAdminForm();
+				showInfoMessage(`Added Word ${wordNumber} to Segment ${segmentLetter}`);
+			}
+		}
+
 
 		// Dynamically remove a word from a specific segment
 		function removeWord(segmentIndex, wordIndex) {
@@ -4489,8 +4606,7 @@
 		window.handleStarClick = handleStarClick;
 		window.handleStarHover = handleStarHover;
 		window.handleStarLeave = handleStarLeave;
-        window.toggleSegment = toggleSegment;
-        window.toggleAllSegments = toggleAllSegments;
+
 		
 		// Make notes functions globally available for onclick handlers
 		window.toggleNotesSection = toggleNotesSection;
@@ -4513,6 +4629,8 @@
 		window.addWord = addWord; // New
 		window.removeWord = removeWord; // New
 		window.showInfoMessage = showInfoMessage; // New
+		window.loadExistingWords = loadExistingWords; // New function
+		window.removeSegment = removeSegment;		
 
 
         document.addEventListener('DOMContentLoaded', init);
