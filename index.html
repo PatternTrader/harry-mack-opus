@@ -7,12 +7,14 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎤</text></svg>">
   
     <style>
+        /* General Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body Styling */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,12 +22,14 @@
             min-height: 100vh;
         }
 
+        /* Container for main content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
+        /* Header Section */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -48,6 +52,7 @@
             opacity: 0.9;
         }
 
+        /* User Info Section */
         .user-section {
             position: absolute;
             top: 20px;
@@ -64,23 +69,7 @@
             font-size: 0.9rem;
         }
 
-        .auth-button {
-            display: inline-flex;
-            align-items: center;
-            background: white;
-            color: #3c4043;
-            border: 1px solid #dadce0;
-            border-radius: 24px;
-            padding: 8px 16px;
-            font-family: 'Google Sans', Roboto, Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.30);
-            gap: 8px;
-        }
-        
+        /* Google Sign-in Button */
         .auth-button {
             display: inline-flex;
             align-items: center;
@@ -116,6 +105,7 @@
             display: block;
         }
         
+        /* Connection Status Indicator */
         .connection-status {
             position: fixed;
             top: 10px;
@@ -147,22 +137,20 @@
             color: white;
         }
  
-
-		/*do i need this*/
+        /* Video Card Hover Effect */
         .video-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
  
-		/*do i need this*/
+		/* Overall Rating Header */
         .overall-rating h4 {
             color: #2c3e50;
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
 
-
-
+        /* Segments Section */
         .segments-section {
             margin-bottom: 20px;
         }
@@ -196,6 +184,7 @@
             background: #7d3c98;
         }
 
+        /* Individual Segment Styling */
         .segment {
             background: #f8f9fa;
             border-radius: 10px;
@@ -253,7 +242,7 @@
         }
 
         .segment.expanded .segment-content {
-            max-height: 800px;
+            max-height: 800px; /* Increased to allow for more content */
         }
 
         .segment-details {
@@ -412,6 +401,7 @@
             text-align: center;
         }
 
+        /* Notification Popups */
         .notification {
             position: fixed;
             top: 20px;
@@ -466,6 +456,7 @@
             to { opacity: 1; }
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .video-grid {
                 grid-template-columns: 1fr;
@@ -484,11 +475,6 @@
             }
         }
 		
-		
-		
-		
-		
-		/* Add these CSS rules to your existing <style> section */
 		/* Notes Section Styles */
 		.notes-section {
 			border-top: 1px solid #eee;
@@ -650,22 +636,19 @@
 		}
 		/* ===== END NOTES CSS ===== */
 		
-		
-  
-		/* do i need this? */
+		/* Segment Summary Header */
         .segments-summary h4 {
             color: #2c3e50;
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
-		
 
-		/* do i need this? */
+		/* Segment Preview Labels */
         .segment-preview-label {
             font-weight: 600;
         }
 
-		/* do i need this? */
+		/* Segment Preview Rating */
         .segment-preview-rating {
             background: rgba(255, 255, 255, 0.3);
             padding: 2px 8px;
@@ -674,7 +657,7 @@
             font-weight: bold;
         }
 
-		/* do i need this? */
+		/* No Segments Preview */
         .no-segments-preview {
             color: #7f8c8d;
             font-style: italic;
@@ -1297,7 +1280,347 @@
 			flex-shrink: 0;
 		}
 
-    </style>
+
+		/* Real words from database - BLUE */
+		.word-real {
+			background: linear-gradient(45deg, #3498db, #2980b9) !important;
+		}
+
+		.word-real .word-text {
+			color: white;
+		}
+
+		/* Small inline real words - BLUE */
+		.segment-words-inline .word-real {
+			background: linear-gradient(45deg, #3498db, #2980b9) !important;
+		}
+
+		/* Missing words (fill-in) - ORANGE */
+		.fill-in-link {
+			background: linear-gradient(45deg, #f39c12, #e67e22) !important;
+		}
+
+		.fill-in-link-small {
+			background: linear-gradient(45deg, #f39c12, #e67e22) !important;
+		}
+
+		.fill-in-link:hover {
+			background: linear-gradient(45deg, #e67e22, #d35400) !important;
+		}
+
+		.fill-in-link-small:hover {
+			background: linear-gradient(45deg, #e67e22, #d35400) !important;
+		}
+
+
+		/* ===== ADMIN MODAL STYLES ===== */
+		.admin-modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.7);
+			z-index: 2000;
+			overflow-y: auto;
+		}
+
+		.admin-modal-content {
+			background: white;
+			margin: 50px auto;
+			padding: 30px;
+			width: 90%;
+			max-width: 800px; /* Increased max-width for more content */
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			animation: slideDown 0.3s ease;
+		}
+
+		@keyframes slideDown {
+			from {
+				transform: translateY(-50px);
+				opacity: 0;
+			}
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.admin-modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 25px;
+			padding-bottom: 15px;
+			border-bottom: 2px solid #e9ecef;
+		}
+
+		.admin-modal-title {
+			font-size: 1.5rem;
+			color: #2c3e50;
+			font-weight: 700;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.admin-close-btn {
+			background: none;
+			border: none;
+			font-size: 1.8rem;
+			color: #6c757d;
+			cursor: pointer;
+			transition: color 0.2s ease;
+			padding: 0;
+			width: 35px;
+			height: 35px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+		}
+
+		.admin-close-btn:hover {
+			color: #e74c3c;
+			background: rgba(231, 76, 60, 0.1);
+		}
+
+		.admin-form-group {
+			margin-bottom: 20px;
+		}
+
+		.admin-form-group label {
+			display: block;
+			margin-bottom: 8px;
+			color: #34495e;
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+
+		.admin-form-control {
+			width: 100%;
+			padding: 10px 15px;
+			border: 2px solid #e9ecef;
+			border-radius: 8px;
+			font-size: 1rem;
+			transition: border-color 0.2s ease;
+			background: #f8f9fa;
+		}
+
+		.admin-form-control:focus {
+			outline: none;
+			border-color: #667eea;
+			background: white;
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		}
+
+		.admin-episode-segment-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 15px;
+		}
+
+		.admin-segment-block {
+			background: #f8f9fa;
+			border-radius: 10px;
+			padding: 20px;
+			margin-bottom: 20px;
+			border: 2px solid #e9ecef;
+		}
+		
+		.admin-words-title {
+			font-size: 1rem;
+			color: #2c3e50;
+			font-weight: 600;
+			margin-bottom: 15px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.admin-word-input {
+			position: relative;
+		}
+
+		.admin-word-number {
+			position: absolute;
+			left: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			background: #667eea;
+			color: white;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.8rem;
+			font-weight: 700;
+		}
+
+		.admin-word-input input {
+			padding-left: 45px;
+		}
+
+		.admin-form-actions {
+			display: flex;
+			gap: 10px;
+			margin-top: 25px;
+			padding-top: 20px;
+			border-top: 2px solid #e9ecef;
+			flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+		}
+
+		.admin-btn {
+			padding: 12px 24px;
+			border: none;
+			border-radius: 8px;
+			font-size: 1rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.admin-btn-primary {
+			background: linear-gradient(135deg, #667eea, #764ba2);
+			color: white;
+			flex: 1;
+		}
+
+		.admin-btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+		}
+
+		.admin-btn-primary:disabled {
+			background: #95a5a6;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		.admin-btn-secondary {
+			background: #e9ecef;
+			color: #495057;
+		}
+
+		.admin-btn-secondary:hover {
+			background: #dee2e6;
+		}
+
+		.admin-preview-section {
+			background: #e8f4f8;
+			border-radius: 10px;
+			padding: 15px;
+			margin-top: 15px;
+			border: 2px solid #3498db;
+		}
+
+		.admin-preview-title {
+			font-size: 0.9rem;
+			color: #2c3e50;
+			font-weight: 600;
+			margin-bottom: 10px;
+		}
+
+		.admin-preview-content {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.admin-preview-word {
+			background: linear-gradient(45deg, #3498db, #2980b9);
+			color: white;
+			padding: 6px 14px;
+			border-radius: 20px;
+			font-size: 0.85rem;
+			font-weight: 600;
+		}
+
+		.admin-success-message {
+			background: #d4edda;
+			color: #155724;
+			padding: 15px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			display: none;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.admin-error-message {
+			background: #f8d7da;
+			color: #721c24;
+			padding: 15px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			display: none;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.admin-info-message { /* Added new info message style */
+			background: #e0f2f7;
+			color: #0c5460;
+			padding: 15px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			display: none;
+			align-items: center;
+			gap: 10px;
+		}
+
+
+		/* Styles for dynamically added word/segment buttons */
+		.admin-btn-remove-word {
+			margin-left: 10px; /* Space out remove button */
+		}
+		.admin-btn-remove-word:hover {
+			color: #c0392b;
+		}
+
+		/* Adjust form-actions for better button alignment */
+		.admin-form-actions button {
+			flex-grow: 1;
+			min-width: 120px; /* Ensure buttons have a minimum width */
+		}
+
+		/* Responsive adjustments for admin modal */
+		@media (max-width: 600px) {
+			.admin-modal-content {
+				margin: 20px auto;
+				padding: 20px;
+			}
+			.admin-modal-title {
+				font-size: 1.2rem;
+			}
+			.admin-close-btn {
+				font-size: 1.5rem;
+			}
+			.admin-form-actions {
+				flex-direction: column;
+			}
+			.admin-form-actions button {
+				width: 100%; /* Full width buttons on small screens */
+			}
+			.admin-segment-block .admin-form-group {
+				grid-template-columns: 1fr; /* Stack word inputs on mobile */
+			}
+			.admin-word-input input {
+				padding-left: 15px; /* Adjust padding if word number is removed on mobile */
+			}
+			.admin-word-number {
+				display: none; /* Hide word number on small screens */
+			}
+		}
+
+	</style>
 </head>
 
 <body>
@@ -1317,15 +1640,11 @@
                 </button>
             </div>
          
-			
-			<!-- Admin-only button (only shows for mathewmit@gmail.com) -->
-			<button id="adminUpdateButton" onclick="bulkUpdateWords()" 
+			<!-- Admin button to open the modal -->
+			<button id="adminUpdateButton" 
 					style="display: none; position: fixed; top: 100px; right: 20px; background: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; z-index: 1001; font-weight: bold;">
-				🔧 Admin: Update Words
+				🔧 Admin: Add Words
 			</button>
-			
-			
-			
 			
             <h1>🎤 Harry Mack Ratings Central</h1>
             <p>Rate Omegle Bars episodes with the global Harry Mack fan community!</p>
@@ -1335,6 +1654,80 @@
         </div>
 
 
+		<!-- ADMIN MODAL - UPDATED DYNAMIC STRUCTURE -->
+		<div id="adminWordsModal" class="admin-modal">
+			<div class="admin-modal-content">
+				<div class="admin-modal-header">
+					<h2 class="admin-modal-title">
+						<span>🛠️</span>
+						Add Words to Episode
+					</h2>
+					<button class="admin-close-btn" onclick="closeAdminModal()">&times;</button>
+				</div>
+
+				<div class="admin-success-message" id="adminSuccessMessage">
+					<span>✅</span>
+					<span id="successText">Words added successfully!</span>
+				</div>
+
+				<div class="admin-error-message" id="adminErrorMessage">
+					<span>❌</span>
+					<span id="errorText">Error adding words</span>
+				</div>
+
+				<div class="admin-info-message" id="adminInfoMessage">
+					<span>ℹ️</span>
+					<span id="infoText">Info message.</span>
+				</div>
+
+
+				<form id="adminWordsForm" onsubmit="submitAdminWords(event)">
+					<div class="admin-form-group" style="margin-bottom: 30px;">
+						<label for="adminEpisode" style="font-size: 1.1rem; font-weight: 700;">Episode Number</label>
+						<select class="admin-form-control" id="adminEpisode" required onchange="loadExistingWords()">
+							<option value="">Select Episode...</option>
+						</select>
+					</div>
+
+					<!-- Dynamic Segment Blocks will be inserted here by JavaScript -->
+					<div id="adminSegmentsContainer">
+						<!-- Content will be rendered by renderAdminForm() -->
+					</div>
+
+					<!-- Global Add/Remove Segment Buttons -->
+					<div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+						<button type="button" class="admin-btn" style="background: #3498db; color: white; padding: 10px 20px; border-radius: 8px;" onclick="addSegment()">
+							+ Add Segment
+						</button>
+						<button type="button" class="admin-btn" style="background: #e74c3c; color: white; padding: 10px 20px; border-radius: 8px;" onclick="removeLastSegment()">
+							- Remove Last Segment
+						</button>
+					</div>
+
+					<div class="admin-form-actions" style="margin-top: 30px;">
+						<button type="button" class="admin-btn admin-btn-secondary" onclick="clearForm()">
+							🗑️ Clear All
+						</button>
+						<button type="button" class="admin-btn admin-btn-secondary" onclick="closeAdminModal()">
+							❌ Close
+						</button>
+						<button type="submit" class="admin-btn admin-btn-primary" id="adminSubmitBtn" style="flex: 1;">
+							<span>💾</span>
+							Save All Words
+						</button>
+					</div>
+					
+					<div style="margin-top: 15px; text-align: center;">
+						<button type="button" class="admin-btn" style="background: #9b59b6; color: white;" onclick="goToNextEpisode()">
+							➡️ Save & Go to Next Episode
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+	
+	
 		<div class="platform-intro">
 			<div class="intro-content">
 				<div class="intro-badge">
@@ -1355,7 +1748,7 @@
 					</div>
 					<div class="feature-item">
 						<div class="feature-icon">💬</div>
-						<span>Rate and discuss their favorites</span>
+						<span>Rate your favorites</span>
 					</div>
 					<div class="feature-item">
 						<div class="feature-icon">🏗️</div>
@@ -1449,7 +1842,7 @@
 		let userNotes = {};
 		let isSavingNote = false;
 		let editingNotes = {};
-		let isSubmittingRating = false; // ADD THIS LINE
+		let isSubmittingRating = false; 
 		
 		// Note configuration
 		const MAX_NOTE_LENGTH = 1000;
@@ -1465,9 +1858,12 @@
         // Debug mode flag
         const DEBUG_EPISODE_2 = true;
 
+        // Global array to hold the mutable segment data for the admin form
+        let currentEpisodeSegmentsForAdmin = [];
+
 
 		function convertWordsObjectToArray(wordsData) {
-			console.log('🔍 Converting words data:', JSON.stringify(wordsData, null, 2));
+			console.log('🔍 Converting words data for display:', JSON.stringify(wordsData, null, 2));
 			
 			if (!wordsData) {
 				return [
@@ -1479,13 +1875,13 @@
 
 			// If it's already the correct format (array of arrays), return as-is
 			if (Array.isArray(wordsData) && wordsData.length > 0 && Array.isArray(wordsData[0])) {
-				console.log('✅ Already in correct array format');
+				console.log('✅ Already in correct array format for display');
 				return wordsData;
 			}
 
-			// NEW: Handle the Firebase object format from bulkUpdateWords
+			// Handle Firebase object format (e.g., { "0": [{...}], "1": [{...}] })
 			if (typeof wordsData === 'object' && !Array.isArray(wordsData)) {
-				console.log('🔄 Converting from Firebase object format (bulkUpdateWords)');
+				console.log('🔄 Converting from Firebase object format for display');
 				const result = [];
 				
 				// Convert object keys back to array positions
@@ -1493,17 +1889,26 @@
 					const wordPosition = wordsData[positionKey];
 					const candidates = [];
 					
-					if (wordPosition && typeof wordPosition === 'object') {
-						// Get the first candidate (index 0)
-						if (wordPosition[0] && wordPosition[0].word) {
-							candidates.push({
-								word: wordPosition[0].word,
-								votes: wordPosition[0].votes || 1,
-								voters: wordPosition[0].voters || []
-							});
-						}
-					}
+					if (Array.isArray(wordPosition)) { // Expecting an array of candidates
+						wordPosition.forEach(candidate => {
+							if (candidate && candidate.word && typeof candidate.word === 'string') {
+								candidates.push({
+									word: candidate.word,
+									votes: candidate.votes || 1,
+									voters: []
+								});
+							}
+						});
+					} else if (wordPosition && typeof wordPosition === 'object' && wordPosition.word) {
+                         // Fallback for single candidate object (less common but good to handle)
+                        candidates.push({
+                            word: wordPosition.word,
+                            votes: wordPosition.votes || 1,
+                            voters: []
+                        });
+                    }
 					
+					// Ensure at least one candidate for the word position if none were found
 					if (candidates.length === 0) {
 						candidates.push({word: `word${result.length + 1}`, votes: 1, voters: []});
 					}
@@ -1511,43 +1916,20 @@
 					result.push(candidates);
 				});
 				
-				// Ensure exactly 3 word positions
+				// Ensure exactly 3 word positions for DISPLAY
 				while (result.length < 3) {
 					result.push([{word: `word${result.length + 1}`, votes: 1, voters: []}]);
 				}
-				
-				console.log('✅ Converted to array format:', result);
+				if (result.length > 3) {
+					result.length = 3; // Truncate for display
+				}
+
+				console.log('✅ Converted to array format for display:', result);
 				return result;
 			}
 
-			// Convert Firebase array format (existing logic)
-			if (Array.isArray(wordsData)) {
-				console.log('🔄 Converting from Firebase array-of-objects format');
-				
-				return wordsData.map((wordPosition, positionIndex) => {
-					if (typeof wordPosition === 'object' && wordPosition !== null && !Array.isArray(wordPosition)) {
-						const candidates = [];
-						Object.keys(wordPosition).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
-							const candidate = wordPosition[key];
-							if (candidate && candidate.word) {
-								candidates.push({
-									word: candidate.word,
-									votes: candidate.votes || 1,
-									voters: candidate.voters || []
-								});
-							}
-						});
-						return candidates.length > 0 ? candidates : [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
-					} else if (Array.isArray(wordPosition)) {
-						return wordPosition;
-					} else {
-						return [{word: `word${positionIndex + 1}`, votes: 1, voters: []}];
-					}
-				});
-			}
-
-			// Fallback
-			console.log('⚠️ Unknown format, creating defaults');
+			// Fallback for completely unknown format
+			console.log('⚠️ Unknown format, creating defaults for display');
 			return [
 				[{word: 'word1', votes: 5, voters: []}],
 				[{word: 'word2', votes: 5, voters: []}],
@@ -1556,9 +1938,8 @@
 		}
 
 
-
 		function sanitizeSegmentData(segment, videoId, segmentIndex) {
-			console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex}:`, segment);
+			console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex} (for display):`, segment);
 			
 			const sanitized = {
 				id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
@@ -1567,11 +1948,11 @@
 			};
 
 			if (segment?.words) {
-				console.log(`🔄 Processing words for ${videoId}-${segmentIndex}`);
+				console.log(`🔄 Processing words for ${videoId}-${segmentIndex} (for display)`);
 				try {
 					sanitized.words = convertWordsObjectToArray(segment.words);
 					
-					// ENSURE EXACTLY 3 WORDS PER SEGMENT
+					// ENSURE EXACTLY 3 WORDS PER SEGMENT FOR DISPLAY
 					while (sanitized.words.length < 3) {
 						sanitized.words.push([{word: `word${sanitized.words.length + 1}`, votes: 5, voters: []}]);
 					}
@@ -1579,9 +1960,9 @@
 						sanitized.words = sanitized.words.slice(0, 3);
 					}
 					
-					console.log(`✅ Words processed for ${videoId}-${segmentIndex}, exactly ${sanitized.words.length} words`);
+					console.log(`✅ Words processed for ${videoId}-${segmentIndex}, exactly ${sanitized.words.length} words for display`);
 				} catch (conversionError) {
-					console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex}:`, conversionError);
+					console.warn(`⚠️ Error converting words for ${videoId}-${segmentIndex} (for display):`, conversionError);
 					sanitized.words = [
 						[{word: 'word1', votes: 5, voters: []}],
 						[{word: 'word2', votes: 5, voters: []}],
@@ -1589,7 +1970,7 @@
 					];
 				}
 			} else {
-				console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default`);
+				console.warn(`⚠️ No words found for ${videoId}-${segmentIndex}, creating default for display`);
 				sanitized.words = [
 					[{word: 'word1', votes: 5, voters: []}],
 					[{word: 'word2', votes: 5, voters: []}],
@@ -1597,7 +1978,7 @@
 				];
 			}
 
-			console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex}:`, sanitized);
+			console.log(`✅ Sanitized segment for ${videoId}-${segmentIndex} (for display):`, sanitized);
 			return sanitized;
 		}
 
@@ -1655,7 +2036,7 @@
             let targetCard = null;
             
             videoCards.forEach(card => {
-                const starsElement = card.querySelector('[data-video]');
+                const starsElement = card.querySelector(`[data-video="${video.episodeNumber}"]`);
                 if (starsElement && starsElement.dataset.video === video.episodeNumber.toString()) {
                     targetCard = card;
                 }
@@ -1667,16 +2048,23 @@
             }
 
             // Update the overall rating display
-            const ratingStats = targetCard.querySelector('.overall-rating .rating-stats');
-            if (ratingStats) {
-                ratingStats.textContent = `${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`;
-            }
+            // This section was causing issues, simplified it to find by data-category and data-video
+            ['lyrics', 'beats', 'reaction', 'overall'].forEach(category => {
+                const ratingCategoryDiv = targetCard.querySelector(`.overall-rating .rating-category .stars[data-category="${category}"]`);
+                if (ratingCategoryDiv) {
+                    const videoRating = video.ratings[category]?.average || 0;
+                    const videoCount = video.ratings[category]?.count || 0;
 
-            // Update the stars display
-            const starsContainer = targetCard.querySelector('.overall-rating .stars');
-            if (starsContainer) {
-                updateStarDisplay(starsContainer, video.ratings.overall.average, false);
-            }
+                    // Update the average/count text
+                    const ratingStatsSpan = ratingCategoryDiv.closest('.rating-controls').previousElementSibling.querySelector('.rating-stats');
+                    if (ratingStatsSpan) {
+                        ratingStatsSpan.textContent = `${videoRating.toFixed(1)}★ (${videoCount} ratings)`;
+                    }
+
+                    // Update the star display
+                    updateStarDisplay(ratingCategoryDiv, videoRating, false); // false because this is overall video rating
+                }
+            });
 
             console.log(`✅ Updated display: ${video.ratings.overall.average.toFixed(1)}★ (${video.ratings.overall.count} ratings)`);
         }
@@ -1728,7 +2116,7 @@
 					// Use existing segment
 					result.push(segments[i]);
 				} else {
-					// Create missing segment
+					// Create missing segment with default words (for display)
 					const newSegment = {
 						id: `segment_${episodeNumber}_${i + 1}`,
 						words: [
@@ -1739,16 +2127,38 @@
 						ratings: { ...defaultRatings }
 					};
 					result.push(newSegment);
-					console.log(`✅ Created missing segment ${i + 1} for Episode ${episodeNumber}`);
+					console.log(`✅ Created missing segment ${i + 1} for Episode ${episodeNumber} (for display)`);
 				}
 			}
 			
-			console.log(`✅ Episode ${episodeNumber} now has exactly ${result.length} segments`);
+			console.log(`✅ Episode ${episodeNumber} now has exactly ${result.length} segments for display`);
 			return result;
 		}
 
 
-
+		// NEW FUNCTION: Generates empty segments for display, if an episode has no segments in DB
+		function generateEmptySegments(episodeNumber) {
+			const segments = [];
+			
+			// Create exactly 3 empty segments for display
+			for (let j = 0; j < 3; j++) {
+				const segmentWords = [];
+				
+				// Create exactly 3 empty word slots per segment for display
+				for (let k = 0; k < 3; k++) {
+					segmentWords.push([]); // Empty array = no words = will show fill-in
+				}
+				
+				segments.push({
+					id: `segment_${episodeNumber}_${j + 1}`,
+					words: segmentWords,
+					ratings: { ...defaultRatings }
+				});
+			}
+			
+			return segments;
+		}
+ 
         async function initializeFirebase() {
             try {
                 console.log('🔥 Initializing Firebase...');
@@ -1859,7 +2269,6 @@
         }
 
  
-
 		function handleAuthStateChange(user) {
 			currentUser = user;
 			
@@ -1878,8 +2287,13 @@
 				
 				if (db) updateConnectionStatus('connected');
 				
-				// ADD THIS LINE - Check admin access
 				checkAdminAccess();
+				
+				// ADD THIS: Force re-render when user signs in to show real vs demo data
+				if (videos.length > 0) {
+					console.log('🔄 User signed in - refreshing video display');
+					renderVideos(); // This will re-evaluate word display logic
+				}
 				
 			} else {
 				userInfo.style.display = 'none';
@@ -1889,12 +2303,17 @@
 				userNotes = {};
 				editingNotes = {};
 				
-				// ADD THIS LINE - Hide admin features when signed out
 				checkAdminAccess();
+				
+				// Also refresh when user signs out
+				if (videos.length > 0) {
+					console.log('🔄 User signed out - refreshing video display');
+					renderVideos();
+				}
 			}
 		}
 
-
+ 
 
         async function signIn() {
             if (!auth) {
@@ -1958,169 +2377,122 @@
             }
         }
 
-        async function loadVideosData() {
-            try {
-                if (!db) {
-                    console.log('No database connection - using demo mode');
-                    initializeDemoMode();
-                    return;
-                }
-
-                console.log('✅ Database connected, loading videos from Firebase...');
-                console.log('📊 Querying videos collection...');
-                
-                const videosSnapshot = await db.collection('videos').orderBy('episodeNumber').get();
-                console.log('📋 Query completed. Documents found:', videosSnapshot.size);
-                
-                if (videosSnapshot.empty) {
-                    console.log('📝 No videos found - initializing sample data...');
-                    await initializeFirebaseData();
-                    console.log('✅ Sample data initialized successfully');
-                } else {
-                    console.log('📖 Loading existing videos from Firebase...');
-                    videos = [];
-                    
-                    videosSnapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
-                        
-                        if (data.episodeNumber === 2 && DEBUG_EPISODE_2) {
-                            console.log('🔍 EPISODE 2 DEBUG - Raw data:', JSON.stringify(data, null, 2));
-                        }
-
-                        let processedSegments = [];
-
-                        if (data.episodeNumber === 2) {
-                            console.log('🔧 FIXING EPISODE 2 DATA - Detected incomplete structure');
-                            
-                            const isCorrupted = !data.segments || 
-                                               Object.keys(data.segments).length < 2 || 
-                                               !Object.values(data.segments).some(seg => seg.words);
-                            
-                            if (isCorrupted) {
-                                console.log('⚠️ Episode 2 data is corrupted, regenerating...');
-                                
-                                const wordBank = ["freestyle", "microphone", "talent", "creativity", "improvise", "rhythm"];
-                                const newSegments = [];
-                                
-                                for (let j = 0; j < 3; j++) {
-                                    const segmentWords = [];
-                                    
-                                    for (let k = 0; k < 3; k++) {
-                                        const candidateWords = [];
-                                        const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
-                                        
-                                        candidateWords.push({
-                                            word: baseWord,
-                                            votes: Math.floor(Math.random() * 10) + 5,
-                                            voters: []
-                                        });
-                                        
-                                        segmentWords.push(candidateWords);
-                                    }
-                                    
-                                    newSegments.push({
-                                        id: `segment_2_${j + 1}`,
-                                        words: segmentWords,
-                                        ratings: {
-                                            lyrics: { average: 3.5 + Math.random(), count: 15 + Math.floor(Math.random() * 10) },
-                                            beats: { average: 3.8 + Math.random(), count: 18 + Math.floor(Math.random() * 12) },
-                                            reaction: { average: 3.2 + Math.random(), count: 12 + Math.floor(Math.random() * 8) },
-                                            overall: { average: 3.5 + Math.random(), count: 14 + Math.floor(Math.random() * 6) }
-                                        }
-                                    });
-                                }
-                                
-                                processedSegments = newSegments;
-                                console.log('✅ Episode 2 data regenerated with', processedSegments.length, 'segments');
-                                console.log('ℹ️ Episode 2 fixed locally only - skipping Firebase save');
-                                
-                            } else {
-                                const segmentValues = Object.values(data.segments);
-                                processedSegments = segmentValues.map((segment, idx) => 
-                                    sanitizeSegmentData(segment, data.episodeNumber, idx)
-                                );
-                            }
-							
-                        
-						//added this on June 8, 2025
-						} else if (data.segments && Array.isArray(data.segments)) {
-					console.log(`✅ Valid segments array with ${data.segments.length} items`);
-					let tempSegments = data.segments.map((segment, idx) => 
-						sanitizeSegmentData(segment, data.episodeNumber, idx)
-					);
-					
-					// FORCE EXACTLY 3 SEGMENTS
-					processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
-					
-				} else if (data.segments && typeof data.segments === 'object') {
-					console.log(`🔄 Converting segments object to array`);
-					const segmentValues = Object.values(data.segments);
-					let tempSegments = segmentValues.map((segment, idx) => 
-						sanitizeSegmentData(segment, data.episodeNumber, idx)
-					);
-					
-					// FORCE EXACTLY 3 SEGMENTS
-					processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
-					
-				} else {
-					console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
-					processedSegments = generateDefaultSegments();
+		async function loadVideosData() {
+			try {
+				if (!db) {
+					console.log('No database connection - using demo mode');
+					initializeDemoMode();
+					return;
 				}
 
-
+				console.log('✅ Database connected, loading videos from Firebase...');
+				console.log('📊 Querying videos collection...');
 				
+				const videosSnapshot = await db.collection('videos').orderBy('episodeNumber').get();
+				console.log('📋 Query completed. Documents found:', videosSnapshot.size);
+				
+				if (videosSnapshot.empty) {
+					console.log('📝 No videos found - creating empty structure...');
+					// Create minimal structure without demo words for all users
+					videos = [];
+					for (let i = 1; i <= 110; i++) {
+						videos.push({
+							episodeNumber: i,
+							title: `Omegle Bars Episode #${i}`,
+							youtubeId: getYouTubeId(i),
+							segments: generateEmptySegments(i), // No demo words for display
+							ratings: { ...defaultRatings }
+						});
+					}
+				} else {
+					console.log('📖 Loading existing videos from Firebase...');
+					videos = [];
+					
+					videosSnapshot.docs.forEach(doc => {
+						const data = doc.data();
+						console.log(`📄 Processing video: Episode ${data.episodeNumber}`);
 						
-						
-						
-                        const processedVideo = {
-                            id: doc.id,
-                            episodeNumber: data.episodeNumber,
-                            title: data.title || `Omegle Bars Episode #${data.episodeNumber}`,
-                            youtubeId: getYouTubeId(data.episodeNumber),
-                            segments: processedSegments,
-                            ratings: data.ratings || { ...defaultRatings }
-                        };
-                        
-                        // 🔥 NEW: Recalculate video ratings from segments (in case stored ratings are outdated)
-                        if (processedSegments.length > 0) {
-                            console.log(`🔄 Recalculating video ratings for Episode ${data.episodeNumber}`);
-                            processedVideo.ratings = calculateVideoOverallRating(processedVideo);
-                        }
-                        
-                        videos.push(processedVideo);
-                        console.log(`✅ Processed Episode ${data.episodeNumber} with ${processedSegments.length} segments`);
-                    });
-                    
-                    console.log(`✅ Successfully loaded ${videos.length} videos`);
-                }
-                
-                console.log('🎨 Starting to render videos...');
-                try {
-                    renderVideos();
-                    updateStats();
-                    document.getElementById('loadingMessage').style.display = 'none';
-                    document.getElementById('videoGrid').style.display = 'grid';
-                    document.getElementById('statsBar').style.display = 'block';
-                    updateConnectionStatus('connected');
-                    console.log('✅ Videos loaded and rendered successfully!');
-                } catch (renderError) {
-                    console.error('❌ Error during rendering (keeping loaded data):', renderError);
-                    showNotification('Error rendering videos. Data loaded but display may be incomplete.', 'error');
-                    
-                    document.getElementById('loadingMessage').style.display = 'none';
-                    document.getElementById('videoGrid').style.display = 'grid';
-                    document.getElementById('statsBar').style.display = 'block';
-                    updateConnectionStatus('connected');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading videos:', error);
-                showNotification('Error loading videos. Using demo data.', 'error');
-                initializeDemoMode();
-            }
-        }
+						if (data.episodeNumber === 2 && DEBUG_EPISODE_2) {
+							console.log('🔍 EPISODE 2 DEBUG - Raw data:', JSON.stringify(data, null, 2));
+						}
 
+						let processedSegments = [];
+
+						// Handle all episodes the same way regardless of user auth
+						if (data.segments && Array.isArray(data.segments)) {
+							console.log(`✅ Valid segments array with ${data.segments.length} items`);
+							let tempSegments = data.segments.map((segment, idx) => 
+								sanitizeSegmentData(segment, data.episodeNumber, idx)
+							);
+							// For display, always ensure 3 segments and 3 words per segment
+							processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
+							
+						} else if (data.segments && typeof data.segments === 'object') {
+							console.log(`🔄 Converting segments object to array`);
+							const segmentValues = Object.values(data.segments); // Get values from object
+							let tempSegments = segmentValues.map((segment, idx) => 
+								sanitizeSegmentData(segment, data.episodeNumber, idx)
+							);
+							processedSegments = ensureExactly3Segments(tempSegments, data.episodeNumber);
+							
+						} else {
+							console.log(`⚠️ No valid segments found for Episode ${data.episodeNumber}`);
+							// Always create empty segments (no demo words for anyone) for display
+							processedSegments = generateEmptySegments(data.episodeNumber);
+						}
+
+						const processedVideo = {
+							id: doc.id,
+							episodeNumber: data.episodeNumber,
+							title: data.title || `Omegle Bars Episode #${data.episodeNumber}`,
+							youtubeId: getYouTubeId(data.episodeNumber),
+							segments: processedSegments,
+							ratings: data.ratings || { ...defaultRatings }
+						};
+						
+						// 🔥 NEW: Recalculate video ratings from segments (in case stored ratings are outdated)
+						if (processedSegments.length > 0) {
+							console.log(`🔄 Recalculating video ratings for Episode ${data.episodeNumber}`);
+							processedVideo.ratings = calculateVideoOverallRating(processedVideo);
+						}
+						
+						videos.push(processedVideo);
+						console.log(`✅ Processed Episode ${data.episodeNumber} with ${processedSegments.length} segments for display`);
+					});
+					
+					console.log(`✅ Successfully loaded ${videos.length} videos`);
+				}
+				
+				console.log('🎨 Starting to render videos...');
+				try {
+					renderVideos();
+					updateStats();
+					document.getElementById('loadingMessage').style.display = 'none';
+					document.getElementById('videoGrid').style.display = 'grid';
+					document.getElementById('statsBar').style.display = 'block';
+					updateConnectionStatus('connected');
+					console.log('✅ Videos loaded and rendered successfully!');
+				} catch (renderError) {
+					console.error('❌ Error during rendering (keeping loaded data):', renderError);
+					showNotification('Error rendering videos. Data loaded but display may be incomplete.', 'error');
+					
+					document.getElementById('loadingMessage').style.display = 'none';
+					document.getElementById('videoGrid').style.display = 'grid';
+					document.getElementById('statsBar').style.display = 'block';
+					updateConnectionStatus('connected');
+				}
+				
+			} catch (error) {
+				console.error('❌ Error loading videos:', error);
+				showNotification('Error loading videos. Using demo data.', 'error');
+				initializeDemoMode();
+			}
+		}
+		
+		
+		
+		
+		
         async function initializeFirebaseData() {
             console.log('🚀 Starting to generate sample videos...');
             const sampleVideos = generateSampleVideos();
@@ -2132,7 +2504,16 @@
                     const batch = db.batch();
                     sampleVideos.forEach((video, index) => {
                         const docRef = db.collection('videos').doc(`episode_${video.episodeNumber}`);
-                        batch.set(docRef, video);
+                        // Convert segments to Firestore object format for saving
+                        const segmentsObject = {};
+                        video.segments.forEach(seg => {
+                            const wordsObject = {};
+                            seg.words.forEach((wordCandidates, idx) => {
+                                wordsObject[idx.toString()] = wordCandidates;
+                            });
+                            segmentsObject[seg.id] = { ...seg, words: wordsObject };
+                        });
+                        batch.set(docRef, { ...video, segments: segmentsObject });
                         if (index < 3) {
                             console.log(`📄 Preparing to save Episode ${video.episodeNumber}:`, video.title);
                         }
@@ -2292,11 +2673,11 @@
 			for (let i = 1; i <= 100; i++) {
 				const segments = [];
 				
-				// Always create exactly 3 segments per video
+				// Always create exactly 3 segments per video for sample data
 				for (let j = 0; j < 3; j++) {
 					const segmentWords = [];
 					
-					// Always create exactly 3 words per segment
+					// Always create exactly 3 words per segment for sample data
 					for (let k = 0; k < 3; k++) {
 						const candidateWords = [];
 						
@@ -2357,7 +2738,7 @@
 					episodeNumber: i,
 					title: `Omegle Bars Episode #${i}`,
 					youtubeId: getYouTubeId(i),
-					segments: segments, // Always exactly 3 segments
+					segments: segments, // Always exactly 3 segments for sample data
 					ratings: {
 						lyrics: { 
 							average: videoLyrics,
@@ -2571,7 +2952,7 @@
 					}
 
 					await db.collection('userRatings').doc(docId).set(ratingsData);
-					//await updateVideoRating(videoId, category, rating, segmentId);
+					//await updateVideoRating(videoId, category, rating, segmentId); // Removed as real-time updates will handle this
 				}
 				
 
@@ -2596,11 +2977,6 @@
 				}
 
 				showNotification(`Rated ${category}${segmentText}: ${rating} stars!`, 'success');
-
-
-
-
-
 				
 			} catch (error) {
 				console.error('❌ RATING ERROR CAUGHT:', error);
@@ -2635,119 +3011,96 @@
 
 
         async function updateVideoRating(videoId, category, newRating, segmentId = null) {
-            if (!db) return;
+            // This function is largely replaced by real-time updates from the main video collection
+            // and the `calculateVideoOverallRating` function.
+            // Keeping it here for reference or if a specific direct update is needed.
+            console.warn("`updateVideoRating` called. This function's direct update logic is now handled by real-time updates from the main 'videos' collection.");
+        }
 
-            try {
-                const docId = segmentId ? `${videoId}_${segmentId}_${category}` : `${videoId}_${category}`;
-                const ratingsRef = db.collection(segmentId ? 'segmentRatings' : 'ratings').doc(docId);
-                
-                await db.runTransaction(async (transaction) => {
-                    const ratingsDoc = await transaction.get(ratingsRef);
-                    
-                    let totalRating = newRating;
-                    let count = 1;
-                    
-                    if (ratingsDoc.exists) {
-                        const data = ratingsDoc.data();
-                        totalRating = data.totalRating + newRating;
-                        count = data.count + 1;
-                    }
-                    
-                    const average = totalRating / count;
-                    
-                    transaction.set(ratingsRef, {
-                        totalRating: totalRating,
-                        count: count,
-                        average: average,
-                        videoId: videoId,
-                        category: category
-                    });
-                    
-                    if (segmentId) {
-                        transaction.set(ratingsRef, {
-                            ...ratingsRef.data,
-                            segmentId: segmentId
-                        });
-                    }
-                    
-                    const videoRef = db.collection('videos').doc(`episode_${videoId}`);
-                    if (segmentId) {
-                        transaction.update(videoRef, {
-                            [`segments.${segmentId}.ratings.${category}.average`]: average,
-                            [`segments.${segmentId}.ratings.${category}.count`]: count
-                        });
-                    } else {
-                        transaction.update(videoRef, {
-                            [`ratings.${category}.average`]: average,
-                            [`ratings.${category}.count`]: count
-                        });
-                    }
-                });
-                
-                // Update local data and recalculate video ratings
+        // NEW: handleStarClick function - captures rating and calls submitRating
+        function handleStarClick(event) {
+            if (!currentUser) {
+                showSignInPrompt('rate videos', 0);
+                return;
+            }
+            const star = event.target;
+            const rating = parseInt(star.dataset.rating);
+            const category = star.dataset.category;
+            const videoId = star.dataset.video;
+            const segmentId = star.dataset.segment; // This will be undefined for video-level ratings
+
+            submitRating(videoId, category, rating, segmentId);
+        }
+
+        // NEW: handleStarHover function - visually highlights stars on hover
+        function handleStarHover(event) {
+            const star = event.target;
+            const hoverRating = parseInt(star.dataset.rating);
+            const starsContainer = star.closest('.stars');
+            if (!starsContainer) return;
+
+            starsContainer.querySelectorAll('.star').forEach((s, index) => {
+                s.classList.remove('active-hover'); // Remove previous hover effects
+                if (index < hoverRating) {
+                    s.classList.add('active-hover');
+                }
+            });
+        }
+
+        // NEW: handleStarLeave function - reverts stars to show the actual rating after hover
+        function handleStarLeave(event) {
+            const starsContainer = event.target.closest('.stars');
+            if (!starsContainer) return;
+            starsContainer.querySelectorAll('.star').forEach(s => s.classList.remove('active-hover'));
+            // Reapply the actual rating visual state
+            const category = starsContainer.dataset.category;
+            const videoId = starsContainer.dataset.video;
+            const segmentId = starsContainer.dataset.segment;
+            
+            // Get the current displayed rating (either user's or community average)
+            let currentDisplayRating = 0;
+            const userRatedValue = segmentId ?
+                (userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) :
+                (userRatings[videoId]?.video?.[category] || 0);
+
+            if (currentUser && userRatedValue !== undefined && userRatedValue > 0) {
+                currentDisplayRating = userRatedValue;
+            } else {
+                // Find the video and segment/video rating to get the community average
                 const video = videos.find(v => v.episodeNumber.toString() === videoId);
                 if (video) {
                     if (segmentId) {
                         const segment = video.segments.find(s => s.id === segmentId);
-                        if (segment && segment.ratings) {
-                            const currentData = segment.ratings[category];
-                            const newTotal = (currentData.average * currentData.count) + newRating;
-                            const newCount = currentData.count + 1;
-                            segment.ratings[category] = { average: newTotal / newCount, count: newCount };
-                            
-                            // 🔥 NEW: Recalculate video overall rating from segments
-                            console.log('🔄 Recalculating video rating after segment update...');
-                            video.ratings = calculateVideoOverallRating(video);
-                            
-                            // Update only the video rating display (no full re-render)
-                            updateVideoRatingDisplay(video);
-                            updateStats();
-                            
-                            console.log(`✅ Video rating updated: ${video.ratings.overall.average.toFixed(1)}★`);
-                        }
+                        currentDisplayRating = segment?.ratings?.[category]?.average || 0;
                     } else {
-                        const currentData = video.ratings[category];
-                        const newTotal = (currentData.average * currentData.count) + newRating;
-                        const newCount = currentData.count + 1;
-                        video.ratings[category] = { average: newTotal / newCount, count: newCount };
-                        
-                        // Update display for video-level ratings (legacy)
-                        updateVideoRatingDisplay(video);
-                        updateStats();
+                        currentDisplayRating = video.ratings?.[category]?.average || 0;
                     }
                 }
-            } catch (error) {
-                console.error('Error updating rating:', error);
             }
+            updateStarDisplay(starsContainer, currentDisplayRating, currentUser && userRatedValue > 0);
         }
  
-
-
-
-
-
-
 		// FIXED: createStarRating function - shows empty stars for unrated items when logged in
 		function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
 			let starsHtml = '';
-			const ratingKey = segmentId ? 
+			const userRatedValue = segmentId ? 
 				(userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : 
 				(userRatings[videoId]?.video?.[category] || 0);
 
-			// Determine what rating to display
+			// Determine what rating to display visually
 			let displayRating = 0;
-			if (currentUser) {
-				// User is logged in - show their rating if they've voted, otherwise show empty
-				displayRating = ratingKey > 0 ? ratingKey : 0;
+			if (currentUser && userRatedValue > 0) {
+				// User is logged in and has rated, display their rating
+				displayRating = userRatedValue;
 			} else {
-				// User not logged in - show average community rating
+				// User not logged in, or logged in but hasn't rated, display community average
 				displayRating = currentRating;
 			}
 
 			// Create exactly 5 stars
 			for (let i = 1; i <= 5; i++) {
 				const activeClass = i <= Math.round(displayRating) ? 'active' : '';
-				const userRatedClass = ratingKey > 0 && i <= ratingKey ? 'user-rated' : '';
+				const userRatedClass = userRatedValue > 0 && i <= userRatedValue ? 'user-rated' : '';
 				
 				const dataAttrs = segmentId ? 
 					`data-rating="${i}" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : 
@@ -2758,10 +3111,28 @@
 			
 			return starsHtml;
 		}
-		
 
-		function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
-			console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex}:`, wordCandidates);
+
+		// Helper function to detect if a word is from demo/sample data
+		function isDemoWord(word) {
+			const demoWords = [
+				// Sample words from generateSampleVideos
+				"pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
+				"telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
+				"bicycle", "ocean", "chocolate", "butterfly", "mountain", "music",
+				"spaceship", "burger", "lightning", "guitar", "forest", "diamond",
+				"robot", "sunset", "library", "airplane", "wizard", "sandwich",
+				"telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream",
+				
+				// Generic placeholders that should be hidden
+				"word1", "word2", "word3", "word", "TBD", "tbd", "error_word"
+			];
+			
+			return demoWords.includes(word.toLowerCase());
+		}
+
+		 function createWordCandidatesHtml(wordCandidates, videoId, segmentId, wordIndex) {
+			console.log(`🔍 Processing word candidates for ${videoId}-${segmentId}-${wordIndex} for display:`, wordCandidates);
 			
 			let validCandidates = [];
 			
@@ -2771,22 +3142,24 @@
 					candidate.word && 
 					typeof candidate.word === 'string' && 
 					candidate.word.trim() !== '' &&
-					!candidate.word.toLowerCase().includes('word') // Filter out placeholder words like "word1", "word2"
+					!isDemoWord(candidate.word) // Filter out ALL demo words
 				);
 			}
 			
-			// Check if we have a real word or just placeholder
+			// Sort by votes in descending order (highest vote first)
+			validCandidates.sort((a, b) => b.votes - a.votes);
+
 			const topWord = validCandidates.length > 0 ? validCandidates[0] : null;
 			
 			if (topWord && topWord.word) {
-				// Display the actual word
+				// Display real word from database in BLUE (for all users)
 				return `
-					<div class="word-display">
+					<div class="word-display word-real">
 						<span class="word-text">${topWord.word}</span>
 					</div>
 				`;
 			} else {
-				// Show fill-in link for missing words
+				// No real word available - show fill-in in ORANGE (for all users)
 				return `
 					<div class="word-missing">
 						<a href="#" class="fill-in-link" onclick="openGoogleSheet('${videoId}', '${segmentId}', ${wordIndex})" title="Help us fill in this word">
@@ -2842,10 +3215,8 @@
         }
 		
 
-
 		function createSegmentHtml(segment, videoId, segmentIndex) {
-			console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex}:`, segment);
-			console.log('🧪 TESTING NOTES SECTION - userNotes:', userNotes);
+			console.log(`🔧 Creating segment HTML for ${videoId}-${segmentIndex} (for display):`, segment);
 			
 			try {
 				const segmentId = segment.id || `fallback_segment_${segmentIndex}`;
@@ -2858,7 +3229,7 @@
 					segmentRatings.overall?.average || 0
 				].reduce((sum, val) => sum + val, 0) / 4;
 				
-				// CREATE INLINE WORDS FOR HEADER
+				// CREATE INLINE WORDS FOR HEADER (for display)
 				let headerWordsHtml = '';
 				if (segment.words && Array.isArray(segment.words)) {
 					const wordDisplays = segment.words.map((wordCandidates, wordIndex) => {
@@ -2883,8 +3254,6 @@
 				// Get user's note for this segment
 				const userNote = userNotes[videoId]?.[segmentId] || '';
 				const hasNote = userNote && userNote.trim();
-
-				console.log('🧪 NOTES DEBUG:', { videoId, segmentId, userNote, hasNote });
 				
 				return `
 					<div class="segment" data-segment="${segmentId}">
@@ -2898,8 +3267,6 @@
 											<span class="segment-rating-inline">${avgRating.toFixed(1)}★</span>
 										</div>
 									</div>
-
-
 								</div>
 								<div class="segment-words-inline">
 									${headerWordsHtml}
@@ -2989,8 +3356,7 @@
         
         function renderVideos() {
 			console.log('🎨 RENDERVIDEOS CALLED!');
-			console.log('🎨 Call stack:');
-			console.trace(); // This shows exactly what called renderVideos
+			console.trace(); 
 	
             console.log('🎨 Starting renderVideos function...');
 
@@ -3035,7 +3401,7 @@
                                ));
                     } catch (searchError) {
                         console.error(`❌ Search error for video ${video.episodeNumber}:`, searchError);
-                        return true;
+                        return true; // Keep the video if there's an error processing its words
                     }
                 });
                 console.log(`🔍 Search filter: ${beforeCount} → ${filteredVideos.length} videos`);
@@ -3061,8 +3427,10 @@
                     videoCard.className = 'video-card';
                     
                     let segmentsHtml = '';
+                    // The `video.segments` here is already sanitized by `loadVideosData` for DISPLAY,
+                    // ensuring 3 segments and 3 words per segment.
                     if (video.segments && Array.isArray(video.segments)) {
-                        console.log(`📦 Processing ${video.segments.length} segments for Episode ${video.episodeNumber}`);
+                        console.log(`📦 Processing ${video.segments.length} segments for Episode ${video.episodeNumber} (for display)`);
                         try {
                             segmentsHtml = video.segments.map((segment, segIndex) => {
                                 try {
@@ -3095,6 +3463,30 @@
                             <h3 class="video-title">${video.title}</h3>
                            
  
+							<div class="overall-rating">
+								<h4>Overall Episode Rating</h4>
+								${['lyrics', 'beats', 'reaction', 'overall'].map(category => {
+                                    const videoRating = video.ratings[category]?.average || 0;
+                                    const videoCount = video.ratings[category]?.count || 0;
+                                    const userVideoRating = userRatings[video.episodeNumber]?.video?.[category] || 0; // Check if user has rated this video category
+                                    return `
+                                    <div class="rating-category">
+                                        <div class="rating-info">
+                                            <span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                                            <span class="rating-stats">${videoRating.toFixed(1)}★ (${videoCount} ratings)</span>
+                                        </div>
+                                        <div class="rating-controls">
+                                            <div class="stars" data-category="${category}" data-video="${video.episodeNumber}">
+                                                ${createStarRating(category, video.episodeNumber, videoRating, videoCount)}
+                                            </div>
+                                            ${userVideoRating > 0 ? `<div class="user-rating-indicator">Your rating: ${userVideoRating}★</div>` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                                }).join('')}
+                            </div>
+
+
 							<div class="segments-section">
 								<div class="segments-header">
 									<h4>Detailed Segments (${video.segments ? video.segments.length : 0})</h4>
@@ -3130,18 +3522,12 @@
             console.log(`✅ Rendering complete: ${successCount} success, ${errorCount} errors`);
 
             try {
-                document.querySelectorAll('.star').forEach(star => {
-                    star.onclick = function() {
-                        const rating = parseInt(this.dataset.rating);
-                        const category = this.dataset.category;
-                        const videoId = this.dataset.video;
-                        const segmentId = this.dataset.segment || null;
-                        if (currentUser) {
-                            submitRating(videoId, category, rating, segmentId);
-                        } else {
-                            showSignInPrompt('rate segments', 0);
-                        }
-                    };
+                document.querySelectorAll('.stars').forEach(starsContainer => { // Changed from .star to .stars
+                    starsContainer.querySelectorAll('.star').forEach(star => {
+                        star.addEventListener('click', handleStarClick);
+                        star.addEventListener('mouseenter', handleStarHover);
+                        star.addEventListener('mouseleave', handleStarLeave);
+                    });
                 });
                 console.log('✅ Star rating event listeners attached');
             } catch (eventError) {
@@ -3164,11 +3550,19 @@
 			
 			// Determine what to show based on login status and user rating
 			let displayRating = 0;
-			if (currentUser) {
-				// User is logged in - show their rating if they've rated, otherwise show empty
-				displayRating = userRated ? rating : 0;
+			const category = starsContainer.dataset.category;
+			const videoId = starsContainer.dataset.video;
+			const segmentId = starsContainer.dataset.segment;
+
+			const userCurrentRating = segmentId ?
+				userRatings[videoId]?.segments?.[segmentId]?.[category] :
+				userRatings[videoId]?.video?.[category];
+
+			if (currentUser && userCurrentRating !== undefined && userCurrentRating > 0) {
+				// User is logged in and has rated, display their rating
+				displayRating = userCurrentRating;
 			} else {
-				// User not logged in - show community average
+				// User not logged in, or logged in but hasn't rated, display community average
 				displayRating = rating;
 			}
 			
@@ -3177,7 +3571,7 @@
 				if (index < displayRating) {
 					star.classList.add('active');
 				}
-				if (userRated && index < rating) {
+				if (currentUser && userCurrentRating > 0 && index < userCurrentRating) {
 					star.classList.add('user-rated');
 				}
 			});
@@ -3199,30 +3593,35 @@
             const container = document.querySelector(`.segments-container[data-video="${videoId}"]`);
             if (container) {
                 const segments = container.querySelectorAll('.segment');
-                let allExpanded = true;
+                const button = container.closest('.video-card').querySelector('.expand-toggle');
+                
+                let anyExpanded = false;
                 segments.forEach(segment => {
-                    if (!segment.classList.contains('expanded')) {
-                        allExpanded = false;
+                    if (segment.classList.contains('expanded')) {
+                        anyExpanded = true;
                     }
                 });
 
                 segments.forEach(segment => {
-                    if (allExpanded) {
+                    if (anyExpanded) { // If any are expanded, collapse all
                         segment.classList.remove('expanded');
-                    } else {
+                    } else { // If none are expanded, expand all
                         segment.classList.add('expanded');
                     }
                 });
                 
-                const button = container.closest('.video-card').querySelector('.expand-toggle');
+                // Update button text
                 if (button) {
-                    button.textContent = allExpanded ? 'Show Ratings' : 'Hide Ratings';
+                    button.textContent = anyExpanded ? 'Show Ratings' : 'Hide Ratings';
                 }
             }
         }
 
         
         function showNotification(message, type) {
+            // Remove any existing notifications first
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.textContent = message;
@@ -3233,7 +3632,14 @@
             }, 3000);
         }
 
-
+		// New info message function for admin modal
+		function showInfoMessage(text) {
+			hideMessages(); // Hide other messages first
+			const infoMsg = document.getElementById('adminInfoMessage');
+			document.getElementById('infoText').textContent = text;
+			infoMsg.style.display = 'flex';
+			setTimeout(hideMessages, 5000); // Auto-hide after 5 seconds
+		}
 
 
 		function updateStats() {
@@ -3299,12 +3705,17 @@
                     signIn();
                 }
             });
+
+            // NEW: Attach event listener for the admin button after DOM is loaded
+            const adminUpdateButton = document.getElementById('adminUpdateButton');
+            if (adminUpdateButton) {
+                adminUpdateButton.addEventListener('click', openAdminModal);
+            }
         }
 
         function applyFilters() {
 			console.log('🔄 APPLYFILTERS CALLED!');
-			console.log('🔄 Call stack:');
-			console.trace(); // This shows exactly what called applyFilters
+			console.trace(); 
 	
             renderVideos();
         }
@@ -3318,7 +3729,7 @@
 					clearTimeout(realtimeUpdateTimeout);
 				}
 
-				// UPDATED: Remove isVotingOnWord and isAddingWord checks
+				// Only process if user is not actively saving notes or submitting ratings
 				if (!isSavingNote && !isSubmittingRating && snapshot.docChanges().length > 0) {
 					console.log('📡 Real-time update received, processing changes...');
 					
@@ -3326,26 +3737,41 @@
 					
 					let hasChanges = false;
 					snapshot.docChanges().forEach((change) => {
-						if (change.type === 'modified') {
-							const updatedVideo = { id: change.doc.id, ...change.doc.data() };
-							const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
+						const updatedVideo = { id: change.doc.id, ...change.doc.data() };
+						const index = videos.findIndex(v => v.episodeNumber === updatedVideo.episodeNumber);
+
+						if (change.type === 'added') {
+							if (index === -1) {
+								let processedSegments = [];
+								if (updatedVideo.segments && typeof updatedVideo.segments === 'object') {
+									// Convert object to array for internal processing
+									const segmentValues = Object.values(updatedVideo.segments);
+									processedSegments = segmentValues.map((segment, idx) => sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx));
+								} else {
+									processedSegments = generateEmptySegments(updatedVideo.episodeNumber);
+								}
+								updatedVideo.segments = ensureExactly3Segments(processedSegments, updatedVideo.episodeNumber);
+								updatedVideo.ratings = calculateVideoOverallRating(updatedVideo); // Recalculate ratings
+								videos.push(updatedVideo);
+								hasChanges = true;
+							}
+						} else if (change.type === 'modified') {
 							if (index !== -1) {
 								let processedSegments = [];
-								if (updatedVideo.segments && Array.isArray(updatedVideo.segments)) {
-									processedSegments = updatedVideo.segments.map((segment, idx) => 
-										sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
-									);
-								} else if (updatedVideo.segments && typeof updatedVideo.segments === 'object') {
+								if (updatedVideo.segments && typeof updatedVideo.segments === 'object') {
 									const segmentValues = Object.values(updatedVideo.segments);
-									processedSegments = segmentValues.map((segment, idx) => 
-										sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx)
-									);
+									processedSegments = segmentValues.map((segment, idx) => sanitizeSegmentData(segment, updatedVideo.episodeNumber, idx));
+								} else {
+									processedSegments = generateEmptySegments(updatedVideo.episodeNumber);
 								}
-								
-								videos[index] = {
-									...updatedVideo,
-									segments: processedSegments
-								};
+								updatedVideo.segments = ensureExactly3Segments(processedSegments, updatedVideo.episodeNumber);
+								updatedVideo.ratings = calculateVideoOverallRating(updatedVideo); // Recalculate ratings
+								videos[index] = updatedVideo;
+								hasChanges = true;
+							}
+						} else if (change.type === 'removed') {
+							if (index !== -1) {
+								videos.splice(index, 1);
 								hasChanges = true;
 							}
 						}
@@ -3362,7 +3788,7 @@
 								restoreExpandedState(expandedSegments);
 							}, 100);
 							
-						}, 3000);
+						}, 1000); // Reduced debounce time for faster updates
 					}
 				} else if (isSavingNote || isSubmittingRating) {
 					console.log('⏸️ Skipping real-time update - user operation in progress');
@@ -3434,6 +3860,26 @@
                     notesDisplay.textContent = 'Click "Edit" to add your private notes for this segment...';
                     notesDisplay.classList.add('empty');
                 }
+				// Update the '📝 My Notes' indicator
+				const notesSection = notesDisplay.closest('.notes-section');
+				if (notesSection) {
+					const notesTitle = notesSection.querySelector('.notes-title');
+					if (notesTitle) {
+						let indicator = notesTitle.querySelector('span[style*="color: #27ae60"]');
+						if (noteText && noteText.trim()) {
+							if (!indicator) {
+								indicator = document.createElement('span');
+								indicator.style.cssText = 'color: #27ae60; font-size: 0.7rem; margin-left: 5px;';
+								indicator.textContent = '●';
+								notesTitle.appendChild(indicator);
+							}
+						} else {
+							if (indicator) {
+								indicator.remove();
+							}
+						}
+					}
+				}
             }
         }
 
@@ -3483,6 +3929,7 @@
             if (textarea) {
                 textarea.focus();
                 textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+                updateCharCount(videoId, segmentId); // Initialize char count
             }
         }
 
@@ -3629,26 +4076,20 @@
 
         // ===== END NOTES FUNCTIONS =====
 		
-		
+		// This function is for bulk updating words from a predefined list,
+		// not directly related to the new dynamic admin form for manual input.
 		async function bulkUpdateWords() {
 			if (!currentUser || !db) {
 				alert('Please sign in first');
 				return;
 			}
 			
-			// Define your word updates here
 			const wordUpdates = {
-				// Episode 11 - Replace these with the actual words from Harry Mack's video
+				// Example: Episode 11 - Replace these with the actual words from Harry Mack's video
 				11: {
 					segment_11_1: ['sandwich', 'flags', 'table'],
 					segment_11_2: ['penguin', 'Philadelphia', 'Steve'], 
 					segment_11_3: ['phone', 'crush', 'car']
-				},
-				// Episode 14 - Add more episodes as needed
-				14: {
-					segment_14_1: ['California', 'language', 'enemy'],
-					segment_14_2: ['chocolate', 'cake', 'dinosaur'],
-					segment_14_3: ['TBD', 'TBD', 'TBD'],
 				},
 				// Add more episodes here...
 			};
@@ -3664,16 +4105,14 @@
 					Object.keys(wordUpdates[episodeNum]).forEach(segmentId => {
 						const words = wordUpdates[episodeNum][segmentId];
 						
-						// Convert words array to Firebase-compatible format (objects, not nested arrays)
+						// Convert words array to Firebase-compatible format (object with numeric keys)
 						const wordsObject = {};
 						words.forEach((word, index) => {
-							wordsObject[index] = {
-								0: {  // First candidate for this word position
-									word: word,
-									votes: Math.floor(Math.random() * 20) + 5,
-									voters: []
-								}
-							};
+							wordsObject[index.toString()] = [{  // Store as an array of candidates (even if just one)
+								word: word,
+								votes: Math.floor(Math.random() * 20) + 5,
+								voters: []
+							}];
 						});
 						
 						segments[segmentId] = {
@@ -3707,7 +4146,7 @@
 		function checkAdminAccess() {
 			const adminButton = document.getElementById('adminUpdateButton');
 			
-			if (currentUser && currentUser.email === 'mathewmit@gmail.com') {
+			if (currentUser && currentUser.email === 'mathewmit@gmail.com') { // Replace with actual admin email
 				// Show admin button
 				if (adminButton) {
 					adminButton.style.display = 'block';
@@ -3718,13 +4157,338 @@
 				if (adminButton) {
 					adminButton.style.display = 'none';
 				}
+				console.log('🚫 Admin access denied');
 			}
 		}
 
 
 
-        // Make functions globally available for onclick handlers
+		// Enhanced Admin Modal Functions (new dynamic logic)
 
+		// Helper to generate initial empty segments for admin form
+		function generateInitialEmptySegmentsForAdmin(episodeNum) {
+			const segments = [];
+			for (let i = 0; i < 3; i++) { // Start with 3 segments
+				segments.push({
+					id: `segment_${episodeNum}_${i + 1}`,
+					words: generateInitialEmptyWordsForAdmin() // Each with 3 empty word slots
+				});
+			}
+			return segments;
+		}
+
+		// Helper to generate initial empty words for admin form
+		function generateInitialEmptyWordsForAdmin() {
+			const words = [];
+			for (let i = 0; i < 3; i++) { // Start with 3 words
+				words.push([]); // Empty array means no candidates, will show blank input
+			}
+			return words;
+		}
+
+
+		// Renders the dynamic segment and word input fields in the admin modal
+		function renderAdminForm() {
+			const segmentsContainer = document.getElementById('adminSegmentsContainer');
+			if (!segmentsContainer) {
+				console.error('Admin segments container not found!');
+				return;
+			}
+			segmentsContainer.innerHTML = ''; // Clear existing content
+
+			const episodeNum = document.getElementById('adminEpisode').value;
+
+			if (currentEpisodeSegmentsForAdmin.length === 0) {
+				// If no segments loaded, initialize with 3 default segments
+				currentEpisodeSegmentsForAdmin = generateInitialEmptySegmentsForAdmin(episodeNum);
+			}
+
+			currentEpisodeSegmentsForAdmin.forEach((segment, segIndex) => {
+				const segmentDiv = document.createElement('div');
+				segmentDiv.className = 'admin-segment-block';
+				segmentDiv.style.cssText = `
+					background: ${segIndex % 3 === 0 ? '#f0f8ff' : (segIndex % 3 === 1 ? '#f0fff0' : '#fff0f0')};
+					border-radius: 10px;
+					padding: 20px;
+					margin-bottom: 20px;
+					border: 2px solid ${segIndex % 3 === 0 ? '#3498db' : (segIndex % 3 === 1 ? '#27ae60' : '#e74c3c')};
+				`;
+
+				const segmentLetter = String.fromCharCode(65 + segIndex);
+
+				let wordsHtml = '';
+				// Ensure segment.words is an array for iteration
+				const segmentWordsArray = Array.isArray(segment.words) ? segment.words : Object.values(segment.words || {});
+
+				segmentWordsArray.forEach((wordCandidates, wordIndex) => {
+					const currentWord = wordCandidates[0]?.word || ''; // Get the first candidate's word
+					wordsHtml += `
+						<div class="admin-form-group admin-word-input">
+							<label>Word ${wordIndex + 1}</label>
+							<div class="admin-word-number">${wordIndex + 1}</div>
+							<input type="text" class="admin-form-control admin-segment-word-input" 
+								   data-segment-index="${segIndex}" data-word-index="${wordIndex}"
+								   placeholder="Word ${wordIndex + 1}..." value="${currentWord}">
+							<button type="button" class="admin-btn admin-btn-remove-word" onclick="removeWord(${segIndex}, ${wordIndex})" 
+									style="position: absolute; right: 0px; top: 30px; background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer;">
+								&times;
+							</button>
+						</div>
+					`;
+				});
+
+				segmentDiv.innerHTML = `
+					<h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.1rem;">
+						📍 Segment ${segmentLetter}
+						<button type="button" class="admin-btn admin-btn-remove-segment" onclick="removeSegment(${segIndex})" 
+								style="float: right; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+							Remove Segment
+						</button>
+					</h3>
+					<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+						${wordsHtml}
+					</div>
+					<div style="text-align: right; margin-top: 15px;">
+						<button type="button" class="admin-btn" style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 8px; font-size: 0.9rem;" 
+								onclick="addWord(${segIndex})">
+							+ Add Word
+						</button>
+					</div>
+				`;
+				segmentsContainer.appendChild(segmentDiv);
+			});
+
+			// Attach input listeners to update currentEpisodeSegmentsForAdmin in real-time
+			document.querySelectorAll('.admin-segment-word-input').forEach(input => {
+				input.addEventListener('input', (e) => {
+					const segIndex = parseInt(e.target.dataset.segmentIndex);
+					const wordIndex = parseInt(e.target.dataset.wordIndex);
+					const value = e.target.value.trim();
+
+					if (!currentEpisodeSegmentsForAdmin[segIndex]) {
+						// This should not happen if currentEpisodeSegmentsForAdmin is properly initialized
+						// but as a safeguard
+						currentEpisodeSegmentsForAdmin[segIndex] = { id: `segment_${episodeNum}_${segIndex + 1}`, words: [] };
+					}
+					if (!currentEpisodeSegmentsForAdmin[segIndex].words[wordIndex]) {
+						currentEpisodeSegmentsForAdmin[segIndex].words[wordIndex] = [];
+					}
+					// Always set the first candidate for simplicity in admin form
+					currentEpisodeSegmentsForAdmin[segIndex].words[wordIndex][0] = { word: value, votes: 1, voters: [] };
+				});
+			});
+		}
+
+
+		// Dynamically add a new segment
+		function openAdminModal() {
+			const modal = document.getElementById('adminWordsModal');
+			modal.style.display = 'block';
+
+			// Populate episode dropdown
+			const episodeSelect = document.getElementById('adminEpisode');
+			if (episodeSelect.options.length <= 1) { // Only populate if empty or just has placeholder
+				for (let i = 1; i <= 110; i++) { // Assuming max 110 episodes
+					const option = document.createElement('option');
+					option.value = i;
+					option.textContent = `Episode ${i}`;
+					episodeSelect.appendChild(option);
+				}
+			}
+			hideMessages(); // Clear any previous messages
+		}
+
+		// Close the admin modal
+		function closeAdminModal() {
+			const modal = document.getElementById('adminWordsModal');
+			modal.style.display = 'none';
+			// Optionally clear form or reset state on close
+			clearForm();
+		}
+
+		// Clear the form and reset currentEpisodeSegmentsForAdmin
+		function clearForm() {
+			document.getElementById('adminEpisode').value = '';
+			currentEpisodeSegmentsForAdmin = []; // Reset the internal data
+			renderAdminForm(); // Rerender to show empty state (will generate 3 empty ones)
+			hideMessages(); // Clear messages
+			showInfoMessage('Form cleared. Select an episode to load words or add new segments.');
+		}
+
+
+		function addSegment() {
+			const episodeNum = document.getElementById('adminEpisode').value;
+			if (!episodeNum) {
+				showErrorMessage('Please select an episode first to add a segment.');
+				return;
+			}
+			const newSegmentIndex = currentEpisodeSegmentsForAdmin.length;
+			currentEpisodeSegmentsForAdmin.push({
+				id: `segment_${episodeNum}_${newSegmentIndex + 1}`,
+				words: generateInitialEmptyWordsForAdmin() // 3 empty words
+			});
+			renderAdminForm();
+		}
+
+		// Dynamically remove the last segment
+		function removeLastSegment() {
+			if (currentEpisodeSegmentsForAdmin.length > 0) {
+				if (confirm('Are you sure you want to remove the last segment? This cannot be undone.')) {
+					currentEpisodeSegmentsForAdmin.pop();
+					renderAdminForm();
+				}
+			} else {
+				showInfoMessage('No segments to remove.');
+			}
+		}
+
+		// Dynamically add a new word to a specific segment
+		function addWord(segmentIndex) {
+			if (currentEpisodeSegmentsForAdmin[segmentIndex]) {
+				currentEpisodeSegmentsForAdmin[segmentIndex].words.push([]); // Add an empty word slot
+				renderAdminForm();
+			}
+		}
+
+		// Dynamically remove a word from a specific segment
+		function removeWord(segmentIndex, wordIndex) {
+			if (currentEpisodeSegmentsForAdmin[segmentIndex] && currentEpisodeSegmentsForAdmin[segmentIndex].words[wordIndex]) {
+				if (confirm(`Are you sure you want to remove word ${wordIndex + 1} from Segment ${String.fromCharCode(65 + segmentIndex)}? This cannot be undone.`)) {
+					currentEpisodeSegmentsForAdmin[segmentIndex].words.splice(wordIndex, 1);
+					renderAdminForm();
+				}
+			}
+		}
+
+
+		async function submitAdminWords(event) {
+			event.preventDefault();
+
+			if (!currentUser || currentUser.email !== 'mathewmit@gmail.com') { // Replace with actual admin email
+				showErrorMessage('Unauthorized: Admin access required');
+				return;
+			}
+
+			const episodeNum = document.getElementById('adminEpisode').value;
+			if (!episodeNum) {
+				showErrorMessage('Please select an episode');
+				return;
+			}
+
+			const submitBtn = document.getElementById('adminSubmitBtn');
+			submitBtn.disabled = true;
+			submitBtn.innerHTML = '<span>⏳</span> Saving...';
+
+			try {
+				const videoRef = db.collection('videos').doc(`episode_${episodeNum}`);
+				const newSegmentsData = {};
+
+				currentEpisodeSegmentsForAdmin.forEach((segment, segIndex) => {
+					// Ensure segment has a valid ID, use generated if missing
+					const segmentId = segment.id || `segment_${episodeNum}_${segIndex + 1}`;
+					
+					const wordsForSegment = {};
+					segment.words.forEach((wordCandidates, wordIndex) => {
+						const wordText = wordCandidates[0]?.word?.trim() || ''; // Get the first candidate's word
+						if (wordText) {
+							wordsForSegment[wordIndex.toString()] = [{ // Store as an array of candidates
+								word: wordText,
+								votes: 1, // Default votes, can be adjusted
+								voters: []
+							}];
+						}
+					});
+
+					newSegmentsData[segmentId] = {
+						id: segmentId,
+						words: wordsForSegment, // This is now an object with numeric keys, matching Firestore structure
+						// Preserve existing ratings if they exist, otherwise use defaults
+						ratings: segment.ratings || {
+							lyrics: { average: 3.0, count: 0 },
+							beats: { average: 3.0, count: 0 },
+							reaction: { average: 3.0, count: 0 },
+							overall: { average: 3.0, count: 0 }
+						}
+					};
+				});
+
+				// Update Firebase with the new segments structure
+				await videoRef.update({
+					segments: newSegmentsData
+				});
+
+				showSuccessMessage(`Successfully saved all words for Episode ${episodeNum}!`);
+
+				// Refresh the main app display
+				if (typeof loadVideosData === 'function') {
+					loadVideosData();
+				}
+
+			} catch (error) {
+				console.error('Error saving words:', error);
+				showErrorMessage(`Error: ${error.message}`);
+			} finally {
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = '<span>💾</span> Save All Words';
+			}
+		}
+
+		function goToNextEpisode() {
+			const episodeSelect = document.getElementById('adminEpisode');
+			const currentEpisode = parseInt(episodeSelect.value);
+			
+			if (!currentEpisode) {
+				showErrorMessage('Please select an episode first');
+				return;
+			}
+			
+			// Submit the current form first
+			document.getElementById('adminWordsForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+			
+			// Then go to next episode after a short delay, checking for success
+			setTimeout(() => {
+				const successMessage = document.getElementById('adminSuccessMessage');
+				if (successMessage.style.display === 'flex') { // Only proceed if save was successful
+					if (currentEpisode < 110) { // Max episode number
+						episodeSelect.value = currentEpisode + 1;
+						loadExistingWords(); // Load data for the next episode
+						showSuccessMessage(`Moved to Episode ${currentEpisode + 1}`);
+					} else {
+						showInfoMessage('You\'ve reached the last episode!');
+					}
+				} else {
+					showErrorMessage('Could not move to next episode. Please fix current errors.');
+				}
+			}, 1500); // Give some time for the save operation and notification to appear
+		}
+
+		function showSuccessMessage(message) {
+			hideMessages();
+			const successMsg = document.getElementById('adminSuccessMessage');
+			document.getElementById('successText').textContent = message;
+			successMsg.style.display = 'flex';
+			setTimeout(hideMessages, 5000); // Auto-hide after 5 seconds
+		}
+
+		function showErrorMessage(message) {
+			hideMessages();
+			const errorMsg = document.getElementById('adminErrorMessage');
+			document.getElementById('errorText').textContent = message;
+			errorMsg.style.display = 'flex';
+			setTimeout(hideMessages, 5000); // Auto-hide after 5 seconds
+		}
+
+		function hideMessages() {
+			document.getElementById('adminSuccessMessage').style.display = 'none';
+			document.getElementById('adminErrorMessage').style.display = 'none';
+			document.getElementById('adminInfoMessage').style.display = 'none';
+		}
+
+
+        // Make functions globally available for onclick handlers
+		window.handleStarClick = handleStarClick;
+		window.handleStarHover = handleStarHover;
+		window.handleStarLeave = handleStarLeave;
         window.toggleSegment = toggleSegment;
         window.toggleAllSegments = toggleAllSegments;
 		
@@ -3735,12 +4499,22 @@
 		window.cancelEditingNote = cancelEditingNote;
 		window.updateCharCount = updateCharCount;
 
-		// Make it globally available
-		window.bulkUpdateWords = bulkUpdateWords;
+		// Make admin functions globally available
+		window.bulkUpdateWords = bulkUpdateWords; // Still available for one-off bulk updates
 		window.checkAdminAccess = checkAdminAccess;
+		window.openAdminModal = openAdminModal;
+		window.closeAdminModal = closeAdminModal;
+		window.clearForm = clearForm;
+		window.submitAdminWords = submitAdminWords;
+		window.goToNextEpisode = goToNextEpisode;
 
-		
- 
+		window.addSegment = addSegment; // New
+		window.removeLastSegment = removeLastSegment; // New
+		window.addWord = addWord; // New
+		window.removeWord = removeWord; // New
+		window.showInfoMessage = showInfoMessage; // New
+
+
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
