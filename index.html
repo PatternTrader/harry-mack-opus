@@ -3860,16 +3860,10 @@
                             </div>
                         </div>
                         <div class="video-content">
-                            <h3 class="video-title">${video.title}</h3>
-                           
+							<h3 class="video-title">${video.title} (${video.segments ? video.segments.length : 0} segments)</h3>
  
-
 							<div class="segments-section">
 								
-								<div class="segments-header">
-									<h4>${video.segments ? video.segments.length : 0} segments</h4>
-								</div>
-
                                 <div class="segments-container" data-video="${video.episodeNumber}">
                                     ${segmentsHtml}
                                 </div>
