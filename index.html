@@ -1003,6 +1003,7 @@
 			gap: 8px;
 			flex-wrap: wrap;
 			align-items: center;
+			width: 100%;
 		}
 
 		.segment-words-inline .word-display {
@@ -1660,15 +1661,7 @@
 				display: none; /* Hide word number on small screens */
 			}
 		}
-
-		/* Dynamic segment and word handling */
-		.segment-words-inline {
-			display: flex;
-			gap: 8px;
-			flex-wrap: wrap;
-			align-items: center;
-			max-width: 100%;
-		}
+ 
 
 		.segments-container {
 			/* Allow natural number of segments */
@@ -1796,6 +1789,8 @@
 			cursor: default;
 			background: #fff;
 			border-bottom: 1px solid #eee;
+			display: flex;
+			flex-direction: column;
 		}
 
 		.segment-info-with-words {
@@ -1868,14 +1863,69 @@
 			flex-wrap: wrap;
 			align-items: center;
 			width: 100%;
-			clear: both;
-			margin-top: 0;
-			padding-top: 0;
 		}
 
+		.segment-header {
+			padding: 12px 15px;
+			cursor: default;
+			background: #fff;
+			border-bottom: 1px solid #eee;
+			display: flex;
+			flex-direction: column;
+		}
 
+		/* Segment header layout */
+		.segment-title-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 12px;
+			width: 100%;
+		}
 
+		.segment-name {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: #2c3e50;
+			flex-shrink: 0;
+		}
 
+		.rate-this-btn {
+			background: linear-gradient(135deg, #667eea, #764ba2);
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 0.75rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			flex-shrink: 0;
+		}
+
+		.rate-this-btn:hover {
+			background: linear-gradient(135deg, #5a6fd8, #6a4190);
+			transform: translateY(-1px);
+		}
+
+		.rate-this-btn.expanded {
+			background: linear-gradient(135deg, #27ae60, #2ecc71);
+		}
+
+		.rate-this-btn.expanded:hover {
+			background: linear-gradient(135deg, #229954, #27ae60);
+		}
+
+		.segment-rating-display {
+			font-size: 0.8rem;
+			background: rgba(52, 152, 219, 0.15);
+			padding: 4px 8px;
+			border-radius: 6px;
+			color: #2980b9;
+			font-weight: 600;
+			flex-shrink: 0;
+			margin-left: auto;
+		}
 
 		.word-display {
 			padding: 6px 12px;
