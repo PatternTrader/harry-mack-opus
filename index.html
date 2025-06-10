@@ -3430,7 +3430,11 @@
 
 			// Create exactly 5 stars
 			for (let i = 1; i <= 5; i++) {
-				const activeClass = i <= Math.round(displayRating) ? 'active' : '';
+				// For user ratings, show exact rating; for community ratings, round
+				const shouldHighlight = (currentUser && userRatedValue > 0) ? 
+					i <= userRatedValue : 
+					i <= Math.round(displayRating);
+				const activeClass = shouldHighlight ? 'active' : '';
 				const userRatedClass = userRatedValue > 0 && i <= userRatedValue ? 'user-rated' : '';
 				
 				const dataAttrs = segmentId ? 
@@ -3855,7 +3859,11 @@
 			
 			stars.forEach((star, index) => {
 				star.classList.remove('active', 'user-rated');
-				if (index < displayRating) {
+				// For user ratings, show exact rating; for community ratings, round
+				const shouldHighlight = (currentUser && userCurrentRating > 0) ? 
+					index < userCurrentRating : 
+					index < Math.round(displayRating);
+				if (shouldHighlight) {
 					star.classList.add('active');
 				}
 				if (currentUser && userCurrentRating > 0 && index < userCurrentRating) {
