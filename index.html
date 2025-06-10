@@ -1779,31 +1779,7 @@
 			font-weight: 600;
 		}
 
-		/* Individual card expand button */
-		.show-ratings-btn {
-			background: linear-gradient(135deg, #e74c3c, #c0392b);
-			color: white;
-			border: none;
-			padding: 6px 12px;
-			border-radius: 6px;
-			font-size: 0.75rem;
-			font-weight: 600;
-			cursor: pointer;
-			transition: all 0.2s ease;
-		}
-
-		.show-ratings-btn:hover {
-			background: linear-gradient(135deg, #c0392b, #a93226);
-			transform: translateY(-1px);
-		}
-
-		.show-ratings-btn.expanded {
-			background: linear-gradient(135deg, #27ae60, #2ecc71);
-		}
-
-		.show-ratings-btn.expanded:hover {
-			background: linear-gradient(135deg, #2ecc71, #27ae60);
-		}
+	
 
 		/* Segment display - compact by default */
 		.segment {
@@ -1830,19 +1806,55 @@
 			margin-bottom: 4px;
 		}
 
+		/* Segment header layout */
+		.segment-title-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 8px;
+		}
+
 		.segment-name {
 			font-size: 0.85rem;
 			font-weight: 600;
 			color: #2c3e50;
+			flex-shrink: 0;
 		}
 
-		.segment-rating-inline {
+		.rate-this-btn {
+			background: linear-gradient(135deg, #667eea, #764ba2);
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 6px;
 			font-size: 0.75rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			flex-shrink: 0;
+		}
+
+		.rate-this-btn:hover {
+			background: linear-gradient(135deg, #5a6fd8, #6a4190);
+			transform: translateY(-1px);
+		}
+
+		.rate-this-btn.expanded {
+			background: linear-gradient(135deg, #27ae60, #2ecc71);
+		}
+
+		.rate-this-btn.expanded:hover {
+			background: linear-gradient(135deg, #229954, #27ae60);
+		}
+
+		.segment-rating-display {
+			font-size: 0.8rem;
 			background: rgba(52, 152, 219, 0.15);
-			padding: 2px 6px;
+			padding: 4px 8px;
 			border-radius: 6px;
 			color: #2980b9;
 			font-weight: 600;
+			flex-shrink: 0;
 		}
 
 		.segment-words-inline {
@@ -1894,11 +1906,13 @@
 			transition: all 0.3s ease;
 		}
 
-		/* Show detailed content when card is expanded */
-		.video-card.expanded .segment-content {
+
+		/* Show detailed content when segment is expanded */
+		.segment.expanded .segment-content {
 			display: block;
 			max-height: 800px;
 		}
+
 
 		/* Responsive design */
 		@media (max-width: 768px) {
@@ -2195,27 +2209,42 @@
         let currentEpisodeSegmentsForAdmin = [];
 		
 		
-		// Individual card expansion functionality
-		function toggleCardExpansion(episodeNumber) {
-			const videoCard = document.querySelector(`[data-video="${episodeNumber}"]`).closest('.video-card');
-			const button = videoCard.querySelector('.show-ratings-btn');
+		// Individual segment expansion functionality
+		function toggleSegment(videoId, segmentId) {
+			if (!currentUser) {
+				showSignInPrompt('rate segments', 0);
+				return;
+			}
+
+			const segment = document.querySelector(`[data-segment="${segmentId}"]`);
+			const button = segment.querySelector('.rate-this-btn');
 			
-			if (videoCard.classList.contains('expanded')) {
-				// Collapse the card
-				videoCard.classList.remove('expanded');
-				button.textContent = '📊 Show Ratings';
-				button.classList.remove('expanded');
-				console.log(`📦 Collapsed Episode ${episodeNumber}`);
-			} else {
-				// Expand the card
-				videoCard.classList.add('expanded');
-				button.textContent = '📋 Hide Ratings';
+			// Check if this segment is currently expanded
+			const isExpanded = segment.classList.contains('expanded');
+			
+			// First, collapse all segments in this video
+			const videoContainer = document.querySelector(`[data-video="${videoId}"]`);
+			if (videoContainer) {
+				videoContainer.querySelectorAll('.segment').forEach(seg => {
+					seg.classList.remove('expanded');
+					const btn = seg.querySelector('.rate-this-btn');
+					if (btn) {
+						btn.textContent = '📊 Rate this!';
+						btn.classList.remove('expanded');
+					}
+				});
+			}
+			
+			// If the clicked segment wasn't expanded, expand it
+			if (!isExpanded) {
+				segment.classList.add('expanded');
+				button.textContent = '📋 Hide ratings';
 				button.classList.add('expanded');
-				console.log(`📊 Expanded Episode ${episodeNumber}`);
+				console.log(`📊 Expanded Segment ${videoId}-${segmentId}`);
 				
-				// Re-attach event listeners for rating stars
+				// Re-attach event listeners for rating stars in this segment
 				setTimeout(() => {
-					const stars = videoCard.querySelectorAll('.stars .star');
+					const stars = segment.querySelectorAll('.stars .star');
 					stars.forEach(star => {
 						star.addEventListener('click', handleStarClick);
 						star.addEventListener('mouseenter', handleStarHover);
@@ -2223,8 +2252,11 @@
 					});
 					updateUserRatingDisplay();
 				}, 100);
+			} else {
+				console.log(`📦 Collapsed Segment ${videoId}-${segmentId}`);
 			}
 		}
+
 	
 
 		function convertWordsObjectToArray(wordsData) {
@@ -3592,24 +3624,18 @@
 				return `
 					<div class="segment" data-segment="${segmentId}">
 
-						<div class="segment-header" onclick="toggleSegment('${videoId}', '${segmentId}')">
-							<div class="segment-info-with-words">
-								<div class="segment-title-and-rating">
-									
-									<div class="segment-title-and-rating">
-										<div class="segment-title-inline">
-											<span class="segment-name">Segment ${videoId}-${String.fromCharCode(65 + segmentIndex)}</span>
-											<span class="segment-rating-inline">${avgRating.toFixed(1)}★</span>
-										</div>
-									</div>
-								</div>
-								<div class="segment-words-inline">
-									${headerWordsHtml}
-								</div>
+						<div class="segment-header">
+							<div class="segment-title-row">
+								<span class="segment-name">Segment ${videoId}-${String.fromCharCode(65 + segmentIndex)}</span>
+								<button class="rate-this-btn" onclick="toggleSegment('${videoId}', '${segmentId}')">
+									📊 Rate this!
+								</button>
+								<span class="segment-rating-display">${avgRating.toFixed(1)}★</span>
 							</div>
-							<div class="segment-expand-icon">▶</div>
+							<div class="segment-words-inline">
+								${headerWordsHtml}
+							</div>
 						</div>
-
 						
 						
 						
@@ -3780,11 +3806,8 @@
 								
 								<div class="segments-header">
 									<h4>${video.segments ? video.segments.length : 0} segments</h4>
-									<button class="show-ratings-btn" onclick="toggleCardExpansion('${video.episodeNumber}')">
-										📊 Show Ratings
-									</button>
 								</div>
-								
+
                                 <div class="segments-container" data-video="${video.episodeNumber}">
                                     ${segmentsHtml}
                                 </div>
@@ -4908,7 +4931,7 @@
 		window.handleStarLeave = handleStarLeave;
 
 		// ADD THIS LINE:
-		window.toggleCardExpansion = toggleCardExpansion;
+		window.toggleSegment = toggleSegment;
 		
 		// Make notes functions globally available for onclick handlers
 		window.toggleNotesSection = toggleNotesSection;
