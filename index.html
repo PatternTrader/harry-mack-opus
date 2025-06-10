@@ -182,7 +182,7 @@
         .segment {
             background: #f8f9fa;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 2px;
             border-left: 4px solid #e74c3c;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -1045,6 +1045,7 @@
 			border: 1px dashed rgba(255,255,255,0.6);
 		}
 
+
 		/* ===== RESPONSIVE FOR INLINE WORDS ===== */
 		@media (max-width: 768px) {
 			.segment-words-inline {
@@ -1057,6 +1058,20 @@
 			.fill-in-link-small {
 				width: 100%;
 				min-width: auto;
+			}
+			
+			.segment-right-controls {
+				gap: 6px;
+			}
+			
+			.rate-this-btn {
+				font-size: 0.7rem;
+				padding: 5px 10px;
+			}
+			
+			.segment-rating-display {
+				font-size: 0.75rem;
+				padding: 3px 6px;
 			}
 		}
 
@@ -1120,34 +1135,13 @@
 		}
 
 		/* Fixed height video title */
-		/* Video title row with segment count */
-		.video-title-row {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 15px;
-			gap: 15px;
-		}
-
-		/* Fixed height video title */
 		.video-title {
-			flex: 1;
-			margin: 0;
 			font-size: 1.1rem;
 			font-weight: bold;
 			color: #2c3e50;
 			line-height: 1.3;
+			margin-bottom: 15px;
 		}
-
-		/* Segments count text */
-		.segments-count {
-			color: #667eea;
-			font-size: 0.8rem;
-			font-weight: 600;
-			flex-shrink: 0;
-			white-space: nowrap;
-		}
-
 
 
 
@@ -1216,16 +1210,6 @@
 
 			.video-title {
 				font-size: 1rem;
-			}
-
-			.video-title-row {
-				flex-direction: column;
-				align-items: flex-start;
-				gap: 8px;
-			}
-
-			.segments-count {
-				align-self: flex-end;
 			}
 			
 			.segments-section::before {
@@ -1907,8 +1891,8 @@
 		/* Segment header layout */
 		.segment-title-row {
 			display: flex;
+			justify-content: space-between;
 			align-items: center;
-			gap: 12px;
 			margin-bottom: 12px;
 			width: 100%;
 		}
@@ -1918,6 +1902,12 @@
 			font-weight: 600;
 			color: #2c3e50;
 			flex-shrink: 0;
+		}
+
+		.segment-right-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
 		}
 
 		.rate-this-btn {
@@ -1954,8 +1944,12 @@
 			color: #2980b9;
 			font-weight: 600;
 			flex-shrink: 0;
-			margin-left: auto;
 		}
+	
+	
+	
+	
+	
 
 		.word-display {
 			padding: 6px 12px;
@@ -3719,16 +3713,17 @@
 						<div class="segment-header">
 							<div class="segment-title-row">
 								<span class="segment-name">Segment ${videoId}-${String.fromCharCode(65 + segmentIndex)}</span>
-								<button class="rate-this-btn" onclick="toggleSegment('${videoId}', '${segmentId}')">
-									📊 Rate this!
-								</button>
-								<span class="segment-rating-display">${avgRating.toFixed(1)}★</span>
+								<div class="segment-right-controls">
+									<button class="rate-this-btn" onclick="toggleSegment('${videoId}', '${segmentId}')">
+										📊 Rate this!
+									</button>
+									<span class="segment-rating-display">${avgRating.toFixed(1)}★</span>
+								</div>
 							</div>
 							<div class="segment-words-inline">
 								${headerWordsHtml}
 							</div>
 						</div>
-						
 						
 						
 						<div class="segment-content">
@@ -3890,11 +3885,10 @@
                             </div>
                         </div>
    					 
-						 <div class="video-content">
-							<div class="video-title-row">
-								<h3 class="video-title">${video.title}</h3>
-								<span class="segments-count">${video.segments ? video.segments.length : 0} segments</span>
-							</div>
+
+						<div class="video-content">
+							<h3 class="video-title">${video.title}</h3>
+							
 							
 							<div class="segments-section">
 								
