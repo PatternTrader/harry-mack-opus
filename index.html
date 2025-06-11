@@ -2986,31 +2986,24 @@
 							ratings: data.ratings || { ...defaultRatings }
 						};
 						
-						// 🔥 NEW: Recalculate video ratings from segments (in case stored ratings are outdated)
-						if (processedSegments.length > 0) {
-							console.log(`🔄 Recalculating video ratings for Episode ${data.episodeNumber}`);
-							processedVideo.ratings = calculateVideoOverallRating(processedVideo);
-						}
-						
-						// If user is not logged in, reset all ratings to zero but keep the words
-						if (!currentUser) {
-							console.log(`🎭 User not logged in - resetting ratings to zero for Episode ${data.episodeNumber}`);
-							processedVideo.ratings = {
+						// Reset all ratings to zero for display purposes
+						// This prevents old Firebase rating data from showing incorrectly
+						console.log(`🎭 Resetting ratings to zero for Episode ${data.episodeNumber}`);
+						processedVideo.ratings = {
+							lyrics: { average: 0.0, count: 0 },
+							beats: { average: 0.0, count: 0 },
+							reaction: { average: 0.0, count: 0 },
+							overall: { average: 0.0, count: 0 }
+						};
+						// Also reset segment ratings to zero
+						processedVideo.segments.forEach(segment => {
+							segment.ratings = {
 								lyrics: { average: 0.0, count: 0 },
 								beats: { average: 0.0, count: 0 },
 								reaction: { average: 0.0, count: 0 },
 								overall: { average: 0.0, count: 0 }
 							};
-							// Also reset segment ratings to zero
-							processedVideo.segments.forEach(segment => {
-								segment.ratings = {
-									lyrics: { average: 0.0, count: 0 },
-									beats: { average: 0.0, count: 0 },
-									reaction: { average: 0.0, count: 0 },
-									overall: { average: 0.0, count: 0 }
-								};
-							});
-						}
+						});
 						
 						videos.push(processedVideo);
 						console.log(`✅ Processed Episode ${data.episodeNumber} with ${processedSegments.length} segments for display`);
