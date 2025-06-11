@@ -305,11 +305,15 @@
             user-select: none;
         }
 
-        .star:hover,
         .star.active,
         .star.active-hover {
             color: #f39c12;
             transform: scale(1.1);
+        }
+
+        .star:hover:not(.active-hover) {
+            color: #f39c12;
+            transform: scale(1.05);
         }
 
         .star.user-rated {
@@ -320,6 +324,36 @@
             font-size: 0.65rem;
             color: #e74c3c;
             font-weight: bold;
+        }
+
+        .clear-rating-btn {
+            background: transparent;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 8px;
+        }
+
+        .clear-rating-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Rating count display (average and count) next to stars */
+        .rating-count {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+
+        .rating-count.no-ratings {
+            color: #999;
+            font-style: italic;
         }
 
         .stats-bar {
@@ -2149,6 +2183,16 @@
 							➡️ Save & Go to Next Episode
 						</button>
 					</div>
+					
+					<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e74c3c; text-align: center;">
+						<div style="color: #e74c3c; font-weight: bold; margin-bottom: 10px;">⚠️ DANGER ZONE ⚠️</div>
+						<button type="button" class="admin-btn" style="background: #e74c3c; color: white; font-weight: bold;" onclick="resetAllRatings()">
+							🗑️ RESET ALL RATINGS TO 0
+						</button>
+						<div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">
+							This will permanently delete ALL user ratings and cannot be undone!
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -2282,10 +2326,10 @@
 				
         // Default ratings structure
         const defaultRatings = {
-            lyrics: { average: 3.0, count: 0 },
-            beats: { average: 3.0, count: 0 },
-            reaction: { average: 3.0, count: 0 },
-            overall: { average: 3.0, count: 0 }
+            lyrics: { average: 0.0, count: 0 },
+            beats: { average: 0.0, count: 0 },
+            reaction: { average: 0.0, count: 0 },
+            overall: { average: 0.0, count: 0 }
         };
 
         // Debug mode flag
@@ -2419,7 +2463,7 @@
 			console.log(`🔧 Sanitizing segment data for ${videoId}-${segmentIndex} (for display):`, segment);
 			
 			const sanitized = {
-				id: segment?.id || `segment_${videoId}_${segmentIndex + 1}`,
+				id: `segment_${videoId}_${segmentIndex + 1}`, // Always use correct episode number
 				ratings: segment?.ratings || { ...defaultRatings },
 				words: []
 			};
@@ -2545,21 +2589,19 @@
 
 		function generateDefaultSegments() {
 			console.log('🔧 Generating exactly 3 default segments...');
-			const wordBank = ["pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee"];
 			const segments = [];
 			
 			// Always create exactly 3 segments
 			for (let j = 0; j < 3; j++) {
 				const segmentWords = [];
 				
-				// Always generate exactly 3 words per segment
+				// Always generate exactly 3 words per segment - use fill-in placeholders
 				for (let k = 0; k < 3; k++) {
 					const candidateWords = [];
-					const baseWord = wordBank[Math.floor(Math.random() * wordBank.length)];
 					
 					candidateWords.push({
-						word: baseWord,
-						votes: Math.floor(Math.random() * 10) + 5,
+						word: "fill-in",
+						votes: 0,
 						voters: []
 					});
 					
@@ -2578,10 +2620,35 @@
 		}
 
 		function ensureProperSegments(segments, episodeNumber) {
-			console.log(`🔧 Processing ${segments.length} segments for Episode ${episodeNumber} (showing all)`);
+			console.log(`🔧 Processing ${segments.length} segments for Episode ${episodeNumber}`);
 			
-			// Don't truncate - return all segments as-is
-			return segments;
+			// Ensure minimum of 3 segments by padding with empty segments if needed
+			const processedSegments = [...segments]; // Copy existing segments
+			
+			// Add empty segments to reach minimum of 3
+			while (processedSegments.length < 3) {
+				const segmentIndex = processedSegments.length;
+				const segmentWords = [];
+				
+				// Create exactly 3 empty word slots per segment
+				for (let k = 0; k < 3; k++) {
+					segmentWords.push([]); // Empty array = no words = will show fill-in
+				}
+				
+				processedSegments.push({
+					id: `segment_${episodeNumber}_${segmentIndex + 1}`,
+					words: segmentWords,
+					ratings: {
+						lyrics: { average: 0.0, count: 0 },
+						beats: { average: 0.0, count: 0 },
+						reaction: { average: 0.0, count: 0 },
+						overall: { average: 0.0, count: 0 }
+					}
+				});
+			}
+			
+			console.log(`✅ Ensured Episode ${episodeNumber} has ${processedSegments.length} segments (minimum 3)`);
+			return processedSegments;
 		}
 
 
@@ -2719,7 +2786,7 @@
         }
 
  
-		function handleAuthStateChange(user) {
+		async function handleAuthStateChange(user) {
 			currentUser = user;
 			
 			const userInfo = document.getElementById('userInfo');
@@ -2732,14 +2799,17 @@
 				authButton.innerHTML = 'Sign Out';
 				authButton.onclick = signOut;
 				
-				loadUserRatings();
-				loadUserNotes(); 
+				// Wait for user data to load before rendering to prevent race condition
+				await Promise.all([
+					loadUserRatings(),
+					loadUserNotes()
+				]);
 				
 				if (db) updateConnectionStatus('connected');
 				
 				checkAdminAccess();
 				
-				// ADD THIS: Force re-render when user signs in to show real vs demo data
+				// Force re-render when user signs in to show real vs demo data
 				if (videos.length > 0) {
 					console.log('🔄 User signed in - refreshing video display');
 					renderVideos(); // This will re-evaluate word display logic
@@ -2838,6 +2908,10 @@
 					initializeDemoMode();
 					return;
 				}
+				
+				// Load Firebase data regardless of login status
+				// (Words are public, only user ratings require authentication)
+				
 				console.log('✅ Database connected, loading videos from Firebase...');
 				console.log('📊 Querying videos collection...');
 				
@@ -2916,6 +2990,26 @@
 						if (processedSegments.length > 0) {
 							console.log(`🔄 Recalculating video ratings for Episode ${data.episodeNumber}`);
 							processedVideo.ratings = calculateVideoOverallRating(processedVideo);
+						}
+						
+						// If user is not logged in, reset all ratings to zero but keep the words
+						if (!currentUser) {
+							console.log(`🎭 User not logged in - resetting ratings to zero for Episode ${data.episodeNumber}`);
+							processedVideo.ratings = {
+								lyrics: { average: 0.0, count: 0 },
+								beats: { average: 0.0, count: 0 },
+								reaction: { average: 0.0, count: 0 },
+								overall: { average: 0.0, count: 0 }
+							};
+							// Also reset segment ratings to zero
+							processedVideo.segments.forEach(segment => {
+								segment.ratings = {
+									lyrics: { average: 0.0, count: 0 },
+									beats: { average: 0.0, count: 0 },
+									reaction: { average: 0.0, count: 0 },
+									overall: { average: 0.0, count: 0 }
+								};
+							});
 						}
 						
 						videos.push(processedVideo);
@@ -3121,15 +3215,6 @@
 
 
 		function generateSampleVideos() {
-			const wordBank = [
-				"pizza", "galaxy", "thunderstorm", "basketball", "dragon", "coffee",
-				"telephone", "rainbow", "adventure", "elephant", "computer", "sunshine",
-				"bicycle", "ocean", "chocolate", "butterfly", "mountain", "music",
-				"spaceship", "burger", "lightning", "guitar", "forest", "diamond",
-				"robot", "sunset", "library", "airplane", "wizard", "sandwich",
-				"telescope", "volcano", "penguin", "keyboard", "tornado", "ice cream"
-			];
-
 			const sampleVideos = [];
 			
 			for (let i = 1; i <= 100; i++) {
@@ -3141,49 +3226,46 @@
 				for (let j = 0; j < 3; j++) {
 					const segmentWords = [];
 					
-					// Always create exactly 3 words per segment for sample data
+					// Always create exactly 3 words per segment - use fill-in placeholders
 					for (let k = 0; k < 3; k++) {
 						const candidateWords = [];
 						
-						const baseWordIndex = Math.floor(Math.random() * wordBank.length);
-						const baseWord = wordBank[baseWordIndex];
-						
-						// Just create one word per position (no alternatives)
+						// Use fill-in placeholder instead of demo words
 						candidateWords.push({
-							word: baseWord,
-							votes: Math.floor(Math.random() * 15) + 10,
+							word: "fill-in",
+							votes: 0,
 							voters: []
 						});
 						
 						segmentWords.push(candidateWords);
 					}
 					
-					const lyrics = Math.random() * 2 + 3;
-					const beats = Math.random() * 2 + 3;
-					const reaction = Math.random() * 2 + 3;
-					const overall = (lyrics + beats + reaction) / 3 + (Math.random() * 0.6 - 0.3);
+					const lyrics = 0;
+					const beats = 0;
+					const reaction = 0;
+					const overall = 0;
 					
-					const baseRatingCount = Math.floor(Math.random() * 50) + 5;
+					const baseRatingCount = 0;
 					
 					segments.push({
 						id: `segment_${i}_${j + 1}`,
 						words: segmentWords,
 						ratings: {
 							lyrics: { 
-								average: Math.max(1, Math.min(5, lyrics)),
-								count: baseRatingCount + Math.floor(Math.random() * 10) 
+								average: 0.0,  // FIXED: No Math.max(1, ...) forcing 1-star minimum
+								count: 0
 							},
 							beats: { 
-								average: Math.max(1, Math.min(5, beats)), 
-								count: baseRatingCount + Math.floor(Math.random() * 12) 
+								average: 0.0,  // FIXED: No Math.max(1, ...) forcing 1-star minimum
+								count: 0
 							},
 							reaction: { 
-								average: Math.max(1, Math.min(5, reaction)), 
-								count: baseRatingCount + Math.floor(Math.random() * 15) 
+								average: 0.0,  // FIXED: No Math.max(1, ...) forcing 1-star minimum
+								count: 0
 							},
 							overall: { 
-								average: Math.max(1, Math.min(5, overall)), 
-								count: baseRatingCount + Math.floor(Math.random() * 8) 
+								average: 0.0,  // FIXED: No Math.max(1, ...) forcing 1-star minimum
+								count: 0
 							}
 						}
 					});
@@ -3205,20 +3287,20 @@
 					segments: segments, // Always exactly 3 segments for sample data
 					ratings: {
 						lyrics: { 
-							average: videoLyrics,
-							count: Math.floor(totalSegmentRatings * 0.25) 
+							average: 0.0,  // FIXED: All video ratings are 0.0
+							count: 0
 						},
 						beats: { 
-							average: videoBeats, 
-							count: Math.floor(totalSegmentRatings * 0.25) 
+							average: 0.0,  // FIXED: All video ratings are 0.0
+							count: 0
 						},
 						reaction: { 
-							average: videoReaction, 
-							count: Math.floor(totalSegmentRatings * 0.25) 
+							average: 0.0,  // FIXED: All video ratings are 0.0
+							count: 0
 						},
 						overall: { 
-							average: videoOverall, 
-							count: Math.floor(totalSegmentRatings * 0.25) 
+							average: 0.0,  // FIXED: All video ratings are 0.0
+							count: 0
 						}
 					}
 				};
@@ -3231,7 +3313,6 @@
 			return sampleVideos;
 		}
 
-        
 
         async function loadUserRatings() {
             if (!currentUser || !db) return;
@@ -3376,17 +3457,47 @@
 				if (starsContainer) {
 					updateStarDisplay(starsContainer, rating, true);
 					
-					// Update or add the "Your rating" indicator
+					// Update or remove the "Your rating" indicator
 					const controls = starsContainer.closest('.rating-controls');
 					if (controls) {
 						const existingIndicator = controls.querySelector('.user-rating-indicator');
-						if (existingIndicator) {
-							existingIndicator.textContent = `Your rating: ${rating}★`;
+						if (rating === 0) {
+							// Remove the indicator when rating is cleared
+							if (existingIndicator) {
+								existingIndicator.remove();
+							}
+							// Also remove the clear button by refreshing the stars
+							const starsContainer = controls.querySelector('.stars');
+							if (starsContainer) {
+								const category = starsContainer.dataset.category;
+								const videoId = starsContainer.dataset.video;
+								const segmentId = starsContainer.dataset.segment;
+								// Find the video to get current rating for refresh
+								const video = videos.find(v => v.episodeNumber.toString() === videoId);
+								if (video) {
+									let currentRating = 0;
+									let ratingCount = 0;
+									if (segmentId) {
+										const segment = video.segments?.find(s => s.id === segmentId);
+										currentRating = segment?.ratings?.[category]?.average || 0;
+										ratingCount = segment?.ratings?.[category]?.count || 0;
+									} else {
+										currentRating = video.ratings?.[category]?.average || 0;
+										ratingCount = video.ratings?.[category]?.count || 0;
+									}
+									starsContainer.innerHTML = createStarRating(category, videoId, currentRating, ratingCount, segmentId);
+								}
+							}
 						} else {
-							const indicator = document.createElement('div');
-							indicator.className = 'user-rating-indicator';
-							indicator.textContent = `Your rating: ${rating}★`;
-							controls.appendChild(indicator);
+							// Add or update the indicator when rating is set
+							if (existingIndicator) {
+								existingIndicator.textContent = `Your rating: ${rating}★`;
+							} else {
+								const indicator = document.createElement('div');
+								indicator.className = 'user-rating-indicator';
+								indicator.textContent = `Your rating: ${rating}★`;
+								controls.appendChild(indicator);
+							}
 						}
 					}
 				}
@@ -3433,7 +3544,10 @@
 					segmentText = ` (Episode ${videoId})`;
 				}
 
-				showNotification(`Rated ${category}${segmentText}: ${rating} stars!`, 'success');
+				const message = rating === 0 ? 
+					`Cleared ${category} rating${segmentText}` : 
+					`Rated ${category}${segmentText}: ${rating} stars!`;
+				showNotification(message, 'success');
 				
 			} catch (error) {
 				console.error('❌ RATING ERROR CAUGHT:', error);
@@ -3482,16 +3596,34 @@
             submitRating(videoId, category, rating, segmentId);
         }
 
+        // NEW: handleClearRating function - clears/removes a user's rating
+        function handleClearRating(event) {
+            if (!currentUser) {
+                showSignInPrompt('rate videos', 0);
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const button = event.target;
+            const category = button.dataset.category;
+            const videoId = button.dataset.video;
+            const segmentId = button.dataset.segment;
+
+            // Submit rating of 0 to clear the rating
+            submitRating(videoId, category, 0, segmentId);
+        }
+
         // NEW: handleStarHover function - visually highlights stars on hover
         function handleStarHover(event) {
             const star = event.target;
             const hoverRating = parseInt(star.dataset.rating);
             const starsContainer = star.closest('.stars');
             if (!starsContainer) return;
-
+            
             starsContainer.querySelectorAll('.star').forEach((s, index) => {
                 s.classList.remove('active-hover'); // Remove previous hover effects
-                if (index < hoverRating) {
+                if (index + 1 <= hoverRating) {
                     s.classList.add('active-hover');
                 }
             });
@@ -3510,10 +3642,10 @@
             // Get the current displayed rating (either user's or community average)
             let currentDisplayRating = 0;
             const userRatedValue = segmentId ?
-                (userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) :
-                (userRatings[videoId]?.video?.[category] || 0);
+                userRatings[videoId]?.segments?.[segmentId]?.[category] :
+                userRatings[videoId]?.video?.[category];
 
-            if (currentUser && userRatedValue !== undefined && userRatedValue > 0) {
+            if (currentUser && userRatedValue !== undefined && userRatedValue >= 0) {
                 currentDisplayRating = userRatedValue;
             } else {
                 // Find the video and segment/video rating to get the community average
@@ -3534,13 +3666,13 @@
 		function createStarRating(category, videoId, currentRating, ratingCount, segmentId = null) {
 			let starsHtml = '';
 			const userRatedValue = segmentId ? 
-				(userRatings[videoId]?.segments?.[segmentId]?.[category] || 0) : 
-				(userRatings[videoId]?.video?.[category] || 0);
+				userRatings[videoId]?.segments?.[segmentId]?.[category] : 
+				userRatings[videoId]?.video?.[category];
 
 			// Determine what rating to display visually
 			let displayRating = 0;
-			if (currentUser && userRatedValue > 0) {
-				// User is logged in and has rated, display their rating
+			if (currentUser && userRatedValue !== undefined && userRatedValue >= 0) {
+				// User is logged in and has rated (including 0 for cleared), display their rating
 				displayRating = userRatedValue;
 			} else {
 				// User not logged in, or logged in but hasn't rated, display community average
@@ -3550,7 +3682,7 @@
 			// Create exactly 5 stars
 			for (let i = 1; i <= 5; i++) {
 				// For user ratings, show exact rating; for community ratings, round
-				const shouldHighlight = (currentUser && userRatedValue > 0) ? 
+				const shouldHighlight = (currentUser && userRatedValue !== undefined && userRatedValue >= 0) ? 
 					i <= userRatedValue : 
 					i <= Math.round(displayRating);
 				const activeClass = shouldHighlight ? 'active' : '';
@@ -3563,7 +3695,36 @@
 				starsHtml += `<span class="star ${activeClass} ${userRatedClass}" ${dataAttrs}>★</span>`;
 			}
 			
-			return starsHtml;
+			// Add clear rating button if user has rated this item
+			if (currentUser && userRatedValue > 0) {
+				const clearDataAttrs = segmentId ? 
+					`data-rating="0" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : 
+					`data-rating="0" data-category="${category}" data-video="${videoId}"`;
+				starsHtml += `<button class="clear-rating-btn" ${clearDataAttrs} onclick="handleClearRating(event)">✕</button>`;
+			}
+			
+			// TEMP: Always show clear button for testing (when logged in)
+			if (currentUser && !userRatedValue) {
+				const clearDataAttrs = segmentId ? 
+					`data-rating="0" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}"` : 
+					`data-rating="0" data-category="${category}" data-video="${videoId}"`;
+				starsHtml += `<button class="clear-rating-btn temp-clear" ${clearDataAttrs} onclick="handleClearRating(event)" title="Clear rating">🗑️</button>`;
+			}
+			
+			// Add rating average and count display (Option 1)
+			const averageToShow = currentRating || 0;
+			const countToShow = ratingCount || 0;
+			
+			let ratingInfoHtml = '';
+			if (countToShow > 0) {
+				// Show average and count when there are ratings
+				ratingInfoHtml = `<span class="rating-count"> ${averageToShow.toFixed(1)} (${countToShow})</span>`;
+			} else {
+				// Show "No ratings yet" when count is 0
+				ratingInfoHtml = `<span class="rating-count no-ratings"> 0.0 (0)</span>`;
+			}
+			
+			return starsHtml + ratingInfoHtml;
 		}
 
 
@@ -3734,7 +3895,6 @@
 										<div class="rating-category">
 											<div class="rating-info">
 												<span class="rating-label">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-												<span class="rating-stats">${(segmentRatings[category]?.average || 0).toFixed(1)}★ (${segmentRatings[category]?.count || 0} ratings)</span>
 											</div>
 											<div class="rating-controls">
 												<div class="stars" data-category="${category}" data-video="${videoId}" data-segment="${segmentId}">
@@ -3957,8 +4117,8 @@
 				userRatings[videoId]?.segments?.[segmentId]?.[category] :
 				userRatings[videoId]?.video?.[category];
 
-			if (currentUser && userCurrentRating !== undefined && userCurrentRating > 0) {
-				// User is logged in and has rated, display their rating
+			if (currentUser && userCurrentRating !== undefined && userCurrentRating >= 0) {
+				// User is logged in and has rated (including 0 for cleared), display their rating
 				displayRating = userCurrentRating;
 			} else {
 				// User not logged in, or logged in but hasn't rated, display community average
@@ -4132,7 +4292,7 @@
 								} else {
 									processedSegments = generateEmptySegments(updatedVideo.episodeNumber);
 								}
-								updatedVideo.segments = ensureExactly3Segments(processedSegments, updatedVideo.episodeNumber);
+								updatedVideo.segments = ensureProperSegments(processedSegments, updatedVideo.episodeNumber);
 								updatedVideo.ratings = calculateVideoOverallRating(updatedVideo); // Recalculate ratings
 								videos[index] = updatedVideo;
 								hasChanges = true;
@@ -4476,10 +4636,10 @@
 							id: segmentId,
 							words: wordsObject,  // Now it's an object, not nested arrays
 							ratings: {
-								lyrics: { average: 3.5 + Math.random(), count: 15 },
-								beats: { average: 3.8 + Math.random(), count: 18 },
-								reaction: { average: 3.2 + Math.random(), count: 12 },
-								overall: { average: 3.5 + Math.random(), count: 14 }
+								lyrics: { average: 0.0, count: 0 },
+								beats: { average: 0.0, count: 0 },
+								reaction: { average: 0.0, count: 0 },
+								overall: { average: 0.0, count: 0 }
 							}
 						};
 					});
@@ -4515,6 +4675,112 @@
 					adminButton.style.display = 'none';
 				}
 				console.log('🚫 Admin access denied');
+			}
+		}
+
+		// RESET FUNCTION: Clear all ratings and start fresh
+		async function resetAllRatings() {
+			// Allow reset in demo mode too - remove sign-in requirement
+			const confirmed = confirm('⚠️ WARNING: This will permanently delete ALL user ratings and reset everything to 0 stars. This cannot be undone!\n\nAre you sure you want to continue?');
+			if (!confirmed) return;
+
+			try {
+				console.log('🔄 Starting complete ratings reset...');
+
+				// Only attempt Firebase operations if we have a valid connection
+				if (db && currentUser) {
+					try {
+						console.log('🔥 Firebase detected - resetting Firebase data...');
+						const batch = db.batch();
+
+						// 1. Clear all user ratings
+						console.log('🗑️ Clearing all user ratings...');
+						const userRatingsSnapshot = await db.collection('userRatings').get();
+						userRatingsSnapshot.docs.forEach(doc => {
+							batch.delete(doc.ref);
+						});
+
+						// 2. Reset all video segment ratings to 0
+						console.log('📊 Resetting all video ratings to 0...');
+						const videosSnapshot = await db.collection('videos').get();
+						videosSnapshot.docs.forEach(doc => {
+							const data = doc.data();
+							if (data.segments) {
+								const resetSegments = {};
+								Object.keys(data.segments).forEach(segmentId => {
+									resetSegments[segmentId] = {
+										...data.segments[segmentId],
+										ratings: {
+											lyrics: { average: 0.0, count: 0 },
+											beats: { average: 0.0, count: 0 },
+											reaction: { average: 0.0, count: 0 },
+											overall: { average: 0.0, count: 0 }
+										}
+									};
+								});
+								batch.update(doc.ref, { 
+									segments: resetSegments,
+									ratings: {
+										lyrics: { average: 0.0, count: 0 },
+										beats: { average: 0.0, count: 0 },
+										reaction: { average: 0.0, count: 0 },
+										overall: { average: 0.0, count: 0 }
+									}
+								});
+							}
+						});
+
+						// Commit all changes
+						await batch.commit();
+						console.log('✅ Firebase data reset complete');
+					} catch (firebaseError) {
+						console.warn('⚠️ Firebase reset failed, continuing with local reset:', firebaseError);
+					}
+				} else {
+					console.log('📴 No Firebase connection - performing local reset only');
+				}
+
+				// 3. Clear user ratings data but preserve videos and words
+				console.log('🧹 Clearing user ratings...');
+				userRatings = {};
+
+				// 4. Reset all ratings in existing videos to 0 (preserve words)
+				console.log('📊 Resetting all local video ratings to 0 (keeping words)...');
+				videos.forEach(video => {
+					// Reset video-level ratings
+					video.ratings = {
+						lyrics: { average: 0.0, count: 0 },
+						beats: { average: 0.0, count: 0 },
+						reaction: { average: 0.0, count: 0 },
+						overall: { average: 0.0, count: 0 }
+					};
+					
+					// Reset segment-level ratings but keep words
+					if (video.segments) {
+						video.segments.forEach(segment => {
+							segment.ratings = {
+								lyrics: { average: 0.0, count: 0 },
+								beats: { average: 0.0, count: 0 },
+								reaction: { average: 0.0, count: 0 },
+								overall: { average: 0.0, count: 0 }
+							};
+							// Keep segment.words unchanged - preserve real words!
+						});
+					}
+				});
+
+				// 5. Refresh the UI
+				console.log('🎨 Refreshing UI...');
+				renderVideos();
+				updateStats();
+
+				// 6. Show success message
+				showNotification('✅ All ratings have been reset to 0! (Words preserved)', 'success');
+				console.log('🎉 Complete ratings reset finished - all ratings now 0, words preserved!');
+
+			} catch (error) {
+				console.error('❌ Error resetting ratings:', error);
+				showNotification('❌ Failed to reset ratings. Check console for details.', 'error');
 			}
 		}
 
@@ -4928,10 +5194,10 @@
 						words: wordsForSegment, // This is now an object with numeric keys, matching Firestore structure
 						// Preserve existing ratings if they exist, otherwise use defaults
 						ratings: segment.ratings || {
-							lyrics: { average: 3.0, count: 0 },
-							beats: { average: 3.0, count: 0 },
-							reaction: { average: 3.0, count: 0 },
-							overall: { average: 3.0, count: 0 }
+							lyrics: { average: 0.0, count: 0 },
+							beats: { average: 0.0, count: 0 },
+							reaction: { average: 0.0, count: 0 },
+							overall: { average: 0.0, count: 0 }
 						}
 					};
 				});
@@ -5032,6 +5298,78 @@
 		window.clearForm = clearForm;
 		window.submitAdminWords = submitAdminWords;
 		window.goToNextEpisode = goToNextEpisode;
+		window.resetAllRatings = resetAllRatings;
+		window.forceDemoMode = function() {
+			console.log('🎭 FORCING OFFLINE DEMO MODE (no Firebase)');
+			videos = [];
+			userRatings = {};
+			generateSampleVideos();
+			renderVideos();
+			updateStats();
+			console.log('✅ Offline demo mode - shows "fill-in" words and 0.0 (0) ratings');
+		};
+
+		window.fixAllSegments = function() {
+			console.log('🔧 FIXING ALL EPISODES TO HAVE MINIMUM 3 SEGMENTS');
+			videos.forEach(video => {
+				video.segments = ensureProperSegments(video.segments, video.episodeNumber);
+			});
+			renderVideos();
+			updateStats();
+			console.log('✅ All episodes now have minimum 3 segments');
+		};
+
+		window.debug3StarBug = function() {
+			console.log('🔍 DEBUGGING 3-STAR BUG');
+			console.log('Current user:', currentUser ? `Logged in as ${currentUser.email}` : 'Not logged in');
+			
+			// Check what ratings are actually in the first few videos
+			videos.slice(0, 3).forEach((video, idx) => {
+				console.log(`Episode ${video.episodeNumber}:`);
+				console.log(`  Video overall rating: ${video.ratings?.overall?.average || 'undefined'}`);
+				if (video.segments && video.segments[0]) {
+					console.log(`  Segment A overall rating: ${video.segments[0].ratings?.overall?.average || 'undefined'}`);
+				}
+			});
+			
+			// Test the reset logic manually
+			console.log('Testing manual rating reset...');
+			videos.forEach(video => {
+				video.ratings = {
+					lyrics: { average: 0.0, count: 0 },
+					beats: { average: 0.0, count: 0 },
+					reaction: { average: 0.0, count: 0 },
+					overall: { average: 0.0, count: 0 }
+				};
+				if (video.segments) {
+					video.segments.forEach(segment => {
+						segment.ratings = {
+							lyrics: { average: 0.0, count: 0 },
+							beats: { average: 0.0, count: 0 },
+							reaction: { average: 0.0, count: 0 },
+							overall: { average: 0.0, count: 0 }
+						};
+					});
+				}
+			});
+			
+			renderVideos();
+			console.log('✅ Manually reset all ratings to 0 - check if 3-star bug is fixed');
+		};
+
+		window.clearMyRating = function(episodeNumber, segmentLetter, category) {
+			if (!currentUser) {
+				console.log('❌ Please sign in first');
+				return;
+			}
+			console.log(`🗑️ Clearing rating for Episode ${episodeNumber}, Segment ${segmentLetter}, Category: ${category}`);
+			const videoId = episodeNumber;
+			const segmentId = `segment_${episodeNumber}_${segmentLetter === 'A' ? 1 : segmentLetter === 'B' ? 2 : 3}`;
+			submitRating(videoId, category, 0, segmentId);
+			console.log('✅ Rating cleared');
+		};
+
+		window.debug3StarBug = debug3StarBug;
 
 		window.addSegment = addSegment; // New
 		window.removeLastSegment = removeLastSegment; // New
